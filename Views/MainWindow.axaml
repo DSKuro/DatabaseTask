@@ -23,11 +23,6 @@
 				<WrapPanel.Styles>
 					<Style Selector="Button">
 						<Setter Property="Height" Value="35"/>
-						<Setter Property="Background" Value="Transparent"/>
-					</Style>
-					<Style Selector="Svg">
-						<Setter Property="Height" Value="15"/>
-						<Setter Property="Width" Value="15"/>
 					</Style>
 					<Style Selector="StackPanel">
 						<Setter Property="Orientation" Value="Horizontal"/>
@@ -57,81 +52,66 @@
 			<Grid.Styles>
 				<Style Selector="Button">
 					<Setter Property="Height" Value="80"/>
-					<Setter Property="Background" Value="Transparent"/>
 				</Style>
 				<Style Selector="TextBlock">
 					<Setter Property="HorizontalAlignment" Value="Center"/>
+					<Setter Property="TextWrapping" Value="Wrap"/>
 				</Style>
 			</Grid.Styles>
 			<Button Grid.Column="0">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/folder-add.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Создать каталог"/>
+					<Svg Path="/Assets/folder-add.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Создать каталог"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="1">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/folder-rename.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Переименовать"/>
+					<Svg Path="/Assets/folder-rename.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Переименовать"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="2">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/folder-delete.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Удалить"/>
+					<Svg Path="/Assets/folder-delete.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Удалить"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="3">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/folder-copy.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Копировать каталог"/>
+					<Svg Path="/Assets/folder-copy.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Копировать каталог"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="4">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/file-move.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Перенести файл"/>
+					<Svg Path="/Assets/file-move.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Перенести файл"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="5">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/file-copy.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Копировать файл"/>
+					<Svg Path="/Assets/file-copy.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Копировать файл"/>
 				</StackPanel>
 			</Button>
 			<Button Grid.Column="6">
 				<StackPanel>
-					<Svg Height="20" Width="20" Path="/Assets/file-delete.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock TextWrapping="Wrap" Text="Удалить файл"/>
+					<Svg Path="/Assets/file-delete.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock Text="Удалить файл"/>
 				</StackPanel>
 			</Button>
 		</Grid>
 		<DataGrid Grid.Row="3"/>
 		<DataGrid Grid.Row="4"/>
 
-
-
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="5">
-			<Grid.Styles>
-				<Style Selector="Button">
-					<Setter Property="Background" Value="Transparent"/>
-				</Style>
-			</Grid.Styles>
 			<Button Grid.Column="0">Дубликаты в чертежах</Button>
 			<Button Grid.Column="1">Неиспользуемые файлы</Button>
 		</Grid>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="6">
-			<Grid.Styles>
-				<Style Selector="Button">
-					<Setter Property="Background" Value="Transparent"/>
-				</Style>
-			</Grid.Styles>
 			<Button Background="#3b6ac6" Foreground="White" Grid.Column="0">Внести изменения</Button>
 			<Button Grid.Column="1">Отменить</Button>
 		</Grid>
 	</Grid>
-	
-    
-
 </Window>

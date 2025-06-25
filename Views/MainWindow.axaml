@@ -3,7 +3,9 @@
         xmlns:vm="using:DatabaseTask.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		xmlns:controls="clr-namespace:DatabaseTask.Views.Controls"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+		Width="500" Height="600"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -15,6 +17,121 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+		<Border Grid.Row="0">
+			<WrapPanel Height="NaN" Margin="10, 10, 0, 0" Orientation="Horizontal">
+				<WrapPanel.Styles>
+					<Style Selector="Button">
+						<Setter Property="Height" Value="35"/>
+						<Setter Property="Background" Value="Transparent"/>
+					</Style>
+					<Style Selector="Svg">
+						<Setter Property="Height" Value="15"/>
+						<Setter Property="Width" Value="15"/>
+					</Style>
+					<Style Selector="StackPanel">
+						<Setter Property="Orientation" Value="Horizontal"/>
+						<Setter Property="Spacing" Value="5"/>
+						<Setter Property="HorizontalAlignment" Value="Center"/>
+					</Style>
+					<Style Selector="TextBlock">
+						<Setter Property="VerticalAlignment" Value="Center"/>
+					</Style>
+				</WrapPanel.Styles>
+				<Button>
+					<StackPanel>
+						<Svg Path="/Assets/db-open.svg" Css="{DynamicResource SvgClass}"/>
+						<TextBlock Text="Выбрать БД"/>
+					</StackPanel>
+				</Button>
+				<Button>
+					<StackPanel>
+						<Svg Path="/Assets/folder-open.svg" Css="{DynamicResource SvgFill}"/>
+						<TextBlock Text="Выбрать каталог"/>
+					</StackPanel>
+				</Button>
+			</WrapPanel>
+		</Border>
+		<TreeDataGrid Grid.Row="1" Height="250"  Background="Red"/>
+		<Grid Margin="10, 5, 5, 5" ColumnDefinitions="*, *, *, *, *, *, *" Grid.Row="2">
+			<Grid.Styles>
+				<Style Selector="Button">
+					<Setter Property="Height" Value="80"/>
+					<Setter Property="Background" Value="Transparent"/>
+				</Style>
+				<Style Selector="TextBlock">
+					<Setter Property="HorizontalAlignment" Value="Center"/>
+				</Style>
+			</Grid.Styles>
+			<Button Grid.Column="0">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/folder-add.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Создать каталог"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="1">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/folder-rename.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Переименовать"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="2">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/folder-delete.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Удалить"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="3">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/folder-copy.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Копировать каталог"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="4">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/file-move.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Перенести файл"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="5">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/file-copy.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Копировать файл"/>
+				</StackPanel>
+			</Button>
+			<Button Grid.Column="6">
+				<StackPanel>
+					<Svg Height="20" Width="20" Path="/Assets/file-delete.svg" Css="{DynamicResource SvgClass}"/>
+					<TextBlock TextWrapping="Wrap" Text="Удалить файл"/>
+				</StackPanel>
+			</Button>
+		</Grid>
+		<DataGrid Grid.Row="3"/>
+		<DataGrid Grid.Row="4"/>
+
+
+
+		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="5">
+			<Grid.Styles>
+				<Style Selector="Button">
+					<Setter Property="Background" Value="Transparent"/>
+				</Style>
+			</Grid.Styles>
+			<Button Grid.Column="0">Дубликаты в чертежах</Button>
+			<Button Grid.Column="1">Неиспользуемые файлы</Button>
+		</Grid>
+
+		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="6">
+			<Grid.Styles>
+				<Style Selector="Button">
+					<Setter Property="Background" Value="Transparent"/>
+				</Style>
+			</Grid.Styles>
+			<Button Background="#3b6ac6" Foreground="White" Grid.Column="0">Внести изменения</Button>
+			<Button Grid.Column="1">Отменить</Button>
+		</Grid>
+	</Grid>
+	
+    
 
 </Window>

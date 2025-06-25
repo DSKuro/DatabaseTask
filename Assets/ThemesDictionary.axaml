@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Add Resources Here -->
+	<ResourceDictionary.ThemeDictionaries>
+		<ResourceDictionary x:Key="Light">
+			<x:String x:Key="SvgClass">.SvgClass { stroke: black }</x:String>
+			<x:String x:Key="SvgFill">.SvgFill { fill: black }</x:String>
+		</ResourceDictionary>
+		<ResourceDictionary x:Key="Dark">
+			<x:String x:Key="SvgClass">.SvgClass { stroke: white }</x:String>
+			<x:String x:Key="SvgFill">.SvgFill { fill: white }</x:String>
+		</ResourceDictionary>
+	</ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

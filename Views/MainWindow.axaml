@@ -3,14 +3,16 @@
         xmlns:vm="using:DatabaseTask.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
+		dialogues:DialogueManager.Register="{Binding}"
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
 		Width="500" Height="600"
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/window.ico"
 
-        Title="DatabaseTask">
+        Title="Управление базой данных">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -22,11 +24,12 @@
 		<Border >
 			<WrapPanel Height="NaN" Margin="10, 10, 0, 0" Orientation="Horizontal">
 				<controls:IconButton 
-						IconSource="/Assets/db-open.svg" 
+						Command="{Binding OpenDbCommand}"
+						IconSource="/Assets/ButtonIcons/db-open.svg" 
 						Css="{DynamicResource SvgClass}" 
 						Content="Выбрать БД"/>
 				<controls:IconButton
-						IconSource="/Assets/folder-open.svg"
+						IconSource="/Assets/ButtonIcons/folder-open.svg"
 						Css="{DynamicResource SvgFill}"
 						Content="Выбрать каталог"/>
 			</WrapPanel>
@@ -46,31 +49,31 @@
 			</Grid.Styles>
 			<controls:IconButton
 					Grid.Column="0"
-					IconSource="/Assets/folder-add.svg"
+					IconSource="/Assets/ButtonIcons/folder-add.svg"
 					Content="Создать каталог"/>
 			<controls:IconButton
 					Grid.Column="1"
-					IconSource="/Assets/folder-rename.svg"
+					IconSource="/Assets/ButtonIcons/folder-rename.svg"
 					Content="Переименовать"/>
 			<controls:IconButton
 					Grid.Column="2"
-					IconSource="/Assets/folder-delete.svg"
+					IconSource="/Assets/ButtonIcons/folder-delete.svg"
 					Content="Удалить"/>
 			<controls:IconButton
 					Grid.Column="3"
-					IconSource="/Assets/folder-copy.svg"
+					IconSource="/Assets/ButtonIcons/folder-copy.svg"
 					Content="Копировать каталог"/>
 			<controls:IconButton
 					Grid.Column="4"
-					IconSource="/Assets/file-move.svg"
+					IconSource="/Assets/ButtonIcons/file-move.svg"
 					Content="Перенести файл"/>
 			<controls:IconButton
 					Grid.Column="5"
-					IconSource="/Assets/file-copy.svg"
+					IconSource="/Assets/ButtonIcons/file-copy.svg"
 					Content="Копировать файл"/>
 			<controls:IconButton
 					Grid.Column="6"
-					IconSource="/Assets/file-delete.svg"
+					IconSource="/Assets/ButtonIcons/file-delete.svg"
 					Content="Удалить файл"/>
 		</Grid>
 		<DataGrid Grid.Row="3"/>

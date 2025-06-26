@@ -1,8 +1,8 @@
 ﻿using Avalonia.Platform.Storage;
 
-namespace DatabaseTask.Services.Dialogues.FilePicker
+namespace DatabaseTask.Services.Dialogues.Storage
 {
-    public class FilePickerConstants
+    public class StorageConstants
     {
         public static readonly string DbChose = "Выберите базу данных:";
         public static readonly FilePickerFileType DatabaseFilter = new("Database Files")

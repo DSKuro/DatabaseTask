@@ -2,8 +2,13 @@
 
 namespace DatabaseTask.Models
 {
-    public class FilePickerOptions : FolderPickerOptions
+    public class FilePickerOptions
     {
+        public bool AllowMultiple
+        {
+            get;
+        }
+
         public string Title
         {
             get;
@@ -14,10 +19,11 @@ namespace DatabaseTask.Models
         }
 
         public FilePickerOptions(string title, FilePickerFileType filter,
-            bool allowMultiple = false) : base(allowMultiple)
+            bool allowMultiple = false)
         {
             Title = title;
             Filter = filter;
+            AllowMultiple = allowMultiple;
         }
     }
 }

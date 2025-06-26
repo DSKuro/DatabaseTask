@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DatabaseTask.Services.Dialogues.Base;
-using DatabaseTask.Services.Dialogues.FilePicker;
+using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.ViewModels;
 using DatabaseTask.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +53,7 @@ namespace DatabaseTask
             collection.AddTransient<DialogueManager>();
             collection.AddTransient<DialogueHelper>();
             collection.AddTransient<MainWindowViewModel>();
-            collection.AddTransient<IFilePickerService, FilePickerService>();
+            collection.AddTransient<IStorageService, StorageService>();
             return collection;
         }
     }

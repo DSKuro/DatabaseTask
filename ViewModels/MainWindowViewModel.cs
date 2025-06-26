@@ -1,7 +1,8 @@
 ﻿using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Models;
-using DatabaseTask.Services.Dialogues.FilePicker;
+using DatabaseTask.Services.Dialogues.Storage;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,11 +10,11 @@ namespace DatabaseTask.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        private readonly IFilePickerService _filePickerService;
+        private readonly IStorageService _storageService;
 
-        public MainWindowViewModel(IFilePickerService filePickerService)
+        public MainWindowViewModel(IStorageService storageService)
         {
-            _filePickerService = filePickerService;
+            _storageService = storageService;
         }
 
         [RelayCommand]
@@ -24,9 +25,25 @@ namespace DatabaseTask.ViewModels
 
         public async Task<IEnumerable<IStorageFile>> ChooseDbFile()
         {
-           return await _filePickerService.OpenFilesAsync(this,
-               new FilePickerOptions(FilePickerConstants.DbChose,
-               FilePickerConstants.DatabaseFilter));
+            try
+            {
+                return await _storageService.OpenFilesAsync(this,
+                    new FilePickerOptions(StorageConstants.DbChose,
+                    StorageConstants.DatabaseFilter));
+            }
+            catch (ArgumentNullException ex)
+            {
+
+            }
+            catch (ArgumentException ex)
+            {
+
+            }
+            catch (InvalidOperationException ex)
+            {
+
+            }
+            return null;
         }
     }
 }

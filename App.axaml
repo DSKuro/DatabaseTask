@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="DatabaseTask.App"
              xmlns:local="using:DatabaseTask"
+			 xmlns:controls="clr-namespace:DatabaseTask.Controls"
              RequestedThemeVariant="Light">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -24,12 +25,11 @@
 		<Style Selector=":is(TopLevel)">
 			<Setter Property="FontWeight" Value="SemiBold"/>
 		</Style>
-		<Style Selector="Svg">
-			<Setter Property="Height" Value="20"/>
-			<Setter Property="Width" Value="20"/>
-		</Style>
-		<Style Selector="Button">
+		<StyleInclude Source="avares://DatabaseTask/Themes/IconButton.axaml" />
+		<Style Selector="controls|IconButton">
 			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="IconSize" Value="20"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
 		</Style>
-    </Application.Styles>
+	</Application.Styles>
 </Application>

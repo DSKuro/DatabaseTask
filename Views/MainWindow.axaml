@@ -3,12 +3,13 @@
         xmlns:vm="using:DatabaseTask.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:controls="clr-namespace:DatabaseTask.Views.Controls"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
 		Width="500" Height="600"
+		xmlns:controls="clr-namespace:DatabaseTask.Controls"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
+
         Title="DatabaseTask">
 
     <Design.DataContext>
@@ -18,88 +19,59 @@
     </Design.DataContext>
 
 	<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto">
-		<Border Grid.Row="0">
+		<Border >
 			<WrapPanel Height="NaN" Margin="10, 10, 0, 0" Orientation="Horizontal">
-				<WrapPanel.Styles>
-					<Style Selector="Button">
-						<Setter Property="Height" Value="35"/>
-					</Style>
-					<Style Selector="StackPanel">
-						<Setter Property="Orientation" Value="Horizontal"/>
-						<Setter Property="Spacing" Value="5"/>
-						<Setter Property="HorizontalAlignment" Value="Center"/>
-					</Style>
-					<Style Selector="TextBlock">
-						<Setter Property="VerticalAlignment" Value="Center"/>
-					</Style>
-				</WrapPanel.Styles>
-				<Button>
-					<StackPanel>
-						<Svg Path="/Assets/db-open.svg" Css="{DynamicResource SvgClass}"/>
-						<TextBlock Text="Выбрать БД"/>
-					</StackPanel>
-				</Button>
-				<Button>
-					<StackPanel>
-						<Svg Path="/Assets/folder-open.svg" Css="{DynamicResource SvgFill}"/>
-						<TextBlock Text="Выбрать каталог"/>
-					</StackPanel>
-				</Button>
+				<controls:IconButton 
+						IconSource="/Assets/db-open.svg" 
+						Css="{DynamicResource SvgClass}" 
+						Content="Выбрать БД"/>
+				<controls:IconButton
+						IconSource="/Assets/folder-open.svg"
+						Css="{DynamicResource SvgFill}"
+						Content="Выбрать каталог"/>
 			</WrapPanel>
 		</Border>
 		<TreeDataGrid Grid.Row="1" Height="250"  Background="Red"/>
 		<Grid Margin="10, 5, 5, 5" ColumnDefinitions="*, *, *, *, *, *, *" Grid.Row="2">
 			<Grid.Styles>
-				<Style Selector="Button">
+				<Style Selector="controls|IconButton">
 					<Setter Property="Height" Value="80"/>
+					<Setter Property="Orientation" Value="Vertical"/>
+					<Setter Property="Css" Value="{DynamicResource SvgClass}"/>
 				</Style>
 				<Style Selector="TextBlock">
 					<Setter Property="HorizontalAlignment" Value="Center"/>
 					<Setter Property="TextWrapping" Value="Wrap"/>
 				</Style>
 			</Grid.Styles>
-			<Button Grid.Column="0">
-				<StackPanel>
-					<Svg Path="/Assets/folder-add.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Создать каталог"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="1">
-				<StackPanel>
-					<Svg Path="/Assets/folder-rename.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Переименовать"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="2">
-				<StackPanel>
-					<Svg Path="/Assets/folder-delete.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Удалить"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="3">
-				<StackPanel>
-					<Svg Path="/Assets/folder-copy.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Копировать каталог"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="4">
-				<StackPanel>
-					<Svg Path="/Assets/file-move.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Перенести файл"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="5">
-				<StackPanel>
-					<Svg Path="/Assets/file-copy.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Копировать файл"/>
-				</StackPanel>
-			</Button>
-			<Button Grid.Column="6">
-				<StackPanel>
-					<Svg Path="/Assets/file-delete.svg" Css="{DynamicResource SvgClass}"/>
-					<TextBlock Text="Удалить файл"/>
-				</StackPanel>
-			</Button>
+			<controls:IconButton
+					Grid.Column="0"
+					IconSource="/Assets/folder-add.svg"
+					Content="Создать каталог"/>
+			<controls:IconButton
+					Grid.Column="1"
+					IconSource="/Assets/folder-rename.svg"
+					Content="Переименовать"/>
+			<controls:IconButton
+					Grid.Column="2"
+					IconSource="/Assets/folder-delete.svg"
+					Content="Удалить"/>
+			<controls:IconButton
+					Grid.Column="3"
+					IconSource="/Assets/folder-copy.svg"
+					Content="Копировать каталог"/>
+			<controls:IconButton
+					Grid.Column="4"
+					IconSource="/Assets/file-move.svg"
+					Content="Перенести файл"/>
+			<controls:IconButton
+					Grid.Column="5"
+					IconSource="/Assets/file-copy.svg"
+					Content="Копировать файл"/>
+			<controls:IconButton
+					Grid.Column="6"
+					IconSource="/Assets/file-delete.svg"
+					Content="Удалить файл"/>
 		</Grid>
 		<DataGrid Grid.Row="3"/>
 		<DataGrid Grid.Row="4"/>

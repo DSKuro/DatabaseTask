@@ -1,0 +1,61 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:controls="clr-namespace:DatabaseTask.Controls">
+
+	<Style Selector="controls|IconButton">
+		<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+		<Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
+		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+		<Setter Property="Padding" Value="{DynamicResource ButtonPadding}" />
+
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+
+					<StackPanel Name="contentPanel"
+                                Orientation="{TemplateBinding Orientation}"
+                                Spacing="{TemplateBinding Spacing}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+
+						<Svg Name="iconPart"
+                                        Path="{TemplateBinding IconSource}"
+                                        Width="{TemplateBinding IconSize}"
+                                        Height="{TemplateBinding IconSize}"
+                                        Stretch="Uniform"
+										Css="{TemplateBinding Css}"/>
+						<ContentPresenter Name="textPart"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+										  FontWeight="{TemplateBinding FontWeight}"
+                                          VerticalAlignment="Center"/>
+					</StackPanel>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<Style Selector="controls|IconButton:pointerover /template/ Border#border">
+		<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+	</Style>
+
+	<Style Selector="controls|IconButton:pressed /template/ Border#border">
+		<Setter Property="RenderTransform" Value="scale(0.98)" />
+	</Style>
+
+	<Style Selector="controls|IconButton:pressed  /template/ Border#border">
+		<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+	</Style>
+
+	<Style Selector="controls|IconButton:disabled">
+		<Setter Property="Opacity" Value="0.5"/>
+	</Style>
+</Styles>

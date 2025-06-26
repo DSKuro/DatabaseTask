@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Dialogues.Base
 {
-    public class DialogueManager
+    public class DialogueManager : IDialogueManager
     {
         private static readonly Dictionary<object, Visual> RegistrationMapper =
             new Dictionary<object, Visual>();

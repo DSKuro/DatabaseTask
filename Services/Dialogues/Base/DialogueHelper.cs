@@ -3,11 +3,11 @@ using System;
 
 namespace DatabaseTask.Services.Dialogues.Base
 {
-    public class DialogueHelper
+    public class DialogueHelper : IDialogueHelper
     {
-        private readonly DialogueManager _dialogueManager;
+        private readonly IDialogueManager _dialogueManager;
 
-        public DialogueHelper(DialogueManager dialogueManager) 
+        public DialogueHelper(IDialogueManager dialogueManager) 
         {
             _dialogueManager = dialogueManager;
         }

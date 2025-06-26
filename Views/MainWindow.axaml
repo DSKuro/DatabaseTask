@@ -29,6 +29,7 @@
 						Css="{DynamicResource SvgClass}" 
 						Content="Выбрать БД"/>
 				<controls:IconButton
+						Command="{Binding OpenFolderCommand}"
 						IconSource="/Assets/ButtonIcons/folder-open.svg"
 						Css="{DynamicResource SvgFill}"
 						Content="Выбрать каталог"/>

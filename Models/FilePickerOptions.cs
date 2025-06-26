@@ -8,7 +8,6 @@ namespace DatabaseTask.Models
         {
             get;
         }
-
         public string Title
         {
             get;

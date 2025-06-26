@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DatabaseTask.Services.Dialogues.Base;
+using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.ViewModels;
 using DatabaseTask.Views;
@@ -50,10 +51,11 @@ namespace DatabaseTask
         private ServiceCollection BuildCollection()
         {
             ServiceCollection collection = new ServiceCollection();
-            collection.AddTransient<DialogueManager>();
-            collection.AddTransient<DialogueHelper>();
+            collection.AddTransient<IDialogueManager, DialogueManager>();
+            collection.AddTransient<IDialogueHelper, DialogueHelper>();
             collection.AddTransient<MainWindowViewModel>();
             collection.AddTransient<IStorageService, StorageService>();
+            collection.AddTransient<IMessageBoxService, MessageBoxService>();
             return collection;
         }
     }

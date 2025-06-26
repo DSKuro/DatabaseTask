@@ -9,9 +9,9 @@ namespace DatabaseTask.Services.Dialogues.Storage
 {
     public class StorageService : IStorageService
     {
-        private readonly DialogueHelper _dialogueHelper;
+        private readonly IDialogueHelper _dialogueHelper;
 
-        public StorageService(DialogueHelper dialogueHelper)
+        public StorageService(IDialogueHelper dialogueHelper)
         {
             _dialogueHelper = dialogueHelper;
         }
@@ -54,7 +54,5 @@ namespace DatabaseTask.Services.Dialogues.Storage
                 });
             return storageFolders;
         }
-
-
     }
 }

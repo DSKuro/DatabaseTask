@@ -1,12 +1,19 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Platform.Storage;
+using AvaloniaEdit.Utils;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Models;
+using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using MessageBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DatabaseTask.ViewModels
 {
@@ -14,11 +21,22 @@ namespace DatabaseTask.ViewModels
     {
         private readonly IStorageService _storageService;
         private readonly IMessageBoxService _messageBoxService;
+        private readonly IGetTreeNodes _getTreeNodes;
 
-        public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService)
+        private IEnumerable<IStorageFolder> _folders;
+
+        [ObservableProperty]
+        private NodeViewModel? _draggedItem;
+
+        [ObservableProperty]
+        private NodeViewModel _selectedNode;
+        public ObservableCollection<NodeViewModel> Nodes { get; } = new();
+        public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService,
+            IGetTreeNodes getTreeNodes)
         {
             _storageService = storageService;
             _messageBoxService = messageBoxService;
+            _getTreeNodes = getTreeNodes;
         }
 
         [RelayCommand]
@@ -32,25 +50,25 @@ namespace DatabaseTask.ViewModels
             try
             {
                 return await _storageService.OpenFilesAsync(this,
-                    new FilePickerOptions(StorageConstants.DbChose,
-                    StorageConstants.DatabaseFilter));
+                    new FilePickerOptions(StorageConstants.BaseStorage.Value,
+                    StorageConstants.BaseStorage.Type));
             }
             catch (ArgumentNullException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Аргумент не найден",
+                    MessageBoxConstants.Error.Value, "Аргумент не найден",
                     ButtonEnum.Ok), ErrorCallback);
             }
             catch (ArgumentException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Неверный аргумент",
+                    MessageBoxConstants.Error.Value, "Неверный аргумент",
                     ButtonEnum.Ok), ErrorCallback);
             }
             catch (InvalidOperationException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Запрещённая операция",
+                    MessageBoxConstants.Error.Value, "Запрещённая операция",
                     ButtonEnum.Ok), ErrorCallback);
             }
             return null;
@@ -60,34 +78,34 @@ namespace DatabaseTask.ViewModels
         public async Task OpenFolder()
         {
             await ChooseMainFolder();
+            Nodes.AddRange(await _getTreeNodes.GetCollectionFromFolders(_folders));
         }
 
-        public async Task<IEnumerable<IStorageFolder>> ChooseMainFolder()
+        public async Task ChooseMainFolder()
         {
             try
             {
-                return await _storageService.OpenFoldersAsync(this,
+                _folders = await _storageService.OpenFoldersAsync(this,
                     new FolderPickerOptions(false));
             }
             catch (ArgumentNullException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Аргумент не найден",
+                    MessageBoxConstants.Error.Value, "Аргумент не найден",
                     ButtonEnum.Ok), ErrorCallback);
             }
             catch (ArgumentException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Неверный аргумент",
+                    MessageBoxConstants.Error.Value, "Неверный аргумент",
                     ButtonEnum.Ok), ErrorCallback);
             }
             catch (InvalidOperationException ex)
             {
                 await MessageBoxHelper(new MessageBoxOptions(
-                    MessageBoxConstants.ErrorTitle, "Запрещённая операция",
+                    MessageBoxConstants.Error.Value, "Запрещённая операция",
                     ButtonEnum.Ok), ErrorCallback);
             }
-            return null;
         }
 
         private async Task MessageBoxHelper(MessageBoxOptions options, Action callback)

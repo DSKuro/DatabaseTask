@@ -2,6 +2,13 @@
 {
     public class MessageBoxConstants
     {
-        public static readonly string ErrorTitle = "Ошибка";
+        public string Value { get; private set; }
+
+        private MessageBoxConstants(string value)
+        {
+            Value = value;
+        }
+
+        public static MessageBoxConstants Error { get { return new MessageBoxConstants("Ошибка"); } }
     }
 }

@@ -5,6 +5,8 @@
 		<ResourceDictionary x:Key="Light">
 			<x:String x:Key="SvgClass">.SvgClass { stroke: black }</x:String>
 			<x:String x:Key="SvgFill">.SvgFill { fill: black }</x:String>
+			<x:String x:Key="SvgSelectedClass">.SvgClass { stroke: #3b6ac6 }</x:String>
+			<x:String x:Key="SvgSelectedFill">.SvgFill { fill: #3b6ac6}</x:String>
 		</ResourceDictionary>
 		<ResourceDictionary x:Key="Dark">
 			<x:String x:Key="SvgClass">.SvgClass { stroke: white }</x:String>

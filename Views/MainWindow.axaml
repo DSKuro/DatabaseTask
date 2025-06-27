@@ -11,9 +11,10 @@
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/window.ico"
-
         Title="Управление базой данных">
 
+
+	
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -21,7 +22,7 @@
     </Design.DataContext>
 
 	<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto">
-		<Border >
+		<Border>
 			<WrapPanel Height="NaN" Margin="10, 10, 0, 0" Orientation="Horizontal">
 				<controls:IconButton 
 						Command="{Binding OpenDbCommand}"
@@ -35,7 +36,28 @@
 						Content="Выбрать каталог"/>
 			</WrapPanel>
 		</Border>
-		<TreeDataGrid Grid.Row="1" Height="250"  Background="Red"/>
+		
+		<Grid Grid.Row="1" ColumnDefinitions="*, *">
+			<TreeView DragDrop.AllowDrop="True" Name="TreeViewControl" 
+					  SelectedItem="{Binding SelectedNode}" SelectionMode="Multiple" 
+					  ItemsSource="{Binding Nodes}" Height="250">
+				<TreeView.Styles>
+						<Style Selector="TreeViewItem" x:DataType="vm:NodeViewModel">
+							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+						</Style>
+				</TreeView.Styles>
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate ItemsSource="{Binding Children}">
+						<StackPanel Orientation="Horizontal" Spacing="5">
+							<Svg Path="{Binding IconPath}"/>
+							<TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
+						</StackPanel>
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+			<DataGrid Height="250"/>
+		</Grid>
+		
 		<Grid Margin="10, 5, 5, 5" ColumnDefinitions="*, *, *, *, *, *, *" Grid.Row="2">
 			<Grid.Styles>
 				<Style Selector="controls|IconButton">

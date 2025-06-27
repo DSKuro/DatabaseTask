@@ -2,4 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <!-- Add Resources Here -->
 	<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
+	<ControlTheme x:Key="MainTreeView" TargetType="TreeView">
+		<Setter Property="SelectionMode" Value="Multiple"/>
+		<Setter Property="DragDrop.AllowDrop" Value="True"/>
+		<TreeView.ItemTemplate>
+				
+		</TreeView.ItemTemplate>
+	</ControlTheme>
 </ResourceDictionary>

@@ -4,13 +4,27 @@ namespace DatabaseTask.Services.Dialogues.Storage
 {
     public class StorageConstants
     {
-        public static readonly string DbChose = "Выберите базу данных:";
+        public string Value { get; private set; }
+        public FilePickerFileType Type { get; private set; }
 
-        public static readonly FilePickerFileType DatabaseFilter = new("Database Files")
+        private StorageConstants(string value, FilePickerFileType type)
         {
-            Patterns = new[] { "*.mdf" },
-            AppleUniformTypeIdentifiers = new[] { "*.mdf" },
-            MimeTypes = null
-        };
+            Value = value;
+            Type = type;
+        }
+
+        public static StorageConstants BaseStorage 
+        { 
+            get
+            {
+                return new StorageConstants("Выберите базу данных:",
+                    new("Database Files")
+                    {
+                        Patterns = new[] { "*.mdf" },
+                        AppleUniformTypeIdentifiers = new[] { "*.mdf" },
+                        MimeTypes = null
+                    });
+            } 
+        }
     }
 }

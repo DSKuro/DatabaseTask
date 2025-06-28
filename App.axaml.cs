@@ -2,11 +2,12 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.TreeView;
 using DatabaseTask.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -55,6 +56,8 @@ namespace DatabaseTask
             collection.AddTransient<IDialogueManager, DialogueManager>();
             collection.AddTransient<IDialogueHelper, DialogueHelper>();
             collection.AddTransient<IGetTreeNodes, GetTreeNodesService>();
+            collection.AddTransient<INode, NodeViewModel>();
+            collection.AddTransient<ITreeView, TreeViewService>();
             collection.AddTransient<MainWindowViewModel>();
             collection.AddTransient<IStorageService, StorageService>();
             collection.AddTransient<IMessageBoxService, MessageBoxService>();

@@ -5,7 +5,6 @@ using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Models;
-using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using MessageBox.Avalonia.Enums;
@@ -25,12 +24,8 @@ namespace DatabaseTask.ViewModels
 
         private IEnumerable<IStorageFolder> _folders;
 
-        [ObservableProperty]
-        private NodeViewModel? _draggedItem;
+        public IGetTreeNodes GetTreeNodes { get => _getTreeNodes; }
 
-        [ObservableProperty]
-        private NodeViewModel _selectedNode;
-        public ObservableCollection<NodeViewModel> Nodes { get; } = new();
         public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService,
             IGetTreeNodes getTreeNodes)
         {
@@ -78,7 +73,7 @@ namespace DatabaseTask.ViewModels
         public async Task OpenFolder()
         {
             await ChooseMainFolder();
-            Nodes.AddRange(await _getTreeNodes.GetCollectionFromFolders(_folders));
+            await _getTreeNodes.GetCollectionFromFolders(_folders);
         }
 
         public async Task ChooseMainFolder()

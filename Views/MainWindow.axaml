@@ -39,15 +39,15 @@
 		
 		<Grid Grid.Row="1" ColumnDefinitions="*, *">
 			<TreeView DragDrop.AllowDrop="True" Name="TreeViewControl" 
-					  SelectedItem="{Binding SelectedNode}" SelectionMode="Multiple" 
-					  ItemsSource="{Binding Nodes}" Height="250">
+					  SelectedItem="{Binding GetTreeNodes.TreeView.SelectedNode, Mode=TwoWay}" SelectionMode="Multiple" 
+					  ItemsSource="{Binding GetTreeNodes.TreeView.Nodes}" Height="250">
 				<TreeView.Styles>
-						<Style Selector="TreeViewItem" x:DataType="vm:NodeViewModel">
+						<Style Selector="TreeViewItem" x:DataType="vm:Nodes.NodeViewModel">
 							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
 						</Style>
 				</TreeView.Styles>
 				<TreeView.ItemTemplate>
-					<TreeDataTemplate ItemsSource="{Binding Children}">
+					<TreeDataTemplate x:DataType="vm:Nodes.NodeViewModel" ItemsSource="{Binding Children}">
 						<StackPanel Orientation="Horizontal" Spacing="5">
 							<Svg Path="{Binding IconPath}"/>
 							<TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>

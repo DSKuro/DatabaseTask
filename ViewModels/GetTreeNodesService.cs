@@ -1,33 +1,37 @@
 ﻿using Avalonia.Platform.Storage;
-using DatabaseTask.ViewModels;
+using DatabaseTask.Services.Collection;
+using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.TreeView;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.Services.Collection
+namespace DatabaseTask.ViewModels
 {
-    public class GetTreeNodesService : IGetTreeNodes
+    public partial class GetTreeNodesService : ViewModelBase, IGetTreeNodes
     {
-        private SmartCollection<NodeViewModel> _nodes = new SmartCollection<NodeViewModel>();
+        private readonly ITreeView _treeView;
 
-        public async Task<SmartCollection<NodeViewModel>> GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
+        public ITreeView TreeView { get => _treeView; }
+
+        public GetTreeNodesService(ITreeView treeView)
+        {
+            _treeView = treeView;
+        }
+
+        public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
         {
             await GetCollectionByRecursion(folders);
-            return _nodes;
         }
 
         private async Task GetCollectionByRecursion(IEnumerable<IStorageFolder> folders)
         {
+            _treeView.Nodes.Clear();
             foreach (IStorageFolder folder in folders)
             {
-                await ProcessData(folder, _nodes);
+                (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
+                 await GetData(folder);
+                _treeView.Nodes.Add(GetNode(folder, settings, childrens));
             }
-        }
-
-        private async Task ProcessData(IStorageItem folder, SmartCollection<NodeViewModel> collection)
-        {
-            (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
-                await GetData(folder);
-            collection.Add(GetNode(folder, settings, childrens));
         }
 
         private async Task<(StorageItemProperties, SmartCollection<NodeViewModel>)> GetData(IStorageItem item)
@@ -47,7 +51,9 @@ namespace DatabaseTask.Services.Collection
             SmartCollection<NodeViewModel> children = new();
             await foreach (IStorageItem item in items)
             {
-                await ProcessData(item, children);
+                (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
+                  await GetData(item);
+                children.Add(GetNode(item, settings, childrens));
             }
             return children;
         }
@@ -58,11 +64,33 @@ namespace DatabaseTask.Services.Collection
             NodeViewModel node = new NodeViewModel()
             {
                 Name = item.Name,
+                IsFolder = (item is IStorageFolder) ? true : false,
                 IconPath = (item is IStorageFolder) ?
                 IconCategory.Folder.Value : IconCategory.File.Value
             };
             node.Children.AddRange(children);
+            node.Expanded += ExpandHandler;
+            node.Collapsed += CollapsedHandler;
             return node;
+        }
+
+        private void ExpandHandler(INode model)
+        {
+            ExpandCollapsedImpl(model, IconCategory.OpenedFolder);
+        }
+
+        private void CollapsedHandler(INode model)
+        {
+            ExpandCollapsedImpl(model, IconCategory.Folder);
+        }
+
+        private void ExpandCollapsedImpl(INode model, IconCategory iconPath)
+        {
+            if (model is NodeViewModel node)
+            {
+                node.IconPath = iconPath.Value;
+                _treeView.SelectedNode = node;
+            }
         }
     }
 }

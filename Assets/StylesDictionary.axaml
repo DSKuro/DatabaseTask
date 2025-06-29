@@ -9,4 +9,7 @@
 				
 		</TreeView.ItemTemplate>
 	</ControlTheme>
+	<ContextMenu x:Key="TreeViewItemContextMenu">
+		<MenuItem Header="Copy"/>
+	</ContextMenu>
 </ResourceDictionary>

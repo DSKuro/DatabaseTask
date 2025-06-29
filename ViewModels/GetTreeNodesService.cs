@@ -46,28 +46,35 @@ namespace DatabaseTask.ViewModels
             return (settings, childrens);
         }
 
-        private async Task<SmartCollection<NodeViewModel>> GetChildren(IAsyncEnumerable<IStorageItem> items)
+        private async Task<SmartCollection<NodeViewModel>> GetChildren(IAsyncEnumerable<IStorageItem> items, INode parent = null)
         {
             SmartCollection<NodeViewModel> children = new();
             await foreach (IStorageItem item in items)
             {
                 (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
                   await GetData(item);
-                children.Add(GetNode(item, settings, childrens));
+                children.Add(GetNode(item, settings, childrens, parent));
             }
             return children;
         }
 
         private NodeViewModel GetNode(IStorageItem item, StorageItemProperties properties,
-            SmartCollection<NodeViewModel> children)
+            SmartCollection<NodeViewModel> children, INode parent = null)
         {
             NodeViewModel node = new NodeViewModel()
             {
                 Name = item.Name,
                 IsFolder = (item is IStorageFolder) ? true : false,
                 IconPath = (item is IStorageFolder) ?
-                IconCategory.Folder.Value : IconCategory.File.Value
+                IconCategory.Folder.Value : IconCategory.File.Value,
+                Parent = parent,
             };
+
+            foreach (NodeViewModel child in children)
+            {
+                child.Parent = node;
+            }
+
             node.Children.AddRange(children);
             node.Expanded += ExpandHandler;
             node.Collapsed += CollapsedHandler;

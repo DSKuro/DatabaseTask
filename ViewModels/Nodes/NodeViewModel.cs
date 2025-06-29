@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Collection;
 using System;
+using System.Collections.ObjectModel;
 
 namespace DatabaseTask.ViewModels.Nodes
 {
@@ -13,9 +14,9 @@ namespace DatabaseTask.ViewModels.Nodes
         public event Action<INode> Collapsed;
 
         public bool IsFolder { get; set; }
-        public NodeViewModel? Parent { get; set; }
+        public INode? Parent { get; set; }
 
-        public SmartCollection<NodeViewModel> Children { get; } = new();
+        public SmartCollection<INode> Children { get; set; } = new();
 
         public string Name
         {

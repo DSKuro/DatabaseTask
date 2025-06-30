@@ -14,10 +14,8 @@
         Title="Управление базой данных">
 	<Window.Styles>
 		<Style Selector="TreeViewItem.drop-above">
-			<Setter Property="Background" Value="#2000FF00"/>
+			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
 			<!-- Зеленая подсветка сверху -->
-			<Setter Property="BorderBrush" Value="Green"/>
-			<Setter Property="BorderThickness" Value="0,2,0,0"/>
 		</Style>
 
 		<Style Selector="TreeViewItem.drop-below">
@@ -53,7 +51,9 @@
 		
 		<Grid Grid.Row="1" ColumnDefinitions="*, *">
 			<TreeView Name="TreeViewControl" 
-					  SelectedItem="{Binding GetTreeNodes.TreeView.SelectedNode, Mode=TwoWay}" SelectionMode="Multiple" 
+					  SelectedItem="{Binding GetTreeNodes.TreeView.SelectedNode, Mode=TwoWay}"
+					  SelectedItems="{Binding GetTreeNodes.TreeView.SelectedNodes, Mode=TwoWay}"
+					  SelectionMode="Multiple" 
 					  ItemsSource="{Binding GetTreeNodes.TreeView.Nodes}" Height="250">
 				<TreeView.Styles>
 						<Style Selector="TreeViewItem" x:DataType="vm:Nodes.NodeViewModel">

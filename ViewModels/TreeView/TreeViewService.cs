@@ -1,4 +1,5 @@
-﻿using DatabaseTask.ViewModels.Nodes;
+﻿using DatabaseTask.Services.Collection;
+using DatabaseTask.ViewModels.Nodes;
 using System;
 using System.Collections.ObjectModel;
 
@@ -8,6 +9,7 @@ namespace DatabaseTask.ViewModels.TreeView
     {
         private INode _selectedNode;
         private ObservableCollection<INode> _nodes = new();
+        private ObservableCollection<INode> _selectedNodes;
 
         public INode DraggedItem { get; set; }
 
@@ -25,11 +27,14 @@ namespace DatabaseTask.ViewModels.TreeView
             }
         }
 
+        public SmartCollection<INode> SelectedNodes { get; } = new();
+
         public ObservableCollection<INode> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);
         }
+ 
 
         public event Action<INode, INode> SelectionChanged;
 

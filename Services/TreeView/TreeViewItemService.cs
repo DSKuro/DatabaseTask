@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace DatabaseTask.Services.TreeView
@@ -118,7 +119,7 @@ namespace DatabaseTask.Services.TreeView
                 return;
             }
             Pressed = true;
-            e.Handled = false;
+            e.Handled = true;
         }
 
         private void OnPointerPressedImpl(INode node, PointerPressedEventArgs e)
@@ -222,16 +223,24 @@ namespace DatabaseTask.Services.TreeView
 
         private bool CanDrop(INode source, INode target)
         {
-            if (source == target)
+            foreach (var item in MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes)
             {
-                return false;
+                if (item == target)
+                {
+                    return false;
+                }
+
+                NodeViewModel node = target as NodeViewModel;
+
+                if ( !(IsTargetAboveSource(item, target) && node.IsFolder && item.Parent != target))
+                {
+                    return false;
+                }
             }
 
-            NodeViewModel node = target as NodeViewModel;
+            return true;
 
-
-            return IsTargetAboveSource(source, target)
-                && node.IsFolder;
+            
         }
 
         private bool IsTargetAboveSource(INode source, INode target)
@@ -274,13 +283,6 @@ namespace DatabaseTask.Services.TreeView
         {
             container.Classes.Add("drop-above");
             container.Classes.Remove("drop-below");
-            container.Classes.Remove("drop-inside");
-        }
-
-        private void AddClassesBelow(Visual container)
-        {
-            container.Classes.Remove("drop-above");
-            container.Classes.Add("drop-below");
             container.Classes.Remove("drop-inside");
         }
         
@@ -419,17 +421,24 @@ namespace DatabaseTask.Services.TreeView
 
         private void Drag(INode targetNode, INode draggedNode)
         {
-            if (draggedNode.Parent != null)
+            List<INode> nodes = MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes.ToList();
+            foreach (var item in nodes)
             {
-                draggedNode.Parent.Children.Remove(draggedNode);
+                if (item.Parent != null)
+                {
+                    item.Parent.Children.Remove(item);
+                }
+                else
+                {
+                    MainWindowViewModel._getTreeNodes.TreeView.Nodes.Remove(item);
+                }
+                targetNode.Children.Add(item);
+                item.Parent = targetNode;
+                item.Parent.IsExpanded = true;
+                MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes.Add(item);
             }
-            else
-            {
-                MainWindowViewModel._getTreeNodes.TreeView.Nodes.Remove(draggedNode);
-            }
-            targetNode.Children.Add(draggedNode);
-            draggedNode.Parent = targetNode;
-            targetNode.IsExpanded = true;
+          
+
         }
 
 

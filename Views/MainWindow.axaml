@@ -17,13 +17,6 @@
 			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
 			<!-- Зеленая подсветка сверху -->
 		</Style>
-
-		<Style Selector="TreeViewItem.drop-below">
-			<Setter Property="Background" Value="#200000FF"/>
-			<!-- Синяя подсветка снизу -->
-			<Setter Property="BorderBrush" Value="Blue"/>
-			<Setter Property="BorderThickness" Value="0,0,0,2"/>
-		</Style>
 	</Window.Styles>
 
 	

@@ -25,6 +25,12 @@ namespace DatabaseTask.Views
             _treeViewItemLogic._treeViewControl = TreeViewControl;
             _treeViewItemLogic._scrollViewer = TreeViewControl.FindDescendantOfType<ScrollViewer>();
             TreeViewControl.ContainerPrepared += _treeViewItemLogic.OnContainerPrepared;
+            TreeViewControl.SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnSelectionChanged(object? sender , SelectionChangedEventArgs e)
+        {
+            Console.WriteLine();
         }
 
         protected override void OnOpened(EventArgs e)

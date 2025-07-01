@@ -44,7 +44,6 @@
 		
 		<Grid Grid.Row="1" ColumnDefinitions="*, *">
 			<TreeView Name="TreeViewControl" 
-					  SelectedItem="{Binding GetTreeNodes.TreeView.SelectedNode, Mode=TwoWay}"
 					  SelectedItems="{Binding GetTreeNodes.TreeView.SelectedNodes, Mode=TwoWay}"
 					  SelectionMode="Multiple" 
 					  ItemsSource="{Binding GetTreeNodes.TreeView.Nodes}" Height="250">

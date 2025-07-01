@@ -10,6 +10,7 @@ namespace DatabaseTask.Services.TreeView
 {
     public interface ITreeViewItem : ITreeViewItemLogic, IDragDrop
     {
+        public bool Pressed { get; set; }
         public Visual _mainWindow { get; set; }
         public Visual _treeViewControl { get; set; }
         public ScrollViewer _scrollViewer { get; set; }

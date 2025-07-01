@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using AvaloniaEdit.Utils;
 using DatabaseTask.Services.TreeView;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Nodes;
@@ -30,7 +31,16 @@ namespace DatabaseTask.Views
 
         private void OnSelectionChanged(object? sender , SelectionChangedEventArgs e)
         {
-            Console.WriteLine();
+            if (_treeViewItemLogic.Pressed)
+            {
+                Debug.WriteLine($"Selection {e.RemovedItems.Count}");
+                foreach (var item in e.RemovedItems)
+                {
+                    _treeViewItemLogic.MainWindowViewModel.GetTreeNodes.TreeView.SelectedNodes.Add((INode)item);
+                }
+
+                e.Handled = true;
+            }
         }
 
         protected override void OnOpened(EventArgs e)

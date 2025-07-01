@@ -12,7 +12,7 @@ namespace DatabaseTask.ViewModels.TreeView
 
         public INode DraggedItem { get; set; }
 
-        public ObservableCollection<INode> Nodes { get; set; }
+        public SmartCollection<INode> Nodes { get; set; }
 
         public event Action<INode, INode> SelectionChanged;
     }

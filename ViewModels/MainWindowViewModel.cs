@@ -25,6 +25,8 @@ namespace DatabaseTask.ViewModels
 
         private IEnumerable<IStorageFolder> _folders;
 
+        public ObservableCollection<INode> Nodes { get; set;  }
+
         public IGetTreeNodes GetTreeNodes { get => _getTreeNodes; }
 
         public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService,
@@ -33,6 +35,13 @@ namespace DatabaseTask.ViewModels
             _storageService = storageService;
             _messageBoxService = messageBoxService;
             _getTreeNodes = getTreeNodes;
+            Nodes = new()
+            {
+                new NodeViewModel()
+                {
+                    Name = "test"
+                }
+            };
         }
 
         [RelayCommand]

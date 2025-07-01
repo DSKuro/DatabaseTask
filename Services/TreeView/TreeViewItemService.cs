@@ -4,6 +4,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Remote.Protocol.Input;
 using Avalonia.VisualTree;
+using DatabaseTask.Services.Collection;
+using DatabaseTask.Services.TreeView;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Nodes;
 using System;
@@ -12,13 +14,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace DatabaseTask.Services.TreeView
 {
     public class TreeViewItemService : ITreeViewItem
     {
-        private bool Pressed = false;
+        public bool Pressed { get; set; } = false;
 
         public ScrollViewer _scrollViewer { get; set; }
         public Visual _mainWindow { get; set; }
@@ -31,6 +35,7 @@ namespace DatabaseTask.Services.TreeView
         public Point DragStartPosition { get; set; }
         public INode DraggedNode { get; set; }
 
+        private SmartCollection<INode> test;
         public EventHandler<PointerPressedEventArgs> PressedEvent { get; }
         public EventHandler<PointerEventArgs> PointerMovedEvent { get; }
         public EventHandler<PointerReleasedEventArgs> ReleasedEvent { get; }
@@ -115,10 +120,11 @@ namespace DatabaseTask.Services.TreeView
                 && e.GetCurrentPoint(_mainWindow).Properties.IsLeftButtonPressed)
             {
                 //Debug.WriteLine($"Pressed");
+                Debug.WriteLine($"Pressed Drag");
+                Pressed = true;
                 OnPointerPressedImpl(node, e);
                 return;
             }
-            Pressed = true;
             e.Handled = true;
         }
 
@@ -131,7 +137,6 @@ namespace DatabaseTask.Services.TreeView
 
         public void OnPointerMoved(object? sender, PointerEventArgs e)
         {
-            //Debug.WriteLine($"{DraggedNode}, {IsDragging}");
             if (DraggedNode == null || IsDragging || e.Source is not Control control)
             {
                 e.Handled = true;
@@ -173,6 +178,7 @@ namespace DatabaseTask.Services.TreeView
         private void OnPointerReleasedImpl()
         {
             DraggedNode = null;
+            Pressed = false;
             IsDragging = false;
             DragStartPosition = new Point();
         }
@@ -315,10 +321,6 @@ namespace DatabaseTask.Services.TreeView
         {
             Debug.WriteLine($"Leave");
             //Debug.WriteLine("Leave");
-            if (Pressed)
-            {
-                Pressed = false;
-            }
             
             if (PressedItem != null)
             {
@@ -340,7 +342,6 @@ namespace DatabaseTask.Services.TreeView
         public void OnDragOver(object? sender, DragEventArgs e)
         {
             IsDragging = true;
-            Debug.WriteLine($"Over");
             if (e.Source is Control control)
             {
                 PressedItem = control.FindAncestorOfType<TreeViewItem>();
@@ -358,7 +359,6 @@ namespace DatabaseTask.Services.TreeView
                     DragStartPosition = e.GetPosition(_treeViewControl);
                     isInBottomZone = DragStartPosition.Y > _treeViewControl.Bounds.Height - 5;
                     isInTopZone = DragStartPosition.Y < 5;
-                    Debug.WriteLine($"Scroll: {DragStartPosition.Y}: {_treeViewControl.Bounds.Height}");
                     if (isInBottomZone || isInTopZone)
                     {
                         _scrollViewer.Offset = new Vector(_scrollViewer.Offset.X, _scrollViewer.Offset.Y + (30 * ((isInTopZone) ? -1 : 1)));
@@ -371,7 +371,6 @@ namespace DatabaseTask.Services.TreeView
             DragStartPosition = e.GetPosition(_treeViewControl);
              isInBottomZone = DragStartPosition.Y > _treeViewControl.Bounds.Height -5;
             isInTopZone = DragStartPosition.Y < 5;
-            Debug.WriteLine($"Scroll: {DragStartPosition.Y}: {_treeViewControl.Bounds.Height}");
             if (isInBottomZone || isInTopZone)
             {
                 _scrollViewer.Offset = new Vector(_scrollViewer.Offset.X,_scrollViewer.Offset.Y + (30 * ((isInTopZone) ? -1 : 1)));
@@ -388,7 +387,6 @@ namespace DatabaseTask.Services.TreeView
 
         public void OnDrop(object? sender, DragEventArgs e)
         {
-            Debug.WriteLine($"Drop");
             INode targetNode = GetNodeFromEvent(e);
             if (targetNode == null ||
                 !e.Data.Contains("NODE") ||
@@ -409,7 +407,7 @@ namespace DatabaseTask.Services.TreeView
                 return;
             }
 
-            Drag(targetNode, draggedNode);
+            Drag(targetNode, draggedNode, e);
 
             DraggedNode = null;
             e.DragEffects = DragDropEffects.Move;
@@ -419,7 +417,7 @@ namespace DatabaseTask.Services.TreeView
             e.Handled = true;
         }
 
-        private void Drag(INode targetNode, INode draggedNode)
+        private async void Drag(INode targetNode, INode draggedNode, DragEventArgs e)
         {
             List<INode> nodes = MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes.ToList();
             foreach (var item in nodes)
@@ -435,11 +433,51 @@ namespace DatabaseTask.Services.TreeView
                 targetNode.Children.Add(item);
                 item.Parent = targetNode;
                 item.Parent.IsExpanded = true;
-                MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes.Add(item);
             }
-          
+            var sorted = targetNode.Children.Select(x => (NodeViewModel) x);
+            var sortFolders = sorted.Where(x => x.IsFolder).OrderBy(x => x.Name).ToList();
+            var sortFiles = sorted.Where(x => !x.IsFolder).OrderBy(x => x.Name).ToList();
+            targetNode.Children.Clear();
+            targetNode.Children.AddRange(sortFolders);
+            targetNode.Children.AddRange(sortFiles);
+            MainWindowViewModel._getTreeNodes.TreeView.SelectedNodes.AddRange(nodes);
+            await Task.Delay(100);
+            if (e.Source is Control control)
+            {
+                var t = GetTreeViewItemForNode(nodes[0]);
+                t.BringIntoView();
+            }
 
         }
+
+        public TreeViewItem? GetTreeViewItemForNode(INode node)
+        {
+            var treeView = MainWindowViewModel._getTreeNodes.TreeView;
+            return FindTreeViewItemRecursive(_treeViewControl, node);
+        }
+
+        private TreeViewItem? FindTreeViewItemRecursive(Visual parent, INode node)
+        {
+            // Проверяем текущий элемент
+            if (parent is TreeViewItem item && item.DataContext == node)
+                return item;
+
+            // Ищем в дочерних элементах
+            var children = parent.GetVisualChildren();
+            foreach (var child in children)
+            {
+                if (child is Visual visualChild)
+                {
+                    var result = FindTreeViewItemRecursive(visualChild, node);
+                    if (result != null)
+                        return result;
+                }
+            }
+
+            return null;
+        }
+
+
 
 
     }

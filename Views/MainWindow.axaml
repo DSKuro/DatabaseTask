@@ -13,7 +13,7 @@
         Icon="/Assets/window.ico"
         Title="Управление базой данных">
 	<Window.Styles>
-		<Style Selector="TreeViewItem.drop-above">
+		<Style Selector="TreeViewItem.drop">
 			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
 			<!-- Зеленая подсветка сверху -->
 		</Style>

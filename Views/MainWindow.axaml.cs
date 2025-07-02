@@ -1,52 +1,40 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using AvaloniaEdit.Utils;
-using DatabaseTask.Services.TreeView;
-using DatabaseTask.ViewModels;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
+using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 
 namespace DatabaseTask.Views
 {
     public partial class MainWindow : Window
     {
-        private ITreeViewItem _treeViewItemLogic;
+        private readonly ITreeViewItemManager _treeViewManager;
 
-        public MainWindow(ITreeViewItem treeViewItemLogic)
+        public MainWindow(ITreeViewItemManager treeViewItemManager)
         {
             InitializeComponent();
-           _treeViewItemLogic = treeViewItemLogic;
-            _treeViewItemLogic._mainWindow = this;
-            _treeViewItemLogic._treeViewControl = TreeViewControl;
-            _treeViewItemLogic._scrollViewer = TreeViewControl.FindDescendantOfType<ScrollViewer>();
-            TreeViewControl.ContainerPrepared += _treeViewItemLogic.OnContainerPrepared;
-            TreeViewControl.SelectionChanged += OnSelectionChanged;
+
+            _treeViewManager = treeViewItemManager;
+            InitializeTree();
         }
 
-        private void OnSelectionChanged(object? sender , SelectionChangedEventArgs e)
+        private void InitializeTree()
         {
-            if (_treeViewItemLogic.Pressed)
+            _treeViewManager.TreeViewItemInteractionData.Control = TreeViewControl;
+            _treeViewManager.TreeViewItemInteractionData.Window = this;
+            InitializeTreeEvents();
+        }
+
+        private void InitializeTreeEvents()
+        {
+            TreeViewControl.Loaded += (object? sender, RoutedEventArgs e) =>
             {
-                Debug.WriteLine($"Selection {e.RemovedItems.Count}");
-                foreach (var item in e.RemovedItems)
-                {
-                    _treeViewItemLogic.MainWindowViewModel.GetTreeNodes.TreeView.SelectedNodes.Add((INode)item);
-                }
+                _treeViewManager.TreeViewItemInteractionData.ScrollViewer = TreeViewControl.FindDescendantOfType<ScrollViewer>();
+            };
 
-                e.Handled = true;
-            }
-        }
-
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
-            _treeViewItemLogic.MainWindowViewModel = DataContext as MainWindowViewModel;
+            TreeViewControl.ContainerPrepared += (object? sender, ContainerPreparedEventArgs e) =>
+            {
+                _treeViewManager.ContainerPreparedEvent?.Invoke(this, e);
+            };
         }
     }
 }

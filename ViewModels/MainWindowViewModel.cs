@@ -21,7 +21,7 @@ namespace DatabaseTask.ViewModels
     {
         private readonly IStorageService _storageService;
         private readonly IMessageBoxService _messageBoxService;
-        public readonly IGetTreeNodes _getTreeNodes;
+        private readonly IGetTreeNodes _getTreeNodes;
 
         private IEnumerable<IStorageFolder> _folders;
 

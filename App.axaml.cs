@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -10,6 +11,7 @@ using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView;
+using DatabaseTask.ViewModels.TreeView.Interfaces;
 using DatabaseTask.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -62,6 +64,9 @@ namespace DatabaseTask
             collection.AddTransient<INode, NodeViewModel>();
             collection.AddTransient<ITreeView, TreeViewService>();
             collection.AddScoped<ITreeViewData, TreeViewItemInteractionData>();
+            collection.AddScoped<ITreeViewControlsHelper, TreeViewControlsHelper>();
+            collection.AddScoped<ITreeNodeOperations, TreeNodeOperations>();
+            collection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             collection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             collection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
             collection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();

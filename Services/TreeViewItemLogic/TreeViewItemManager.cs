@@ -24,7 +24,6 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             _treeViewInteractions = treeViewInteractions;
             _treeViewDragDrop = treeViewDragDrop;
             TreeViewItemInteractionData = treeViewItemInteractionData;
-
             ContainerPreparedEvent += OnContainerPrepared;
         }
 

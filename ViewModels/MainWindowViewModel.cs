@@ -8,6 +8,7 @@ using DatabaseTask.Models;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.TreeView.Interfaces;
 using MessageBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;

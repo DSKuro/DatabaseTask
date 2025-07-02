@@ -1,10 +1,9 @@
 ﻿using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView;
 using System;
 using System.Collections.ObjectModel;
 
-namespace DatabaseTask.ViewModels.TreeView
+namespace DatabaseTask.ViewModels.TreeView.Interfaces
 {
     public class TreeViewService : ViewModelBase, ITreeView
     {

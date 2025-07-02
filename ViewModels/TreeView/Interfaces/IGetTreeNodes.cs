@@ -1,9 +1,8 @@
 ﻿using Avalonia.Platform.Storage;
-using DatabaseTask.ViewModels.TreeView;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels
+namespace DatabaseTask.ViewModels.TreeView.Interfaces
 {
     public interface IGetTreeNodes
     {

@@ -1,7 +1,7 @@
 ﻿using Avalonia.Input;
 using System;
 
-namespace DatabaseTask.Services.Interactions
+namespace DatabaseTask.Services.Interactions.Interfaces
 {
     public interface IElementInteractions
     {

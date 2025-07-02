@@ -1,12 +1,11 @@
-﻿using Avalonia.Input;
-using Avalonia.Platform.Storage;
+﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView;
+using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels
+namespace DatabaseTask.ViewModels.TreeView
 {
     public partial class GetTreeNodesService : ViewModelBase, IGetTreeNodes
     {
@@ -65,8 +64,8 @@ namespace DatabaseTask.ViewModels
             NodeViewModel node = new NodeViewModel()
             {
                 Name = item.Name,
-                IsFolder = (item is IStorageFolder) ? true : false,
-                IconPath = (item is IStorageFolder) ?
+                IsFolder = item is IStorageFolder ? true : false,
+                IconPath = item is IStorageFolder ?
                 IconCategory.Folder.Value : IconCategory.File.Value,
                 Parent = parent,
             };

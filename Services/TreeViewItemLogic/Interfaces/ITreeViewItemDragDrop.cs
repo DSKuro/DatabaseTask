@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services.Interactions;
+﻿using DatabaseTask.Services.Interactions.Interfaces;
 
 namespace DatabaseTask.Services.TreeViewItemLogic.Interfaces
 {

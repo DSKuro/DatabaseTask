@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 
-namespace DatabaseTask.Services.Interactions
+namespace DatabaseTask.Services.Interactions.Interfaces
 {
     public interface IInteractionData
     {

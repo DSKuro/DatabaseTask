@@ -1,6 +1,5 @@
 ﻿using DatabaseTask.Services.Collection;
 using System;
-using System.Collections.ObjectModel;
 
 namespace DatabaseTask.ViewModels.Nodes
 {

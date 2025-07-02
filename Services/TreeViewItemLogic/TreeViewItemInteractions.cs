@@ -5,7 +5,6 @@ using DatabaseTask.Services.Interactions;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using System;
-using System.Diagnostics;
 
 namespace DatabaseTask.Services.TreeViewItemLogic
 {
@@ -30,12 +29,10 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         protected override void OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            Debug.WriteLine($"Pressed");
             if (e.Source is Control control &&
                 control.DataContext is INode node
                 && e.GetCurrentPoint(_data.Window).Properties.IsLeftButtonPressed)
             {
-                _data.IsPressed = true;
                 OnPointerPressedImpl(node, e);
                 return;
             }
@@ -44,22 +41,20 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         private void OnPointerPressedImpl(INode node, PointerPressedEventArgs e)
         {
-            //DraggedNode = node;
+            _data.IsPressed = true;
             _data.DragStartPosition = e.GetPosition(_data.Window);
             e.Handled = true;
         }
 
         protected override void OnPointerMoved(object? sender, PointerEventArgs e)
         {
-            if (/*DraggedNode */_data.IsDragging || !_data.IsPressed || e.Source is not Control control)
+            if (_data.IsDragging || !_data.IsPressed || e.Source is not Control control)
             {
                 e.Handled = true;
                 return;
             }
-            Debug.WriteLine($"Pointer Move");
-            OnPointerMovedImpl(e);
 
-            e.Handled = true;
+            OnPointerMovedImpl(e);
         }
 
         private void OnPointerMovedImpl(PointerEventArgs e)
@@ -71,6 +66,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             {
                 OnPointerMovedOverThreshold(e);
             }
+            e.Handled = true;
         }
 
         private void OnPointerMovedOverThreshold(PointerEventArgs e)
@@ -80,19 +76,15 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
             _data.IsDragging = false;
             _data.IsPressed = false;
-            //DraggedNode = null;
         }
 
         protected override void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
         {
-            Debug.WriteLine($"Released");
             OnPointerReleasedImpl();
         }
 
-
         private void OnPointerReleasedImpl()
         {
-            //DraggedNode = null;
             _data.IsPressed = false;
             _data.IsDragging = false;
             _data.DragStartPosition = new Point();

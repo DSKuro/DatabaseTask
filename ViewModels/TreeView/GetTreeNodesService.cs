@@ -2,7 +2,9 @@
 using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.TreeView
@@ -28,38 +30,71 @@ namespace DatabaseTask.ViewModels.TreeView
             _treeView.Nodes.Clear();
             foreach (IStorageFolder folder in folders)
             {
-                (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
-                 await GetData(folder);
-                _treeView.Nodes.Add(GetNode(folder, settings, childrens));
+                await ProcessFolders(folder, _treeView.Nodes);
             }
         }
 
-        private async Task<(StorageItemProperties, SmartCollection<NodeViewModel>)> GetData(IStorageItem item)
+        private async Task ProcessFolders(IStorageItem folder, SmartCollection<INode> collection, INode parent = null)
+        {
+            (StorageItemProperties settings, SmartCollection<INode> childrens) =
+                 await GetData(folder);
+            collection.Add(GetNode(folder, settings, childrens, parent));
+        }
+
+        private async Task<(StorageItemProperties, SmartCollection<INode>)> GetData(IStorageItem item)
         {
             StorageItemProperties settings = await item.GetBasicPropertiesAsync();
-            SmartCollection<NodeViewModel> childrens = new SmartCollection<NodeViewModel>();
+            SmartCollection<INode> childrens = new SmartCollection<INode>();
             if (item is IStorageFolder folder)
             {
-                IAsyncEnumerable<IStorageItem> items = folder.GetItemsAsync();
+                IAsyncEnumerator<IStorageItem> items = folder.GetItemsAsync().GetAsyncEnumerator();
                 childrens = await GetChildren(items);
             }
             return (settings, childrens);
         }
 
-        private async Task<SmartCollection<NodeViewModel>> GetChildren(IAsyncEnumerable<IStorageItem> items, INode parent = null)
+        private async Task<SmartCollection<INode>> GetChildren(IAsyncEnumerator<IStorageItem> items, INode parent = null)
         {
-            SmartCollection<NodeViewModel> children = new();
-            await foreach (IStorageItem item in items)
+
+            SmartCollection<INode> children = new SmartCollection<INode>();
+            bool hasMany = true;
+            IStorageItem? item = null;
+            while (hasMany)
             {
-                (StorageItemProperties settings, SmartCollection<NodeViewModel> childrens) =
-                  await GetData(item);
-                children.Add(GetNode(item, settings, childrens, parent));
+                try
+                {
+                    hasMany = await items.MoveNextAsync();
+                    item = hasMany ? items.Current : null;
+                    if (item == null)
+                    {
+                        break;
+                    }
+                    if (HasFlag(item, FileAttributes.Hidden))
+                    {
+                        continue;
+                    }
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    continue;
+                }
+                await ProcessFolders(item, children, parent);
             }
             return children;
         }
 
+        private bool HasFlag(IStorageItem? item, Enum flag)
+        {
+            FileAttributes attributes = File.GetAttributes(item.TryGetLocalPath());
+            if (attributes.HasFlag(flag))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private NodeViewModel GetNode(IStorageItem item, StorageItemProperties properties,
-            SmartCollection<NodeViewModel> children, INode parent = null)
+            SmartCollection<INode> children, INode parent = null)
         {
             NodeViewModel node = new NodeViewModel()
             {

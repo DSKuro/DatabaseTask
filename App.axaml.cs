@@ -1,11 +1,12 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.Services.Exceptions;
+using DatabaseTask.Services.Exceptions.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
@@ -69,6 +70,7 @@ namespace DatabaseTask
             collection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             collection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             collection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
+            collection.AddScoped<IExceptionHandler, ExceptionHandler>();
             collection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();
             collection.AddScoped<MainWindowViewModel>();
             collection.AddTransient<IStorageService, StorageService>();

@@ -36,13 +36,6 @@ namespace DatabaseTask.ViewModels
             _storageService = storageService;
             _messageBoxService = messageBoxService;
             _getTreeNodes = getTreeNodes;
-            Nodes = new()
-            {
-                new NodeViewModel()
-                {
-                    Name = "test"
-                }
-            };
         }
 
         [RelayCommand]

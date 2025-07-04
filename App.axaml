@@ -23,13 +23,16 @@
         <FluentTheme />
 		<Style Selector=":is(TopLevel)">
 			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
 		</Style>
 		<Style Selector="Svg">
 			<Setter Property="Width" Value="20"/>
 			<Setter Property="Height" Value="20"/>
 		</Style>
-		<StyleInclude Source="avares://DatabaseTask/Themes/IconButton.axaml" />
 		
+		<StyleInclude Source="avares://DatabaseTask/Themes/IconButton.axaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
 		<Style Selector="TreeViewItem:selected /template/ Border#PART_LayoutRoot">
 			<Setter Property="Background" Value="Transparent"/>
 		</Style>
@@ -39,7 +42,11 @@
 		<Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover">
 			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}"/>
 		</Style>
-		
+
+		<Style Selector="DataGridRow:selected > StackPanel > Svg">
+			<Setter Property="Css" Value="{DynamicResource SvgSelectedFill}"/>
+		</Style>
+
 		<Style Selector="controls|IconButton">
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="IconSize" Value="20"/>

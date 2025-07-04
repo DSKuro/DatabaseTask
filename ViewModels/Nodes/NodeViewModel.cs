@@ -1,6 +1,6 @@
-﻿using DatabaseTask.Services.Collection;
+﻿using DatabaseTask.Models;
+using DatabaseTask.Services.Collection;
 using System;
-using System.Collections.ObjectModel;
 
 namespace DatabaseTask.ViewModels.Nodes
 {
@@ -16,7 +16,7 @@ namespace DatabaseTask.ViewModels.Nodes
         public bool IsFolder { get; set; }
         public INode? Parent { get; set; }
 
-        public SmartCollection<INode> Children { get; set; } = new();
+        public SmartCollection<INode> Children { get; set; } = new SmartCollection<INode>();
 
         public string Name
         {

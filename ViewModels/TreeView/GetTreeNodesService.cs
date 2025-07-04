@@ -1,10 +1,13 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using DatabaseTask.Models;
 using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.TreeView
@@ -12,12 +15,17 @@ namespace DatabaseTask.ViewModels.TreeView
     public partial class GetTreeNodesService : ViewModelBase, IGetTreeNodes
     {
         private readonly ITreeView _treeView;
+        private List<FileProperties> _filesProperties = new List<FileProperties>();
+
+        public SmartCollection<FileProperties> FilesProperties { get; } = new SmartCollection<FileProperties>();
 
         public ITreeView TreeView { get => _treeView; }
+
 
         public GetTreeNodesService(ITreeView treeView)
         {
             _treeView = treeView;
+            _treeView.SelectionChanged += OnSelectionChanged;
         }
 
         public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
@@ -37,18 +45,18 @@ namespace DatabaseTask.ViewModels.TreeView
         private async Task ProcessFolders(IStorageItem folder, SmartCollection<INode> collection, INode parent = null)
         {
             (StorageItemProperties settings, SmartCollection<INode> childrens) =
-                 await GetData(folder);
+                 await GetData(folder, parent);
             collection.Add(GetNode(folder, settings, childrens, parent));
         }
 
-        private async Task<(StorageItemProperties, SmartCollection<INode>)> GetData(IStorageItem item)
+        private async Task<(StorageItemProperties, SmartCollection<INode>)> GetData(IStorageItem item, INode parent = null)
         {
             StorageItemProperties settings = await item.GetBasicPropertiesAsync();
             SmartCollection<INode> childrens = new SmartCollection<INode>();
             if (item is IStorageFolder folder)
             {
                 IAsyncEnumerator<IStorageItem> items = folder.GetItemsAsync().GetAsyncEnumerator();
-                childrens = await GetChildren(items);
+                childrens = await GetChildren(items, parent);
             }
             return (settings, childrens);
         }
@@ -105,6 +113,21 @@ namespace DatabaseTask.ViewModels.TreeView
                 Parent = parent,
             };
 
+            DateTimeOffset? modifiedTime = properties.DateModified;
+            string modifiedString = "";
+            if (modifiedTime != null)
+            {
+                DateTimeOffset time = modifiedTime.Value;
+                modifiedString = time.ToString("HH:mm");
+            }
+
+            _filesProperties.Add(new FileProperties(item.Name, 
+                item is IStorageFolder? "" : Math.Ceiling((double)properties.Size / 1024).ToString() + " KB",
+                modifiedString,
+                item is IStorageFolder ?
+                IconCategory.Folder.Value : IconCategory.File.Value,
+                parent));
+
             foreach (NodeViewModel child in children)
             {
                 child.Parent = node;
@@ -131,7 +154,17 @@ namespace DatabaseTask.ViewModels.TreeView
             if (model is NodeViewModel node)
             {
                 node.IconPath = iconPath.Value;
-                _treeView.SelectedNode = node;
+                _treeView.SelectedNodes.Clear();
+                _treeView.SelectedNodes.Add(node);
+            }
+        }
+
+        private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_treeView.SelectedNodes.Count == 1)
+            {
+                var t = _filesProperties.Where(x => x.Parent == _treeView.SelectedNodes[0]);
+                FilesProperties.AddRange(t);
             }
         }
     }

@@ -2,6 +2,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.ViewModels;
+using System;
 
 namespace DatabaseTask.Views
 {
@@ -34,6 +36,11 @@ namespace DatabaseTask.Views
             TreeViewControl.ContainerPrepared += (object? sender, ContainerPreparedEventArgs e) =>
             {
                 _treeViewManager.ContainerPreparedEvent?.Invoke(this, e);
+            };
+
+            TreeViewControl.SelectionChanged += (object? sender, SelectionChangedEventArgs e) =>
+            {
+                ((MainWindowViewModel)DataContext).GetTreeNodes.TreeView.SelectionChanged?.Invoke(this, e);
             };
         }
     }

@@ -1,3 +1,6 @@
+
+
+
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DatabaseTask.ViewModels"
@@ -8,6 +11,7 @@
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
 		Width="500" Height="600"
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
+		xmlns:models="using:DatabaseTask.Models"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/window.ico"
@@ -15,7 +19,6 @@
 	<Window.Styles>
 		<Style Selector="TreeViewItem.drop">
 			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
-			<!-- Зеленая подсветка сверху -->
 		</Style>
 	</Window.Styles>
 
@@ -42,8 +45,9 @@
 			</WrapPanel>
 		</Border>
 		
-		<Grid Grid.Row="1" ColumnDefinitions="*, *">
-			<TreeView Name="TreeViewControl" 
+		<Grid Grid.Row="1" ColumnDefinitions="0.75*, 1.25*">
+			<TreeView Grid.Column="0"
+					  Name="TreeViewControl" 
 					  SelectedItems="{Binding GetTreeNodes.TreeView.SelectedNodes, Mode=TwoWay}"
 					  SelectionMode="Multiple" 
 					  ItemsSource="{Binding GetTreeNodes.TreeView.Nodes}" Height="250">
@@ -62,7 +66,46 @@
 					</TreeDataTemplate>
 				</TreeView.ItemTemplate>
 			</TreeView>
-			<DataGrid Height="250"/>
+			<DataGrid Name="dataGrid" 
+					  Grid.Column="1" 
+					  IsReadOnly="True"
+					  CanUserResizeColumns="True"
+					  ItemsSource="{Binding GetTreeNodes.FilesProperties}" 
+					  Height="250">
+				<DataGrid.Styles>
+					<Style Selector="DataGridCell">
+						<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+					</Style>
+					<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+						<Setter Property="IsVisible" Value="false" />
+					</Style>
+					<Style Selector="DataGridRow:current">
+						<Setter Property="Background" Value="Transparent"/>
+					</Style>
+					<Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+						<Setter Property="Fill" Value="Transparent" />
+					</Style>
+
+					<Style Selector="DataGridRow:selected DataGridCell:nth-child(1) StackPanel Svg">
+						<Setter Property="Css" Value="{DynamicResource SvgSelectedFill}"/>
+					</Style>
+				</DataGrid.Styles>
+				<DataGrid.Columns>
+					<DataGridTemplateColumn Header="Имя">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate DataType="models:FileProperties">
+								<StackPanel Orientation="Horizontal" Spacing="5">
+									<Svg Path="{Binding IconPath}"/>
+									<TextBlock Text="{Binding Name}"
+									  VerticalAlignment="Center"/>
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTextColumn Header="Размер" Binding="{Binding Size}"/>
+					<DataGridTextColumn Header="Дата изменения" Binding="{Binding Modificated}"/>
+				</DataGrid.Columns>
+			</DataGrid>
 		</Grid>
 		
 		<Grid Margin="10, 5, 5, 5" ColumnDefinitions="*, *, *, *, *, *, *" Grid.Row="2">

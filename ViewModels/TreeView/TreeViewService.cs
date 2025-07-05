@@ -3,16 +3,12 @@ using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System;
-using System.Collections.ObjectModel;
 
 namespace DatabaseTask.ViewModels.TreeView
 {
     public class TreeViewService : ViewModelBase, ITreeView
     {
-        private SmartCollection<INode> _nodes = new();
-        private ObservableCollection<INode> _selectedNodes;
-
-        public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
+        private SmartCollection<INode> _nodes = new SmartCollection<INode>();
 
         public INode DraggedItem { get; set; }
 
@@ -23,5 +19,7 @@ namespace DatabaseTask.ViewModels.TreeView
             get => _nodes;
             set => SetProperty(ref _nodes, value);
         }
+
+        public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
     }
 }

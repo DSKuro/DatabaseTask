@@ -1,0 +1,16 @@
+﻿using DatabaseTask.Models;
+using DatabaseTask.Services.Collection;
+using System;
+using System.Collections.Generic;
+
+namespace DatabaseTask.ViewModels.DataGrid.Interfaces
+{
+    public interface IDataGrid
+    {
+        public List<FileProperties> SavedFilesProperties { get; set; }
+        public SmartCollection<FileProperties> FilesProperties { get; }
+
+        public string TimeToString(DateTimeOffset? dateTimeOffset);
+        public string SizeToString(ulong? size);
+    }
+}

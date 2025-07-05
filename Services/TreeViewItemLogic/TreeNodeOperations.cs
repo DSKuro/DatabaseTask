@@ -121,7 +121,8 @@ namespace DatabaseTask.Services.TreeViewItemLogic
                     _viewModel.GetTreeNodes.TreeView.Nodes.Remove(nodes[i]);
                 }
                 targetNode.Children.Add(nodes[i]);
-                _viewModel.GetTreeNodes._filesProperties.Find(x => x.Node == nodes[i]).Parent = targetNode;
+                _viewModel.GetTreeNodes.DataGrid.SavedFilesProperties
+                    .Find(x => x.Node == nodes[i]).Node.Parent = targetNode;
                 nodes[i].Parent = targetNode;
                 nodes[i].Parent.IsExpanded = true;
             }

@@ -70,7 +70,7 @@
 					  Grid.Column="1" 
 					  IsReadOnly="True"
 					  CanUserResizeColumns="True"
-					  ItemsSource="{Binding GetTreeNodes.FilesProperties}" 
+					  ItemsSource="{Binding GetTreeNodes.DataGrid.FilesProperties}" 
 					  Height="250">
 				<DataGrid.Styles>
 					<Style Selector="DataGridCell">

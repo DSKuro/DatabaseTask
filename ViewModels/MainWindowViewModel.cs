@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Models;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
 using MessageBox.Avalonia.Enums;
@@ -22,20 +23,20 @@ namespace DatabaseTask.ViewModels
     {
         private readonly IStorageService _storageService;
         private readonly IMessageBoxService _messageBoxService;
-        private readonly IGetTreeNodes _getTreeNodes;
+        private readonly IFileManager _fileManager;
 
         private IEnumerable<IStorageFolder> _folders;
 
         public ObservableCollection<INode> Nodes { get; set;  }
 
-        public IGetTreeNodes GetTreeNodes { get => _getTreeNodes; }
+        public IFileManager GetTreeNodes { get => _fileManager; }
 
         public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService,
-            IGetTreeNodes getTreeNodes)
+            IFileManager fileManager)
         {
             _storageService = storageService;
             _messageBoxService = messageBoxService;
-            _getTreeNodes = getTreeNodes;
+            _fileManager = fileManager;
         }
 
         [RelayCommand]
@@ -77,7 +78,7 @@ namespace DatabaseTask.ViewModels
         public async Task OpenFolder()
         {
             await ChooseMainFolder();
-            await _getTreeNodes.GetCollectionFromFolders(_folders);
+            await _fileManager.GetCollectionFromFolders(_folders);
         }
 
         public async Task ChooseMainFolder()

@@ -110,19 +110,20 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         private void PlaceNode(List<INode> nodes, INode targetNode)
         {
-            foreach (INode item in nodes)
+            for (int i = 0; i < nodes.Count; i++)
             {
-                if (item.Parent != null)
+                if (nodes[i].Parent != null)
                 {
-                    item.Parent.Children.Remove(item);
+                    nodes[i].Parent.Children.Remove(nodes[i]);
                 }
                 else
                 {
-                    _viewModel.GetTreeNodes.TreeView.Nodes.Remove(item);
+                    _viewModel.GetTreeNodes.TreeView.Nodes.Remove(nodes[i]);
                 }
-                targetNode.Children.Add(item);
-                item.Parent = targetNode;
-                item.Parent.IsExpanded = true;
+                targetNode.Children.Add(nodes[i]);
+                _viewModel.GetTreeNodes._filesProperties.Find(x => x.Node == nodes[i]).Parent = targetNode;
+                nodes[i].Parent = targetNode;
+                nodes[i].Parent.IsExpanded = true;
             }
         }
 

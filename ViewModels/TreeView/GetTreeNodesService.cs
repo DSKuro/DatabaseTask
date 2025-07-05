@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using AvaloniaEdit.Utils;
 using DatabaseTask.Models;
 using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
@@ -15,7 +16,7 @@ namespace DatabaseTask.ViewModels.TreeView
     public partial class GetTreeNodesService : ViewModelBase, IGetTreeNodes
     {
         private readonly ITreeView _treeView;
-        private List<FileProperties> _filesProperties = new List<FileProperties>();
+        public List<FileProperties> _filesProperties { get; set; } = new List<FileProperties>();
 
         public SmartCollection<FileProperties> FilesProperties { get; } = new SmartCollection<FileProperties>();
 
@@ -36,60 +37,155 @@ namespace DatabaseTask.ViewModels.TreeView
         private async Task GetCollectionByRecursion(IEnumerable<IStorageFolder> folders)
         {
             _treeView.Nodes.Clear();
+            _filesProperties.Clear();
+            FilesProperties.Clear();
+
             foreach (IStorageFolder folder in folders)
             {
-                await ProcessFolders(folder, _treeView.Nodes);
+                var rootNode = await CreateNodeRecursive(folder, null);
+                _treeView.Nodes.Add(rootNode);
             }
         }
 
-        private async Task ProcessFolders(IStorageItem folder, SmartCollection<INode> collection, INode parent = null)
+        private async Task<NodeViewModel> CreateNodeRecursive(IStorageItem item, INode parent)
         {
-            (StorageItemProperties settings, SmartCollection<INode> childrens) =
-                 await GetData(folder, parent);
-            collection.Add(GetNode(folder, settings, childrens, parent));
-        }
-
-        private async Task<(StorageItemProperties, SmartCollection<INode>)> GetData(IStorageItem item, INode parent = null)
-        {
-            StorageItemProperties settings = await item.GetBasicPropertiesAsync();
-            SmartCollection<INode> childrens = new SmartCollection<INode>();
-            if (item is IStorageFolder folder)
+            var properties = await item.GetBasicPropertiesAsync();
+            var node = new NodeViewModel
             {
-                IAsyncEnumerator<IStorageItem> items = folder.GetItemsAsync().GetAsyncEnumerator();
-                childrens = await GetChildren(items, parent);
-            }
-            return (settings, childrens);
-        }
+                Name = item.Name,
+                IsFolder = item is IStorageFolder,
+                IconPath = item is IStorageFolder
+                    ? IconCategory.Folder.Value
+                    : IconCategory.File.Value,
+                Parent = parent
+            };
 
-        private async Task<SmartCollection<INode>> GetChildren(IAsyncEnumerator<IStorageItem> items, INode parent = null)
-        {
+            // Добавляем свойства файла
+            AddFileProperties(item, properties, parent, node);
 
-            SmartCollection<INode> children = new SmartCollection<INode>();
-            bool hasMany = true;
-            IStorageItem? item = null;
-            while (hasMany)
+            // Обработка дочерних элементов только для папок
+            if (item is IStorageFolder folder)
             {
                 try
                 {
-                    hasMany = await items.MoveNextAsync();
-                    item = hasMany ? items.Current : null;
-                    if (item == null)
+                    var items = folder.GetItemsAsync();
+                    await foreach (var childItem in items)
                     {
-                        break;
-                    }
-                    if (HasFlag(item, FileAttributes.Hidden))
-                    {
-                        continue;
+                        if (!HasFlag(childItem, FileAttributes.Hidden))
+                        {
+                            var childNode = await CreateNodeRecursive(childItem, node);
+                            node.Children.Add(childNode);
+                        }
                     }
                 }
-                catch (UnauthorizedAccessException e)
+                catch (UnauthorizedAccessException)
                 {
-                    continue;
+                    // Пропускаем папки без доступа
                 }
-                await ProcessFolders(item, children, parent);
             }
-            return children;
+
+            // Подписываемся на события
+            node.Expanded += ExpandHandler;
+            node.Collapsed += CollapsedHandler;
+
+            return node;
         }
+
+        private void AddFileProperties(
+            IStorageItem item,
+            StorageItemProperties properties,
+            INode parent,
+            INode node)
+        {
+            DateTimeOffset? modifiedTime = properties.DateModified;
+            string modifiedString = modifiedTime?.ToString("HH:mm") ?? "";
+
+            _filesProperties.Add(new FileProperties(
+                item.Name,
+                item is IStorageFolder ? "" : $"{Math.Ceiling((double)properties.Size / 1024)} KB",
+                modifiedString,
+                item is IStorageFolder
+                    ? IconCategory.Folder.Value
+                    : IconCategory.File.Value,
+                parent,
+                node
+            ));
+        }
+
+        private bool HasFlag(IStorageItem item, FileAttributes flag)
+        {
+            try
+            {
+                var path = item.TryGetLocalPath();
+                if (string.IsNullOrEmpty(path))
+                    return false;
+
+                var attributes = File.GetAttributes(path);
+                return attributes.HasFlag(flag);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        //private async Task GetCollectionByRecursion(IEnumerable<IStorageFolder> folders)
+        //{
+        //    _treeView.Nodes.Clear();
+        //    foreach (IStorageFolder folder in folders)
+        //    {
+        //        await ProcessFolders(folder, _treeView.Nodes);
+        //    }
+        //}
+
+        //private async Task ProcessFolders(IStorageItem folder, SmartCollection<INode> collection, INode parent = null)
+        //{
+        //    (StorageItemProperties settings, SmartCollection<INode> childrens) =
+        //         await GetData(folder, parent);
+        //    collection.Add(GetNode(folder, settings, childrens, parent));
+        //}
+
+        //private async Task<(StorageItemProperties, SmartCollection<INode>)> GetData(IStorageItem item, INode parent = null)
+        //{
+        //    StorageItemProperties settings = await item.GetBasicPropertiesAsync();
+        //    SmartCollection<INode> childrens = new SmartCollection<INode>();
+        //    if (item is IStorageFolder folder)
+        //    {
+        //        IAsyncEnumerator<IStorageItem> items = folder.GetItemsAsync().GetAsyncEnumerator();
+        //        childrens = await GetChildren(items, parent);
+        //    }
+        //    return (settings, childrens);
+        //}
+
+        //private async Task<SmartCollection<INode>> GetChildren(IAsyncEnumerator<IStorageItem> items, INode parent = null)
+        //{
+
+        //    SmartCollection<INode> children = new SmartCollection<INode>();
+        //    bool hasMany = true;
+        //    IStorageItem? item = null;
+        //    while (hasMany)
+        //    {
+        //        try
+        //        {
+        //            hasMany = await items.MoveNextAsync();
+        //            item = hasMany ? items.Current : null;
+        //            if (item == null)
+        //            {
+        //                break;
+        //            }
+        //            if (HasFlag(item, FileAttributes.Hidden))
+        //            {
+        //                continue;
+        //            }
+        //        }
+        //        catch (UnauthorizedAccessException e)
+        //        {
+        //            continue;
+        //        }
+        //        await ProcessFolders(item, children, parent);
+        //    }
+        //    return children;
+        //}
 
         private bool HasFlag(IStorageItem? item, Enum flag)
         {
@@ -101,43 +197,43 @@ namespace DatabaseTask.ViewModels.TreeView
             return false;
         }
 
-        private NodeViewModel GetNode(IStorageItem item, StorageItemProperties properties,
-            SmartCollection<INode> children, INode parent = null)
-        {
-            NodeViewModel node = new NodeViewModel()
-            {
-                Name = item.Name,
-                IsFolder = item is IStorageFolder ? true : false,
-                IconPath = item is IStorageFolder ?
-                IconCategory.Folder.Value : IconCategory.File.Value,
-                Parent = parent,
-            };
+        //private NodeViewModel GetNode(IStorageItem item, StorageItemProperties properties,
+        //    SmartCollection<INode> children, INode parent = null)
+        //{
+        //    NodeViewModel node = new NodeViewModel()
+        //    {
+        //        Name = item.Name,
+        //        IsFolder = item is IStorageFolder ? true : false,
+        //        IconPath = item is IStorageFolder ?
+        //        IconCategory.Folder.Value : IconCategory.File.Value,
+        //        Parent = parent,
+        //    };
 
-            DateTimeOffset? modifiedTime = properties.DateModified;
-            string modifiedString = "";
-            if (modifiedTime != null)
-            {
-                DateTimeOffset time = modifiedTime.Value;
-                modifiedString = time.ToString("HH:mm");
-            }
+        //    DateTimeOffset? modifiedTime = properties.DateModified;
+        //    string modifiedString = "";
+        //    if (modifiedTime != null)
+        //    {
+        //        DateTimeOffset time = modifiedTime.Value;
+        //        modifiedString = time.ToString("HH:mm");
+        //    }
 
-            _filesProperties.Add(new FileProperties(item.Name, 
-                item is IStorageFolder? "" : Math.Ceiling((double)properties.Size / 1024).ToString() + " KB",
-                modifiedString,
-                item is IStorageFolder ?
-                IconCategory.Folder.Value : IconCategory.File.Value,
-                parent));
+        //    _filesProperties.Add(new FileProperties(item.Name, 
+        //        item is IStorageFolder? "" : Math.Ceiling((double)properties.Size / 1024).ToString() + " KB",
+        //        modifiedString,
+        //        item is IStorageFolder ?
+        //        IconCategory.Folder.Value : IconCategory.File.Value,
+        //        parent));
 
-            foreach (NodeViewModel child in children)
-            {
-                child.Parent = node;
-            }
+        //    foreach (NodeViewModel child in children)
+        //    {
+        //        child.Parent = node;
+        //    }
 
-            node.Children.AddRange(children);
-            node.Expanded += ExpandHandler;
-            node.Collapsed += CollapsedHandler;
-            return node;
-        }
+        //    node.Children.AddRange(children);
+        //    node.Expanded += ExpandHandler;
+        //    node.Collapsed += CollapsedHandler;
+        //    return node;
+        //}
 
         private void ExpandHandler(INode model)
         {
@@ -161,10 +257,15 @@ namespace DatabaseTask.ViewModels.TreeView
 
         private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
+            FilesProperties.Clear();
             if (_treeView.SelectedNodes.Count == 1)
             {
                 var t = _filesProperties.Where(x => x.Parent == _treeView.SelectedNodes[0]);
-                FilesProperties.AddRange(t);
+                var n = t.Where(x => x.Node is NodeViewModel);
+                var folders = n.Where(x => ((NodeViewModel)x.Node).IsFolder).OrderBy(x => x.Name);
+                var files = n.Where(x => !((NodeViewModel)x.Node).IsFolder).OrderBy(x => x.Name);
+                FilesProperties.AddRange(folders);
+                FilesProperties.AddRange(files);
             }
         }
     }

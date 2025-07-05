@@ -12,14 +12,18 @@ namespace DatabaseTask.Models
 
         public INode? Parent { get; set; }
 
+        public INode Node { get; set; }
+
         public FileProperties(string name, string size, string modificated, string iconPath,
-            INode? parent)
+            INode? parent,
+            INode node)
         {
             Name = name;
             Size = size;
             Modificated = modificated;
             IconPath = iconPath;
             Parent = parent;
+            Node = node;
         }
     }
 }

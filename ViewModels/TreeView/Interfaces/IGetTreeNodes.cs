@@ -9,6 +9,8 @@ namespace DatabaseTask.ViewModels.TreeView.Interfaces
     public interface IGetTreeNodes
     {
         public ITreeView TreeView { get; }
+
+        public List<FileProperties> _filesProperties { get; set; }
         public SmartCollection<FileProperties> FilesProperties { get; }
 
         public Task GetCollectionFromFolders

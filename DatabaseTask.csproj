@@ -14,6 +14,10 @@
 
   <ItemGroup>
     <AvaloniaXaml Remove="Assets\StylesDictionary.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\AppStyles.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\DataGridStyles.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\IconButtonStyles.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\TreeViewStyles.axaml" />
     <AvaloniaXaml Remove="Assets\ThemesDictionary.axaml" />
   </ItemGroup>
 
@@ -34,10 +38,22 @@
 
 
   <ItemGroup>
-    <AvaloniaResource Update="Assets\StylesDictionary.axaml">
+    <AvaloniaResource Update="Assets\Styles\AppStyles.axaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\ThemesDictionary.axaml">
+    <AvaloniaResource Update="Assets\Styles\DataGridStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\IconButtonStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\Resources\StylesDictionary.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\Resources\ThemesDictionary.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\TreeViewStyles.axaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
   </ItemGroup>

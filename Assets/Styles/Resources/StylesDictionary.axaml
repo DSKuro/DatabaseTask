@@ -1,12 +1,17 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:controls="clr-namespace:DatabaseTask.Controls"
+					>
   <!-- Add Resources Here -->
 	<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
+	<x:Double x:Key="SvgWidth">20</x:Double>
+	<x:Double x:Key="SvgHeight">20</x:Double>
+	<FontWeight x:Key="ControlContentThemeFontWeight">SemiBold</FontWeight>
+
 	<ControlTheme x:Key="MainTreeView" TargetType="TreeView">
 		<Setter Property="SelectionMode" Value="Multiple"/>
 		<Setter Property="DragDrop.AllowDrop" Value="True"/>
-		<TreeView.ItemTemplate>
-				
+		<TreeView.ItemTemplate>	
 		</TreeView.ItemTemplate>
 	</ControlTheme>
 	<ContextMenu x:Key="TreeViewItemContextMenu">

@@ -1,6 +1,3 @@
-
-
-
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DatabaseTask.ViewModels"
@@ -15,14 +12,7 @@
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/window.ico"
-        Title="Управление базой данных">
-	<Window.Styles>
-		<Style Selector="TreeViewItem.drop">
-			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
-		</Style>
-	</Window.Styles>
-
-	
+        Title="Управление базой данных">	
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -60,7 +50,7 @@
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate x:DataType="vm:Nodes.NodeViewModel" ItemsSource="{Binding Children}">
 						<StackPanel Orientation="Horizontal" Spacing="5">
-							<Svg Path="{Binding IconPath}"/>
+							<Svg Path="{Binding IconPath}" Css="{DynamicResource SvgFill}"/>
 							<TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
 						</StackPanel>
 					</TreeDataTemplate>
@@ -72,30 +62,12 @@
 					  CanUserResizeColumns="True"
 					  ItemsSource="{Binding GetTreeNodes.DataGrid.FilesProperties}" 
 					  Height="250">
-				<DataGrid.Styles>
-					<Style Selector="DataGridCell">
-						<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
-					</Style>
-					<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
-						<Setter Property="IsVisible" Value="false" />
-					</Style>
-					<Style Selector="DataGridRow:current">
-						<Setter Property="Background" Value="Transparent"/>
-					</Style>
-					<Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
-						<Setter Property="Fill" Value="Transparent" />
-					</Style>
-
-					<Style Selector="DataGridRow:selected DataGridCell:nth-child(1) StackPanel Svg">
-						<Setter Property="Css" Value="{DynamicResource SvgSelectedFill}"/>
-					</Style>
-				</DataGrid.Styles>
 				<DataGrid.Columns>
 					<DataGridTemplateColumn Header="Имя">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate DataType="models:FileProperties">
 								<StackPanel Orientation="Horizontal" Spacing="5">
-									<Svg Path="{Binding IconPath}"/>
+									<Svg Path="{Binding IconPath}" Css="{DynamicResource SvgFill}"/>
 									<TextBlock Text="{Binding Name}"
 									  VerticalAlignment="Center"/>
 								</StackPanel>
@@ -111,7 +83,7 @@
 		<Grid Margin="10, 5, 5, 5" ColumnDefinitions="*, *, *, *, *, *, *" Grid.Row="2">
 			<Grid.Styles>
 				<Style Selector="controls|IconButton">
-					<Setter Property="Height" Value="80"/>
+					<Setter Property="MinHeight" Value="80"/>
 					<Setter Property="Orientation" Value="Vertical"/>
 					<Setter Property="Css" Value="{DynamicResource SvgClass}"/>
 				</Style>
@@ -135,6 +107,7 @@
 			<controls:IconButton
 					Grid.Column="3"
 					IconSource="/Assets/ButtonIcons/folder-copy.svg"
+					Css="{StaticResource SvgFill}"
 					Content="Копировать каталог"/>
 			<controls:IconButton
 					Grid.Column="4"
@@ -147,6 +120,7 @@
 			<controls:IconButton
 					Grid.Column="6"
 					IconSource="/Assets/ButtonIcons/file-delete.svg"
+					Css="{StaticResource SvgFill}"
 					Content="Удалить файл"/>
 		</Grid>
 		<DataGrid Grid.Row="3"/>

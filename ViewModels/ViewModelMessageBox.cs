@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models;
 using DatabaseTask.Services.Dialogues.MessageBox;
+using MsBox.Avalonia.Enums;
 using System;
 using System.Threading.Tasks;
 
@@ -14,11 +15,11 @@ namespace DatabaseTask.ViewModels
             _messageBoxService = messageBoxService;
         }
 
-        protected async Task MessageBoxHelper(MessageBoxOptions options, Action callback)
+        protected async Task<ButtonResult?> MessageBoxHelper(MessageBoxOptions options, Action callback)
         {
             try
             {
-                await _messageBoxService.ShowMessageBoxAsync(this, options);
+                return await _messageBoxService.ShowMessageBoxAsync(this, options);
             }
             finally
             {

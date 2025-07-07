@@ -1,4 +1,4 @@
-﻿namespace DatabaseTask.Services.Collection
+﻿namespace DatabaseTask.Services._serviceCollection
 {
     public class WindowCategory
     {
@@ -21,6 +21,13 @@
             get
             {
                 return new WindowCategory("Переименовать каталог");
+            }
+        }
+        public static WindowCategory DeleteFolderCategory
+        {
+            get
+            {
+                return new WindowCategory("Удалить каталог");
             }
         }
     }

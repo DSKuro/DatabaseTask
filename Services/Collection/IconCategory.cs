@@ -1,4 +1,4 @@
-﻿namespace DatabaseTask.Services.Collection
+﻿namespace DatabaseTask.Services._serviceCollection
 {
     public class IconCategory
     {

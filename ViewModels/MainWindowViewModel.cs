@@ -39,11 +39,34 @@ namespace DatabaseTask.ViewModels
         }
 
         [RelayCommand]
+        public async Task DeleteFolder()
+        {
+            try
+            {
+                _fileManager.Permissions.CanDoOperationOnFolder();
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper(new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+                return;
+            }
+            ButtonResult? t = await MessageBoxHelper(new MessageBoxOptions("Удаление файла", "Вы точно хотите удалить " +
+                "выбранный каталог?", ButtonEnum.YesNo), null);
+            if (t.HasValue && t.Value == ButtonResult.Yes)
+            {
+                ICommand deleteFolderCommand = _folderCommandsFactory.CreateDeleteFolderCommand();
+                deleteFolderCommand.Execute();
+            }
+        }
+
+        [RelayCommand]
         public async Task RenameFolder()
         {
             try
             {
-                _fileManager.Permissions.CanCreateFolder();
+                _fileManager.Permissions.CanDoOperationOnFolder();
             }
             catch (FileManagerOperationsException ex)
             {
@@ -70,7 +93,7 @@ namespace DatabaseTask.ViewModels
         {
             try
             {
-                _fileManager.Permissions.CanCreateFolder();
+                _fileManager.Permissions.CanDoOperationOnFolder();
             }
             catch (FileManagerOperationsException ex)
             {

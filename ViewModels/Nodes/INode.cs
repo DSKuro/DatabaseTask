@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services.Collection;
+﻿using DatabaseTask.Services._serviceCollection;
 using System;
 
 namespace DatabaseTask.ViewModels.Nodes
@@ -9,6 +9,6 @@ namespace DatabaseTask.ViewModels.Nodes
         public INode? Parent { get; set; }
         public event Action<INode> Expanded;
         public event Action<INode> Collapsed;
-        public SmartCollection<INode> Children { get; set; }
+        public Smart_serviceCollection<INode> Children { get; set; }
     }
 }

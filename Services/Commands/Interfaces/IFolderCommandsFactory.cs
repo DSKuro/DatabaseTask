@@ -4,5 +4,6 @@
     {
         public ICommand CreateCreateFolderCommand(string folderName);
         public ICommand CreateRenameFolderCommand(string newName);
+        public ICommand CreateDeleteFolderCommand();
     }
 }

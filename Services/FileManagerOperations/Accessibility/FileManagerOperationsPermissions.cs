@@ -14,7 +14,7 @@ namespace DatabaseTask.Services.FileManagerOperations.Accessibility
             _treeView = treeView;
         }
 
-        public void CanCreateFolder() 
+        public void CanDoOperationOnFolder() 
         {
             if (_treeView.SelectedNodes.Count == 0)
             {

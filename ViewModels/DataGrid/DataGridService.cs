@@ -1,5 +1,5 @@
 ﻿using DatabaseTask.Models;
-using DatabaseTask.Services.Collection;
+using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace DatabaseTask.ViewModels.DataGrid
     public class DataGridService : IDataGrid
     {
         public List<FileProperties> SavedFilesProperties { get; set; } = new List<FileProperties>();
-        public SmartCollection<FileProperties> FilesProperties { get; } = new SmartCollection<FileProperties>();
+        public Smart_serviceCollection<FileProperties> FilesProperties { get; } = new Smart_serviceCollection<FileProperties>();
 
         public string TimeToString(DateTimeOffset? dateTimeOffset)
         {

@@ -110,6 +110,7 @@
 					Name="BtnDeleteFolder"
 					Grid.Column="2"
 					IconSource="/Assets/ButtonIcons/folder-delete.svg"
+					Command="{Binding DeleteFolderCommand}"
 					Content="Удалить"/>
 			<controls:IconButton
 					Name="BtnCopyFolder"

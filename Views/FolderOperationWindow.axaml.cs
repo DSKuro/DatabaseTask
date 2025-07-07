@@ -18,7 +18,7 @@ public partial class FolderOperationWindow : Window
 
     private void InitializeMessages()
     {
-        WeakReferenceMessenger.Default.Register<FolderOperationWindow, CreateFolderWindowCloseMessage>(this,
+        WeakReferenceMessenger.Default.Register<FolderOperationWindow, FolderOperationWindowCloseMessage>(this,
             (window, message) =>
             {
                 window.Close(message.FolderName);

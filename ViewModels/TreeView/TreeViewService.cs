@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using DatabaseTask.Services.Collection;
+using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.EventArguments;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
@@ -9,13 +9,13 @@ namespace DatabaseTask.ViewModels.TreeView
 {
     public class TreeViewService : ViewModelBase, ITreeView
     {
-        private SmartCollection<INode> _nodes = new SmartCollection<INode>();
+        private Smart_serviceCollection<INode> _nodes = new Smart_serviceCollection<INode>();
 
         public INode DraggedItem { get; set; }
 
-        public SmartCollection<INode> SelectedNodes { get; } = new();
+        public Smart_serviceCollection<INode> SelectedNodes { get; } = new();
 
-        public SmartCollection<INode> Nodes
+        public Smart_serviceCollection<INode> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);

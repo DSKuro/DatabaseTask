@@ -3,7 +3,6 @@ using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System.Collections.Generic;
-using System.Security;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.FileManager.Interfaces

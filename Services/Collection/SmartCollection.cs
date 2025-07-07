@@ -3,18 +3,18 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace DatabaseTask.Services.Collection
+namespace DatabaseTask.Services._serviceCollection
 {
-    public class SmartCollection<T> : ObservableCollection<T>
+    public class Smart_serviceCollection<T> : ObservableCollection<T>
     {
-        public SmartCollection() : base() { }
+        public Smart_serviceCollection() : base() { }
 
-        public SmartCollection(IEnumerable<T> collection)
-            : base(collection)
+        public Smart_serviceCollection(IEnumerable<T> _serviceCollection)
+            : base(_serviceCollection)
         {
         }
 
-        public SmartCollection(List<T> list)
+        public Smart_serviceCollection(List<T> list)
             : base(list)
         {
         }

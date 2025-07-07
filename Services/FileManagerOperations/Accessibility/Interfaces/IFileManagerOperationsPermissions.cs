@@ -2,6 +2,6 @@
 {
     public interface IFileManagerOperationsPermissions
     {
-        public void CanCreateFolder();
+        public void CanDoOperationOnFolder();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using DatabaseTask.Services.Collection;
 using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.TreeView.EventArguments;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System;
 
@@ -21,5 +22,6 @@ namespace DatabaseTask.ViewModels.TreeView
         }
 
         public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
+        public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; }
     }
 }

@@ -11,20 +11,24 @@ namespace DatabaseTask.Services.TreeViewItemLogic
     {
         private readonly ITreeViewItemInteractions _treeViewInteractions;
         private readonly ITreeViewItemDragDrop _treeViewDragDrop;
+        private readonly ITreeNodeOperations _treeNodeOperations;
 
         public ITreeViewData TreeViewItemInteractionData { get; }
+        public ITreeNodeOperations TreeNodeOperations { get => _treeNodeOperations; }
 
         public EventHandler<ContainerPreparedEventArgs> ContainerPreparedEvent { get; }
 
         public TreeViewItemManager(
             ITreeViewItemInteractions treeViewInteractions,
             ITreeViewItemDragDrop treeViewDragDrop,
-            ITreeViewData treeViewItemInteractionData)
+            ITreeViewData treeViewItemInteractionData,
+            ITreeNodeOperations treeNodeOperations)
         {
             _treeViewInteractions = treeViewInteractions;
             _treeViewDragDrop = treeViewDragDrop;
             TreeViewItemInteractionData = treeViewItemInteractionData;
             ContainerPreparedEvent += OnContainerPrepared;
+            _treeNodeOperations = treeNodeOperations;
         }
 
         private void OnContainerPrepared(object? sender, ContainerPreparedEventArgs e)

@@ -7,5 +7,6 @@ namespace DatabaseTask.Services.TreeViewItemLogic.Interfaces
     {
         public EventHandler<ContainerPreparedEventArgs> ContainerPreparedEvent { get; }
         public  ITreeViewData TreeViewItemInteractionData { get; }
+        public ITreeNodeOperations TreeNodeOperations { get; }
     }
 }

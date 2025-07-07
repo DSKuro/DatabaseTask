@@ -38,7 +38,6 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             DragOverEvent += OnDragOver;
             DropEvent += OnDrop;
         }
-
         protected override void OnDragEnter(object? sender, DragEventArgs e)
         {
             Control control = e.Source as Control;

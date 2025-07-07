@@ -1,5 +1,5 @@
 ﻿using DatabaseTask.Models;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Dialogues.MessageBox

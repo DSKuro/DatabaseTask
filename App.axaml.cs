@@ -2,11 +2,17 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using DatabaseTask.Services.Commands;
+using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.Exceptions;
 using DatabaseTask.Services.Exceptions.Interfaces;
+using DatabaseTask.Services.FileManagerOperations.Accessibility;
+using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
@@ -43,7 +49,8 @@ namespace DatabaseTask
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
-                desktop.MainWindow = new MainWindow(services.GetRequiredService<ITreeViewItemManager>())
+                desktop.MainWindow = new MainWindow(services.GetRequiredService<ITreeViewItemManager>(),
+                    services.GetRequiredService<IMessageBoxService>(), services)
                 {
               
                     DataContext = viewModel,
@@ -51,7 +58,9 @@ namespace DatabaseTask
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
-                singleViewPlatform.MainView = new MainWindow(services.GetRequiredService<ITreeViewItemManager>())
+                singleViewPlatform.MainView = new MainWindow(services.GetRequiredService<ITreeViewItemManager>(),
+                    services.GetRequiredService<IMessageBoxService>(),
+                    services)
                 {
                     DataContext = viewModel
                 };
@@ -65,10 +74,11 @@ namespace DatabaseTask
             ServiceCollection collection = new ServiceCollection();
             collection.AddTransient<IDialogueManager, DialogueManager>();
             collection.AddTransient<IDialogueHelper, DialogueHelper>();
+            collection.AddScoped<IFileManagerOperationsPermissions, FileManagerOperationsPermissions>();
             collection.AddScoped<IDataGrid, DataGridService>();
             collection.AddTransient<IFileManager, FileManager>();
             collection.AddTransient<INode, NodeViewModel>();
-            collection.AddTransient<ITreeView, TreeViewService>();
+            collection.AddScoped<ITreeView, TreeViewService>();
             collection.AddScoped<ITreeViewData, TreeViewItemInteractionData>();
             collection.AddScoped<ITreeViewControlsHelper, TreeViewControlsHelper>();
             collection.AddScoped<ITreeNodeOperations, TreeNodeOperations>();
@@ -77,9 +87,13 @@ namespace DatabaseTask
             collection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
             collection.AddScoped<IExceptionHandler, ExceptionHandler>();
             collection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();
+            collection.AddTransient<IMessageBoxService, MessageBoxService>();
+            collection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
+            collection.AddScoped<IFolderCommandsFactory, FolderCommandsFactory>();
+            collection.AddTransient<CreateFolderWindowViewModel>();
             collection.AddScoped<MainWindowViewModel>();
             collection.AddTransient<IStorageService, StorageService>();
-            collection.AddTransient<IMessageBoxService, MessageBoxService>();
+            collection.AddTransient<CreateFolderWindow>();
             return collection;
         }
     }

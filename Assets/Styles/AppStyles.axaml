@@ -9,4 +9,15 @@
 		<Setter Property="Width" Value="{StaticResource SvgWidth}"/>
 		<Setter Property="Height" Value="{StaticResource SvgHeight}"/>
 	</Style>
+	<Style Selector="Button">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+	<Style Selector="Button.ApplyButton">
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Background" Value="#3b6ac6"/>
+	</Style>
+	<Style Selector="Button.ApplyButton:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="#2b5097"/>
+		<Setter Property="Foreground" Value="White"/>
+	</Style>
 </Styles>

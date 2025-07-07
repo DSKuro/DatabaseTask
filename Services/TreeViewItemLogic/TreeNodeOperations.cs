@@ -32,7 +32,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         public bool CanDrop(INode target)
         {
-            foreach (INode item in _viewModel.GetTreeNodes.TreeView.SelectedNodes)
+            foreach (INode item in _viewModel.FileManager.TreeView.SelectedNodes)
             {
                 if (item == target)
                 {
@@ -100,7 +100,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         public async void DragItem(INode item, DragEventArgs args)
         {
-            List<INode> nodes = _viewModel.GetTreeNodes.TreeView.SelectedNodes.ToList();
+            List<INode> nodes = _viewModel.FileManager.TreeView.SelectedNodes.ToList();
             PlaceNode(nodes, item);
             GetSortedCategories(item);
             FillNodes(item, nodes);
@@ -118,10 +118,10 @@ namespace DatabaseTask.Services.TreeViewItemLogic
                 }
                 else
                 {
-                    _viewModel.GetTreeNodes.TreeView.Nodes.Remove(nodes[i]);
+                    _viewModel.FileManager.TreeView.Nodes.Remove(nodes[i]);
                 }
                 targetNode.Children.Add(nodes[i]);
-                _viewModel.GetTreeNodes.DataGrid.SavedFilesProperties
+                _viewModel.FileManager.DataGrid.SavedFilesProperties
                     .Find(x => x.Node == nodes[i]).Node.Parent = targetNode;
                 nodes[i].Parent = targetNode;
                 nodes[i].Parent.IsExpanded = true;
@@ -141,7 +141,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             targetNode.Children.Clear();
             targetNode.Children.AddRange(_sortedFolders);
             targetNode.Children.AddRange(_sortedFiles);
-            _viewModel.GetTreeNodes.TreeView.SelectedNodes.AddRange(nodes);
+            _viewModel.FileManager.TreeView.SelectedNodes.AddRange(nodes);
         }
     }
 }

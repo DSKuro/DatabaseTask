@@ -2,6 +2,7 @@
 using Avalonia.Platform.Storage;
 using DatabaseTask.Models;
 using DatabaseTask.Services.Collection;
+using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
@@ -18,15 +19,18 @@ namespace DatabaseTask.ViewModels.FileManager
     {
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
+        private readonly IFileManagerOperationsPermissions _permissions;
 
         public ITreeView TreeView { get => _treeView; }
         public IDataGrid DataGrid { get => _dataGrid; }
+        public IFileManagerOperationsPermissions Permissions { get => _permissions; }
 
-        public FileManager(ITreeView treeView, IDataGrid dataGrid)
+        public FileManager(ITreeView treeView, IDataGrid dataGrid, IFileManagerOperationsPermissions permissions)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += OnSelectionChanged;
             _dataGrid = dataGrid;
+            _permissions = permissions;
         }
 
         public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
@@ -41,6 +45,7 @@ namespace DatabaseTask.ViewModels.FileManager
         {
             foreach (IStorageFolder folder in folders)
             {
+                   
                 NodeViewModel rootNode = await CreateNodeRecursive(folder, null);
                 _treeView.Nodes.Add(rootNode);
             }
@@ -83,7 +88,7 @@ namespace DatabaseTask.ViewModels.FileManager
             INode node)
         {
             string modifiedString = _dataGrid.TimeToString(properties.DateModified);
-
+            
             _dataGrid.SavedFilesProperties.Add(new FileProperties(
                 item.Name,
                 item is IStorageFolder ? "" : _dataGrid.SizeToString(properties.Size),

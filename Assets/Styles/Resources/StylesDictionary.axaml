@@ -8,12 +8,6 @@
 	<x:Double x:Key="SvgHeight">20</x:Double>
 	<FontWeight x:Key="ControlContentThemeFontWeight">SemiBold</FontWeight>
 
-	<ControlTheme x:Key="MainTreeView" TargetType="TreeView">
-		<Setter Property="SelectionMode" Value="Multiple"/>
-		<Setter Property="DragDrop.AllowDrop" Value="True"/>
-		<TreeView.ItemTemplate>	
-		</TreeView.ItemTemplate>
-	</ControlTheme>
 	<ContextMenu x:Key="TreeViewItemContextMenu">
 		<MenuItem Header="Copy"/>
 	</ContextMenu>

@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:DatabaseTask.ViewModels"
+		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
+		dialogues:DialogueManager.Register="{Binding}"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Width="400" Height="90"
+		x:DataType="vm:CreateFolderWindowViewModel"
+        x:Class="DatabaseTask.CreateFolderWindow"
+        Title="Создать каталог">
+
+	<Design.DataContext>
+		<vm:CreateFolderWindowViewModel/>
+	</Design.DataContext>
+	
+	<Grid RowDefinitions="*, *">
+		<TextBox Text="{Binding FolderName, Mode=TwoWay}" Watermark="Введите имя каталога" Grid.Row="0" Margin="10, 10, 10, 0"></TextBox>
+		<StackPanel Spacing="10" Margin="0, 0, 10, 0" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="HorizontalContentAlignment" Value="Center"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button 
+				MinWidth="70" 
+				Classes="ApplyButton"
+				Command="{Binding OnApplyButtonClick}">
+				Ok
+			</Button>
+			<Button 
+				MinWidth="70"
+				Command="{Binding OnCancelButtonClick}">
+				Отмена</Button>
+		</StackPanel>
+	</Grid>
+</Window>

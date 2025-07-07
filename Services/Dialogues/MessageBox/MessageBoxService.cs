@@ -1,10 +1,10 @@
 ﻿using Avalonia.Controls;
 using DatabaseTask.Models;
 using DatabaseTask.Services.Dialogues.Base;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.BaseWindows.Base;
-using MessageBox.Avalonia.DTO;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Base;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Dialogues.MessageBox
@@ -27,13 +27,14 @@ namespace DatabaseTask.Services.Dialogues.MessageBox
         private async Task<ButtonResult?> ShowMessageBoxImpl(MessageBoxOptions options,
             TopLevel topLevel)
         {
-            IMsBoxWindow<ButtonResult> msgBox = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
+            IMsBox<ButtonResult> msgBox = MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
             {
                 ButtonDefinitions = options.Buttons,
                 ContentTitle = options.Title,
-                ContentMessage = options.Content
+                ContentMessage = options.Content,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
             });
-            return await msgBox.ShowDialog(topLevel as Window);
+            return await msgBox.ShowWindowDialogAsync(topLevel as Window);
         }
     }
 }

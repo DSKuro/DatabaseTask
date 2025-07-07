@@ -1,42 +1,80 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
-using Avalonia.Platform.Storage;
-using AvaloniaEdit.Utils;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
+using DatabaseTask.Services.Commands;
+using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.Services.FileManagerOperations.Exceptions;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
+using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DatabaseTask.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelMessageBox
     {
         private readonly IStorageService _storageService;
-        private readonly IMessageBoxService _messageBoxService;
         private readonly IFileManager _fileManager;
+        private readonly IFolderCommandsFactory _folderCommandsFactory;
 
         private IEnumerable<IStorageFolder> _folders;
 
         public ObservableCollection<INode> Nodes { get; set;  }
 
-        public IFileManager GetTreeNodes { get => _fileManager; }
+        public IFileManager FileManager { get => _fileManager; }
 
         public MainWindowViewModel(IStorageService storageService, IMessageBoxService messageBoxService,
-            IFileManager fileManager)
+            IFileManager fileManager,
+            IFolderCommandsFactory folderCommandsFactory) : base(messageBoxService)
         {
             _storageService = storageService;
-            _messageBoxService = messageBoxService;
             _fileManager = fileManager;
+            _folderCommandsFactory = folderCommandsFactory;
+        }
+
+        [RelayCommand]
+        public async Task CreateFolder()
+        {
+            await CreateFolderImpl();
+        }
+
+        private async Task CreateFolderImpl()
+        {
+            try
+            {
+                _fileManager.Permissions.CanCreateFolder();
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper(new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+                return;
+            }
+            await CreateNewFolder();
+        }
+
+        private async Task CreateNewFolder()
+        {
+            string folderName = await GetNewFolderName();
+            if (folderName != null)
+            {
+                ICommand createFolderCommand = _folderCommandsFactory.CreateCreateFolderCommand(folderName);
+                createFolderCommand.Execute();
+            }
+        }
+
+        private async Task<string> GetNewFolderName()
+        {
+            return await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderWindow>();
         }
 
         [RelayCommand]
@@ -87,6 +125,7 @@ namespace DatabaseTask.ViewModels
             {
                 _folders = await _storageService.OpenFoldersAsync(this,
                     new FolderPickerOptions(false));
+                WeakReferenceMessenger.Default.Send<MainWindowEnableManagerButtons>();
             }
             catch (ArgumentNullException ex)
             {
@@ -106,26 +145,6 @@ namespace DatabaseTask.ViewModels
                     MessageBoxConstants.Error.Value, "Запрещённая операция",
                     ButtonEnum.Ok), ErrorCallback);
             }
-        }
-
-        private async Task MessageBoxHelper(MessageBoxOptions options, Action callback)
-        {
-            try
-            {
-                await _messageBoxService.ShowMessageBoxAsync(this, options);
-            }
-            finally
-            {
-                if (callback != null)
-                {
-                    callback.Invoke();
-                }
-            }
-        }
-
-        private void ErrorCallback()
-        {
-            Environment.Exit(1);
         }
     }
 }

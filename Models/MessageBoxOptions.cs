@@ -1,4 +1,4 @@
-﻿using MessageBox.Avalonia.Enums;
+﻿using MsBox.Avalonia.Enums;
 
 namespace DatabaseTask.Models
 {

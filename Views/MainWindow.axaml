@@ -104,6 +104,7 @@
 					Name="BtnRenameFolder"
 					Grid.Column="1"
 					IconSource="/Assets/ButtonIcons/folder-rename.svg"
+					Command="{Binding RenameFolderCommand}"
 					Content="Переименовать"/>
 			<controls:IconButton
 					Name="BtnDeleteFolder"

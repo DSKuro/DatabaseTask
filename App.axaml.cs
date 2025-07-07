@@ -7,8 +7,6 @@ using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
-using DatabaseTask.Services.Exceptions;
-using DatabaseTask.Services.Exceptions.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.Accessibility;
 using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
@@ -72,29 +70,54 @@ namespace DatabaseTask
         private ServiceCollection BuildCollection()
         {
             ServiceCollection collection = new ServiceCollection();
+            AddStorage(collection);
+            AddFileManager(collection);
+            AddVisualTreeView(collection);
+            AddCommands(collection);
+            AddViewModelsAndWindows(collection);
+            return collection;
+        }
+
+        private void AddStorage(ServiceCollection collection)
+        {
             collection.AddTransient<IDialogueManager, DialogueManager>();
             collection.AddTransient<IDialogueHelper, DialogueHelper>();
-            collection.AddScoped<IFileManagerOperationsPermissions, FileManagerOperationsPermissions>();
-            collection.AddScoped<IDataGrid, DataGridService>();
-            collection.AddTransient<IFileManager, FileManager>();
+            collection.AddTransient<IMessageBoxService, MessageBoxService>();
+            collection.AddTransient<IStorageService, StorageService>();
+        }
+
+        private void AddFileManager(ServiceCollection collection)
+        {
             collection.AddTransient<INode, NodeViewModel>();
             collection.AddScoped<ITreeView, TreeViewService>();
+            collection.AddScoped<IDataGrid, DataGridService>();
+            collection.AddScoped<IFileManager, FileManager>();
+            collection.AddScoped<IFileManagerOperationsPermissions, FileManagerOperationsPermissions>();
+        }
+
+        private void AddVisualTreeView(ServiceCollection collection)
+        {
             collection.AddScoped<ITreeViewData, TreeViewItemInteractionData>();
             collection.AddScoped<ITreeViewControlsHelper, TreeViewControlsHelper>();
             collection.AddScoped<ITreeNodeOperations, TreeNodeOperations>();
             collection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             collection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             collection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
-            collection.AddScoped<IExceptionHandler, ExceptionHandler>();
             collection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();
-            collection.AddTransient<IMessageBoxService, MessageBoxService>();
+        }
+
+        private void AddCommands(ServiceCollection collection)
+        {
             collection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
+            collection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
             collection.AddScoped<IFolderCommandsFactory, FolderCommandsFactory>();
-            collection.AddTransient<CreateFolderWindowViewModel>();
+        }
+
+        private void AddViewModelsAndWindows(ServiceCollection collection)
+        {
+            collection.AddTransient<FolderOperationWindowViewModel>();
             collection.AddScoped<MainWindowViewModel>();
-            collection.AddTransient<IStorageService, StorageService>();
-            collection.AddTransient<CreateFolderWindow>();
-            return collection;
+            collection.AddTransient<FolderOperationWindow>();
         }
     }
 }

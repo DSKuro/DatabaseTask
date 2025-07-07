@@ -2,12 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
-using DatabaseTask.Services.Commands;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
-using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
@@ -38,6 +36,28 @@ namespace DatabaseTask.ViewModels
             _storageService = storageService;
             _fileManager = fileManager;
             _folderCommandsFactory = folderCommandsFactory;
+        }
+
+        [RelayCommand]
+        public async Task RenameFolder()
+        {
+            try
+            {
+                _fileManager.Permissions.CanCreateFolder();
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper(new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+                return;
+            }
+            string newName = await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>();
+            if (newName != null)
+            {
+                ICommand renameFolderCommand = _folderCommandsFactory.CreateRenameFolderCommand(newName);
+                renameFolderCommand.Execute();
+            }
         }
 
         [RelayCommand]
@@ -74,7 +94,7 @@ namespace DatabaseTask.ViewModels
 
         private async Task<string> GetNewFolderName()
         {
-            return await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderWindow>();
+            return await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>();
         }
 
         [RelayCommand]

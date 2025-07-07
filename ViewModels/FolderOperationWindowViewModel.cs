@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels
 {
-    public partial class CreateFolderWindowViewModel : ViewModelMessageBox
+    public partial class FolderOperationWindowViewModel : ViewModelMessageBox
     {
         public string FolderName { get; set; }
 
-        public CreateFolderWindowViewModel(IMessageBoxService messageBoxService)
+        public FolderOperationWindowViewModel(IMessageBoxService messageBoxService)
             : base(messageBoxService) { }
 
         public async Task OnApplyButtonClick()
@@ -28,12 +28,12 @@ namespace DatabaseTask.ViewModels
                     ButtonEnum.Ok), null);
                 return;
             }
-            WeakReferenceMessenger.Default.Send(new CreateFolderWindowCloseMessage(FolderName));
+            WeakReferenceMessenger.Default.Send(new FolderOperationWindowCloseMessage(FolderName));
         }
 
         public void OnCancelButtonClick()
         {
-            WeakReferenceMessenger.Default.Send(new CreateFolderWindowCloseMessage(null));
+            WeakReferenceMessenger.Default.Send(new FolderOperationWindowCloseMessage(null));
         }
     }
 }

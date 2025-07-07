@@ -1,10 +1,10 @@
 ﻿namespace DatabaseTask.Services.Messages
 { 
-    public class CreateFolderWindowCloseMessage
+    public class FolderOperationWindowCloseMessage
     {
         public string FolderName { get; }
 
-        public CreateFolderWindowCloseMessage(string folderName)
+        public FolderOperationWindowCloseMessage(string folderName)
         {
             FolderName = folderName;
         }

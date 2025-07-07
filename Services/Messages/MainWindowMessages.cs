@@ -3,5 +3,7 @@
 namespace DatabaseTask.Services.Messages
 {
     public class MainWindowEnableManagerButtons {}
-    public class MainWindowCreateFolderWindow : AsyncRequestMessage<string> { }
+    public class MainWindowDialogueMessage : AsyncRequestMessage<string> { }
+    public class MainWindowCreateFolderMessage : MainWindowDialogueMessage { }
+    public class MainWindowRenameFolderMessage : MainWindowDialogueMessage { }
 }

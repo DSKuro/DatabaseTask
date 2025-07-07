@@ -60,8 +60,8 @@
 
 
   <ItemGroup>
-    <Compile Update="Views\CreateFolderWindow.axaml.cs">
-      <DependentUpon>CreateFolderWindow.axaml</DependentUpon>
+    <Compile Update="Views\FolderOperationWindow.axaml.cs">
+      <DependentUpon>FolderOperationWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

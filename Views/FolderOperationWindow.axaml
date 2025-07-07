@@ -7,16 +7,16 @@
 		dialogues:DialogueManager.Register="{Binding}"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		Width="400" Height="90"
-		x:DataType="vm:CreateFolderWindowViewModel"
-        x:Class="DatabaseTask.CreateFolderWindow"
+		x:DataType="vm:FolderOperationWindowViewModel"
+        x:Class="DatabaseTask.FolderOperationWindow"
         Title="Создать каталог">
 
 	<Design.DataContext>
-		<vm:CreateFolderWindowViewModel/>
+		<vm:FolderOperationWindowViewModel/>
 	</Design.DataContext>
 	
 	<Grid RowDefinitions="*, *">
-		<TextBox Text="{Binding FolderName, Mode=TwoWay}" Watermark="Введите имя каталога" Grid.Row="0" Margin="10, 10, 10, 0"></TextBox>
+		<TextBox Name="textBox" Text="{Binding FolderName, Mode=TwoWay}" Grid.Row="0" Margin="10, 10, 10, 0"></TextBox>
 		<StackPanel Spacing="10" Margin="0, 0, 10, 0" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
 			<StackPanel.Styles>
 				<Style Selector="Button">

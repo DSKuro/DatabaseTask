@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
+using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
@@ -70,14 +71,21 @@ namespace DatabaseTask.Views
                     }
                 });
 
-            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowCreateFolderWindow>(this,
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowCreateFolderMessage>(this,
                 (window, message) =>
                 {
-                    CreateFolderWindow createFolderWindow = new CreateFolderWindow()
-                    {
-                        DataContext = _serviceProvider.GetRequiredService<CreateFolderWindowViewModel>(),
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    };
+                    FolderOperationWindow createFolderWindow = CreateDialogueWindow();
+                    createFolderWindow.Title = WindowCategory.CreateFolderCategory.Value;
+                    createFolderWindow.Watermark = TextBoxWatermark.CreateFolderWatermark.Value;
+                    message.Reply(createFolderWindow.ShowDialog<string>(window));
+                });
+
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowRenameFolderMessage>(this,
+                (window, message) =>
+                {
+                    FolderOperationWindow createFolderWindow = CreateDialogueWindow();
+                    createFolderWindow.Title = WindowCategory.RenameFolderCategory.Value;
+                    createFolderWindow.Watermark = TextBoxWatermark.RenameFolderWatermark.Value;
                     message.Reply(createFolderWindow.ShowDialog<string>(window));
                 });
         }
@@ -91,6 +99,14 @@ namespace DatabaseTask.Views
             BtnMoveFile.IsEnabled = true;
             BtnCopyFile.IsEnabled = true;
             BtnDeleteFile.IsEnabled = true;
+        }
+
+        private FolderOperationWindow CreateDialogueWindow()
+        {
+            FolderOperationWindow window = _serviceProvider.GetRequiredService<FolderOperationWindow>();
+            window.DataContext = _serviceProvider.GetRequiredService<FolderOperationWindowViewModel>();
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            return window;
         }
 
         protected override void OnOpened(EventArgs e)

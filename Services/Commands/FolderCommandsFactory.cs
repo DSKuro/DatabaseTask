@@ -17,5 +17,10 @@ namespace DatabaseTask.Services.Commands
         {
             return ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, folderName);
         }
+
+        public ICommand CreateRenameFolderCommand(string newName)
+        {
+            return ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, newName);
+        }
     }
 }

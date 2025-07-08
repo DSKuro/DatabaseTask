@@ -27,5 +27,10 @@ namespace DatabaseTask.Services.Commands
         {
             return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
         }
+
+        public ICommand CreateCopyFolderCommand()
+        {
+            return ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider);
+        }
     }
 }

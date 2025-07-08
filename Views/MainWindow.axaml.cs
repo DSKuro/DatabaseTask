@@ -10,6 +10,7 @@ using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.TreeView.EventArguments;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Transactions;
 
 namespace DatabaseTask.Views
 {
@@ -74,7 +75,7 @@ namespace DatabaseTask.Views
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowCreateFolderMessage>(this,
                 (window, message) =>
                 {
-                    FolderOperationWindow createFolderWindow = CreateDialogueWindow();
+                    FolderOperationWindow createFolderWindow = CreateFolderDialogueWindow();
                     createFolderWindow.Title = WindowCategory.CreateFolderCategory.Value;
                     createFolderWindow.Watermark = TextBoxWatermark.CreateFolderWatermark.Value;
                     message.Reply(createFolderWindow.ShowDialog<string>(window));
@@ -83,7 +84,7 @@ namespace DatabaseTask.Views
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowRenameFolderMessage>(this,
                 (window, message) =>
                 {
-                    FolderOperationWindow createFolderWindow = CreateDialogueWindow();
+                    FolderOperationWindow createFolderWindow = CreateFolderDialogueWindow();
                     createFolderWindow.Title = WindowCategory.RenameFolderCategory.Value;
                     createFolderWindow.Watermark = TextBoxWatermark.RenameFolderWatermark.Value;
                     message.Reply(createFolderWindow.ShowDialog<string>(window));
@@ -101,7 +102,7 @@ namespace DatabaseTask.Views
             BtnDeleteFile.IsEnabled = true;
         }
 
-        private FolderOperationWindow CreateDialogueWindow()
+        private FolderOperationWindow CreateFolderDialogueWindow()
         {
             FolderOperationWindow window = _serviceProvider.GetRequiredService<FolderOperationWindow>();
             window.DataContext = _serviceProvider.GetRequiredService<FolderOperationWindowViewModel>();

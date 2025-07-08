@@ -109,6 +109,26 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             }
         }
 
+        public async Task CopyFolderImpl()
+        {
+            await ProcessCommand(_fileManager.FolderPermissions.CanCopyCatalog,
+                CopyFolderCommand);
+        }
+
+        private async Task CopyFolderCommand()
+        {
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
+                new MessageBoxOptions(
+                MessageBoxCategory.CopyFolderMessageBox.Title,
+                MessageBoxCategory.CopyFolderMessageBox.Content,
+                ButtonEnum.YesNo), null);
+            if (result.HasValue && result.Value == ButtonResult.Yes)
+            {
+                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand();
+                deleteItemCommand.Execute();
+            }
+        }
+
         public async Task DeleteFileImpl()
         {
             await ProcessCommand(_fileManager.FilePermissions.CanDeleteFile,

@@ -24,16 +24,16 @@ namespace DatabaseTask.ViewModels
             if (FolderName == null || FolderName == "")
             {
                 await MessageBoxHelper("FolderOperationDialogue", new MessageBoxOptions(
-                    MessageBoxConstants.Error.Value, "Имя каталога не может быть пустым",
+                    MessageBoxConstants.Error.Value, $"Имя каталога не может быть пустым",
                     ButtonEnum.Ok), null);
                 return;
             }
-            WeakReferenceMessenger.Default.Send(new FolderOperationWindowCloseMessage(FolderName));
+            WeakReferenceMessenger.Default.Send(new DialogueWindowCloseMessage(FolderName));
         }
 
         public void OnCancelButtonClick()
         {
-            WeakReferenceMessenger.Default.Send(new FolderOperationWindowCloseMessage(null));
+            WeakReferenceMessenger.Default.Send(new DialogueWindowCloseMessage(null));
         }
     }
 }

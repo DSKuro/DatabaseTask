@@ -16,7 +16,7 @@ namespace DatabaseTask.ViewModels.Nodes
         public bool IsFolder { get; set; }
         public INode? Parent { get; set; }
 
-        public Smart_serviceCollection<INode> Children { get; set; } = new Smart_serviceCollection<INode>();
+        public SmartCollection<INode> Children { get; set; } = new SmartCollection<INode>();
 
         public string Name
         {

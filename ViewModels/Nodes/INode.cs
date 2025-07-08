@@ -9,6 +9,6 @@ namespace DatabaseTask.ViewModels.Nodes
         public INode? Parent { get; set; }
         public event Action<INode> Expanded;
         public event Action<INode> Collapsed;
-        public Smart_serviceCollection<INode> Children { get; set; }
+        public SmartCollection<INode> Children { get; set; }
     }
 }

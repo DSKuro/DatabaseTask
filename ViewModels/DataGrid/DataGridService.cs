@@ -9,7 +9,7 @@ namespace DatabaseTask.ViewModels.DataGrid
     public class DataGridService : IDataGrid
     {
         public List<FileProperties> SavedFilesProperties { get; set; } = new List<FileProperties>();
-        public Smart_serviceCollection<FileProperties> FilesProperties { get; } = new Smart_serviceCollection<FileProperties>();
+        public SmartCollection<FileProperties> FilesProperties { get; } = new SmartCollection<FileProperties>();
 
         public string TimeToString(DateTimeOffset? dateTimeOffset)
         {

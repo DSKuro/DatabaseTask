@@ -9,13 +9,13 @@ namespace DatabaseTask.ViewModels.TreeView
 {
     public class TreeViewService : ViewModelBase, ITreeView
     {
-        private Smart_serviceCollection<INode> _nodes = new Smart_serviceCollection<INode>();
+        private SmartCollection<INode> _nodes = new SmartCollection<INode>();
 
         public INode DraggedItem { get; set; }
 
-        public Smart_serviceCollection<INode> SelectedNodes { get; } = new();
+        public SmartCollection<INode> SelectedNodes { get; } = new();
 
-        public Smart_serviceCollection<INode> Nodes
+        public SmartCollection<INode> Nodes
         {
             get => _nodes;
             set => SetProperty(ref _nodes, value);

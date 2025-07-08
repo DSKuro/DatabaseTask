@@ -18,10 +18,10 @@ public partial class FolderOperationWindow : Window
 
     private void InitializeMessages()
     {
-        WeakReferenceMessenger.Default.Register<FolderOperationWindow, FolderOperationWindowCloseMessage>(this,
+        WeakReferenceMessenger.Default.Register<FolderOperationWindow, DialogueWindowCloseMessage>(this,
             (window, message) =>
             {
-                window.Close(message.FolderName);
+                window.Close(message.StringValue);
             });
     }
 

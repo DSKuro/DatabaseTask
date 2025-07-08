@@ -25,5 +25,13 @@
                 return new MessageBoxCategory("Удаление файла", "Вы точно хотите удалить выбранные файлы?");
             }
         }
+        public static MessageBoxCategory CopyFolderMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Копировать каталог",
+                    "Вы точно хотите копировать выделенный каталог?");
+            }
+        }
     }
 }

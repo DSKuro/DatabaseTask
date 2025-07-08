@@ -81,6 +81,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
             _serviceCollection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
+            _serviceCollection.AddScoped<ICopyFolderOperation, CopyFolderOperation>();
             _serviceCollection.AddScoped<IItemCommandsFactory, ItemCommandsFactory>();
         }
 

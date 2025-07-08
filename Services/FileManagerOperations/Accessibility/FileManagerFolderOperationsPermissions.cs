@@ -56,5 +56,36 @@ namespace DatabaseTask.Services.FileManagerOperations.Accessibility
                 }
             }
         }
+
+        public void CanCopyCatalog()
+        {
+            if (_treeView.SelectedNodes.Count == 0)
+            {
+                throw new FileManagerOperationsException("Каталог не выбран");
+            }
+            else if (_treeView.SelectedNodes.Count == 1)
+            {
+                throw new FileManagerOperationsException("Не выбран целевой каталог");
+            }
+            else if (_treeView.SelectedNodes.Count > 2)
+            {
+                throw new FileManagerOperationsException("Выбрано больше двух каталогов");
+            }
+            else if (_treeView.SelectedNodes.First() == _treeView.Nodes.First())
+            {
+                throw new FileManagerOperationsException("Нельзя копировать корневой каталог");
+            }
+            else
+            {
+                foreach (NodeViewModel node in _treeView.SelectedNodes)
+                {
+
+                    if (!node.IsFolder)
+                    {
+                        throw new FileManagerOperationsException("Выбран файл, не каталог");
+                    }
+                }
+            }
+        }
     }
 }

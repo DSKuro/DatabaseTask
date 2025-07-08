@@ -4,5 +4,6 @@
     {
         public void CanDoOperationOnFolder();
         public void CanDeleteFolder();
+        public void CanCopyCatalog();
     }
 }

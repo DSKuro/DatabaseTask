@@ -8,8 +8,8 @@ namespace DatabaseTask.ViewModels.TreeView.Interfaces
 {
     public interface ITreeView
     {
-        public Smart_serviceCollection<INode> SelectedNodes { get; }
-        public Smart_serviceCollection<INode> Nodes { get; set; }
+        public SmartCollection<INode> SelectedNodes { get; }
+        public SmartCollection<INode> Nodes { get; set; }
         public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
         public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; }
     }

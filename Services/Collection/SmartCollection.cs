@@ -5,16 +5,16 @@ using System.ComponentModel;
 
 namespace DatabaseTask.Services._serviceCollection
 {
-    public class Smart_serviceCollection<T> : ObservableCollection<T>
+    public class SmartCollection<T> : ObservableCollection<T>
     {
-        public Smart_serviceCollection() : base() { }
+        public SmartCollection() : base() { }
 
-        public Smart_serviceCollection(IEnumerable<T> _serviceCollection)
+        public SmartCollection(IEnumerable<T> _serviceCollection)
             : base(_serviceCollection)
         {
         }
 
-        public Smart_serviceCollection(List<T> list)
+        public SmartCollection(List<T> list)
             : base(list)
         {
         }

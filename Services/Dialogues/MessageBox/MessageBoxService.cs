@@ -32,7 +32,9 @@ namespace DatabaseTask.Services.Dialogues.MessageBox
                 ButtonDefinitions = options.Buttons,
                 ContentTitle = options.Title,
                 ContentMessage = options.Content,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                CanResize = true,
+                
             });
             return await msgBox.ShowWindowDialogAsync(topLevel as Window);
         }

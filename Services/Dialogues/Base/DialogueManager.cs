@@ -40,14 +40,14 @@ namespace DatabaseTask.Services.Dialogues.Base
 
         private static void RegisterChangedImpl(Visual sender, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.OldValue != null)
+            if (e.OldValue != null && RegistrationMapper.ContainsKey(e.OldValue))
             {
                 RegistrationMapper.Remove(e.OldValue);
             }
 
             if (e.NewValue != null)
             {
-                RegistrationMapper.Add(e.NewValue, sender);
+                RegistrationMapper[e.NewValue] = sender;
             }
         }
 

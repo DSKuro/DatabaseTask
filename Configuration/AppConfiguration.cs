@@ -14,6 +14,8 @@ using DatabaseTask.ViewModels.DataGrid;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.FileManager;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
+using DatabaseTask.ViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainSubViewModels;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
@@ -83,8 +85,10 @@ namespace DatabaseTask.Configuration
 
         private void AddViewModelsAndWindows()
         {
+            _serviceCollection.AddScoped<IFileManagerFolderCommandsViewModel, FileManagerFolderCommandsViewModel>();
+            _serviceCollection.AddScoped<IOpenDataViewModel, OpenDataViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
-            _serviceCollection.AddScoped<MainWindowViewModel>();
+            _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
         }
     }

@@ -3,5 +3,6 @@
     public interface IFileManagerOperationsPermissions
     {
         public void CanDoOperationOnFolder();
+        public void CanDeleteFolder();
     }
 }

@@ -23,7 +23,7 @@ namespace DatabaseTask.ViewModels
         {
             if (FolderName == null || FolderName == "")
             {
-                await MessageBoxHelper(new MessageBoxOptions(
+                await MessageBoxHelper("FolderOperationDialogue", new MessageBoxOptions(
                     MessageBoxConstants.Error.Value, "Имя каталога не может быть пустым",
                     ButtonEnum.Ok), null);
                 return;

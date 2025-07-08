@@ -2,6 +2,7 @@
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
+using System.Linq;
 
 namespace DatabaseTask.Services.FileManagerOperations.Accessibility
 {
@@ -29,6 +30,29 @@ namespace DatabaseTask.Services.FileManagerOperations.Accessibility
                 if (!node.IsFolder)
                 {
                     throw new FileManagerOperationsException("Выбран файл, не каталог");
+                }
+            }
+        }
+
+        public void CanDeleteFolder()
+        {
+            if (_treeView.SelectedNodes.Count == 0)
+            {
+                throw new FileManagerOperationsException("Каталог не выбран");
+            }
+            else if (_treeView.SelectedNodes.Contains(_treeView.Nodes.First())) 
+            {
+                throw new FileManagerOperationsException("Нельзя удалить корневой каталог");
+            }
+            else
+            {
+                foreach (NodeViewModel node in _treeView.SelectedNodes)
+                {
+
+                    if (!node.IsFolder)
+                    {
+                        throw new FileManagerOperationsException("Выбран файл, не каталог");
+                    }
                 }
             }
         }

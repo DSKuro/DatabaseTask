@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="using:DatabaseTask.ViewModels"
 		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
-		dialogues:DialogueManager.Register="{Binding}"
+		dialogues:DialogueManager.Register="FolderOperationDialogue"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		Width="400" Height="90"
 		x:DataType="vm:FolderOperationWindowViewModel"

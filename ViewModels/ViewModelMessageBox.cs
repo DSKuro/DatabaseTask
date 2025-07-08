@@ -15,11 +15,12 @@ namespace DatabaseTask.ViewModels
             _messageBoxService = messageBoxService;
         }
 
-        protected async Task<ButtonResult?> MessageBoxHelper(MessageBoxOptions options, Action callback)
+        protected async Task<ButtonResult?> MessageBoxHelper(object context, MessageBoxOptions options, Action callback)
         {
+            ButtonResult? result = null;
             try
             {
-                return await _messageBoxService.ShowMessageBoxAsync(this, options);
+                result = await _messageBoxService.ShowMessageBoxAsync(context, options);
             }
             finally
             {
@@ -28,6 +29,7 @@ namespace DatabaseTask.ViewModels
                     callback.Invoke();
                 }
             }
+            return result;
         }
 
         protected void ErrorCallback()

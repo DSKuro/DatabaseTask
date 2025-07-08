@@ -3,8 +3,10 @@ using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
 {
@@ -21,20 +23,26 @@ namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
 
         public async Task DeleteFolder()
         {
-            INode node = RemoveNode();
-            RemoveProperties(node);
+            RemoveNodes();
             _treeView.SelectedNodes.Clear();
         }
 
-        private INode RemoveNode()
+        private void RemoveNodes()
         {
-            INode node = _treeView.SelectedNodes.First();
-            _treeView.Nodes.Remove(node);
+            List<INode> selectedNodes = _treeView.SelectedNodes.ToList();
+            foreach (INode node in selectedNodes)
+            {
+                RemoveNode(node);
+                RemoveProperties(node);
+            }
+        }
+
+        private void RemoveNode(INode node)
+        {
             if (node.Parent != null)
             {
                 node.Parent.Children.Remove(node);
             }
-            return node;
         }
 
         private void RemoveProperties(INode node)

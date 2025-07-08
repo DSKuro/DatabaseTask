@@ -6,22 +6,21 @@ using DatabaseTask.ViewModels.TreeView.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
 {
-    public class DeleteFolderOperation : IDeleteFolderOperation
+    public class DeleteItemOperation : IDeleteItemOperation
     {
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
 
-        public DeleteFolderOperation(ITreeView treeView, IDataGrid dataGrid)
+        public DeleteItemOperation(ITreeView treeView, IDataGrid dataGrid)
         {
             _treeView = treeView;
             _dataGrid = dataGrid;
         }
 
-        public async Task DeleteFolder()
+        public async Task DeleteItem()
         {
             RemoveNodes();
             _treeView.SelectedNodes.Clear();

@@ -117,6 +117,7 @@
 					Grid.Column="3"
 					IconSource="/Assets/ButtonIcons/folder-copy.svg"
 					Css="{StaticResource SvgFill}"
+					Command="{Binding CopyFolderCommand}"
 					Content="Копировать каталог"/>
 			<controls:IconButton
 					Name="BtnMoveFile"
@@ -133,6 +134,7 @@
 					Grid.Column="6"
 					IconSource="/Assets/ButtonIcons/file-delete.svg"
 					Css="{StaticResource SvgFill}"
+					Command="{Binding DeleteFileCommand}"
 					Content="Удалить файл"/>
 		</Grid>
 		<DataGrid Grid.Row="3"/>

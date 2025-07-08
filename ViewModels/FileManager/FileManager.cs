@@ -19,18 +19,24 @@ namespace DatabaseTask.ViewModels.FileManager
     {
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
-        private readonly IFileManagerOperationsPermissions _permissions;
+        private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
+        private readonly IFileManagerFileOperationsPermissions _filePermissions;
 
         public ITreeView TreeView { get => _treeView; }
         public IDataGrid DataGrid { get => _dataGrid; }
-        public IFileManagerOperationsPermissions Permissions { get => _permissions; }
+        public IFileManagerFolderOperationsPermissions FolderPermissions { get => _folderPermissions; }
+        public IFileManagerFileOperationsPermissions FilePermissions { get => _filePermissions; }
 
-        public FileManager(ITreeView treeView, IDataGrid dataGrid, IFileManagerOperationsPermissions permissions)
+        public FileManager(ITreeView treeView,
+            IDataGrid dataGrid,
+            IFileManagerFolderOperationsPermissions folderPermissions,
+            IFileManagerFileOperationsPermissions filePermissions)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += OnSelectionChanged;
             _dataGrid = dataGrid;
-            _permissions = permissions;
+            _folderPermissions = folderPermissions;
+            _filePermissions = filePermissions;
         }
 
         public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)

@@ -11,7 +11,9 @@ namespace DatabaseTask.ViewModels.FileManager.Interfaces
     {
         public ITreeView TreeView { get; }
         public IDataGrid DataGrid { get; }
-        public IFileManagerOperationsPermissions Permissions { get; }
+        public IFileManagerFolderOperationsPermissions FolderPermissions { get; }
+        public IFileManagerFileOperationsPermissions FilePermissions { get; }
+
 
         public Task GetCollectionFromFolders
             (IEnumerable<IStorageFolder> folders);

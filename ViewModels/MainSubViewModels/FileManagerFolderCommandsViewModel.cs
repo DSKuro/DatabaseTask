@@ -16,19 +16,19 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
     public class FileManagerFolderCommandsViewModel : ViewModelMessageBox, IFileManagerFolderCommandsViewModel
     {
         private readonly IFileManager _fileManager;
-        private readonly IFolderCommandsFactory _folderCommandsFactory;
+        private readonly IItemCommandsFactory _itemCommandsFactory;
 
         public FileManagerFolderCommandsViewModel(IMessageBoxService messageBoxService,
-            IFileManager fileManager, IFolderCommandsFactory folderCommandsFactory)
+            IFileManager fileManager, IItemCommandsFactory itemCommandsFactory)
             : base(messageBoxService) 
         { 
             _fileManager = fileManager;
-            _folderCommandsFactory = folderCommandsFactory;
+            _itemCommandsFactory = itemCommandsFactory;
         }
 
         public async Task CreateFolderImpl()
         {
-            await ProcessCommand(_fileManager.Permissions.CanDoOperationOnFolder,
+            await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
                 CreateNewFolder);
         }
 
@@ -53,7 +53,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             string folderName = await GetNewFolderName();
             if (folderName != null)
             {
-                ICommand createFolderCommand = _folderCommandsFactory.CreateCreateFolderCommand(folderName);
+                ICommand createFolderCommand = _itemCommandsFactory.CreateCreateFolderCommand(folderName);
                 createFolderCommand.Execute();
             }
         }
@@ -65,7 +65,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 
         public async Task RenameFolderImpl()
         {
-            await ProcessCommand(_fileManager.Permissions.CanDoOperationOnFolder,
+            await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
                 RenameFolderCommandImpl);
         }
 
@@ -74,7 +74,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             string newName = await GetRenamedFolderName();
             if (newName != null)
             {
-                ICommand renameFolderCommand = _folderCommandsFactory.CreateRenameFolderCommand(newName);
+                ICommand renameFolderCommand = _itemCommandsFactory.CreateRenameFolderCommand(newName);
                 renameFolderCommand.Execute();
             }
         }
@@ -86,20 +86,41 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 
         public async Task DeleteFolderImpl()
         {
-            await ProcessCommand(_fileManager.Permissions.CanDeleteFolder,
-                DeleteCommand);
+            await ProcessCommand(_fileManager.FolderPermissions.CanDeleteFolder,
+                DeleteFolderCommand);
         }
 
-        private async Task DeleteCommand()
+        private async Task DeleteFolderCommand()
+        {
+            await DeleteItemCommandImpl(new MessageBoxOptions(
+                MessageBoxCategory.DeleteFolderMessageBox.Title,
+                MessageBoxCategory.DeleteFolderMessageBox.Content,
+                ButtonEnum.YesNo));
+        }
+
+        private async Task DeleteItemCommandImpl(MessageBoxOptions messageBoxOptions)
         {
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
-                new MessageBoxOptions(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                MessageBoxCategory.DeleteFolderMessageBox.Content, ButtonEnum.YesNo), null);
+                messageBoxOptions, null);
             if (result.HasValue && result.Value == ButtonResult.Yes)
             {
-                ICommand deleteFolderCommand = _folderCommandsFactory.CreateDeleteFolderCommand();
-                deleteFolderCommand.Execute();
+                ICommand deleteItemCommand = _itemCommandsFactory.CreateDeleteItemCommand();
+                deleteItemCommand.Execute();
             }
+        }
+
+        public async Task DeleteFileImpl()
+        {
+            await ProcessCommand(_fileManager.FilePermissions.CanDeleteFile,
+                DeleteFileCommand);
+        }
+
+        private async Task DeleteFileCommand()
+        {
+            await DeleteItemCommandImpl(new MessageBoxOptions(
+                MessageBoxCategory.DeleteFileMessageBox.Title,
+                MessageBoxCategory.DeleteFileMessageBox.Content,
+                ButtonEnum.YesNo));
         }
     }
 }

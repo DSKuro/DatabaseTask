@@ -3,11 +3,11 @@ using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 
 namespace DatabaseTask.Services.Commands
 {
-    public class DeleteFolderCommand : ICommand
+    public class DeleteItemCommand : ICommand
     {
-        private readonly IDeleteFolderOperation _folderOperation;
+        private readonly IDeleteItemOperation _folderOperation;
 
-        public DeleteFolderCommand(IDeleteFolderOperation folderOperation)
+        public DeleteItemCommand(IDeleteItemOperation folderOperation)
         {
             _folderOperation = folderOperation;
         }
@@ -16,7 +16,7 @@ namespace DatabaseTask.Services.Commands
         {
             if (_folderOperation != null)
             {
-                _folderOperation.DeleteFolder();
+                _folderOperation.DeleteItem();
             }
         }
 

@@ -4,11 +4,11 @@ using System;
 
 namespace DatabaseTask.Services.Commands
 {
-    public class FolderCommandsFactory : IFolderCommandsFactory
+    public class ItemCommandsFactory : IItemCommandsFactory
     {
         private IServiceProvider _serviceProvider;
 
-        public FolderCommandsFactory(IServiceProvider serviceProvider)
+        public ItemCommandsFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -23,9 +23,9 @@ namespace DatabaseTask.Services.Commands
             return ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, newName);
         }
         
-        public ICommand CreateDeleteFolderCommand()
+        public ICommand CreateDeleteItemCommand()
         {
-            return ActivatorUtilities.CreateInstance<DeleteFolderCommand>(_serviceProvider);
+            return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
         }
     }
 }

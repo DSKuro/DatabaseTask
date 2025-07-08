@@ -18,5 +18,12 @@
                 return new MessageBoxCategory("Удаление каталога", "Вы точно хотите удалить выбранные каталоги?");
             }
         }
+        public static MessageBoxCategory DeleteFileMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Удаление файла", "Вы точно хотите удалить выбранные файлы?");
+            }
+        }
     }
 }

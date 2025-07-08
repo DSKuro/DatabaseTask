@@ -2,8 +2,8 @@
 
 namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces
 {
-    public interface IDeleteFolderOperation
+    public interface IDeleteItemOperation
     {
-        public Task DeleteFolder();
+        public Task DeleteItem();
     }
 }

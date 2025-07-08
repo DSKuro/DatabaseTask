@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace DatabaseTask.Services.FileManagerOperations.Accessibility
 {
-    public class FileManagerOperationsPermissions : IFileManagerOperationsPermissions
+    public class FileManagerFolderOperationsPermissions : IFileManagerFolderOperationsPermissions
     {
         private readonly ITreeView _treeView;
 
-        public FileManagerOperationsPermissions(ITreeView treeView)
+        public FileManagerFolderOperationsPermissions(ITreeView treeView)
         {
             _treeView = treeView;
         }

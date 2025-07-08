@@ -61,7 +61,8 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeView, TreeViewService>();
             _serviceCollection.AddScoped<IDataGrid, DataGridService>();
             _serviceCollection.AddScoped<IFileManager, FileManager>();
-            _serviceCollection.AddScoped<IFileManagerOperationsPermissions, FileManagerOperationsPermissions>();
+            _serviceCollection.AddScoped<IFileManagerFolderOperationsPermissions, FileManagerFolderOperationsPermissions>();
+            _serviceCollection.AddScoped<IFileManagerFileOperationsPermissions, FileManagerFileOperationsPermissions>();
         }
 
         private void AddVisualTreeView()
@@ -79,8 +80,8 @@ namespace DatabaseTask.Configuration
         {
             _serviceCollection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
             _serviceCollection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
-            _serviceCollection.AddScoped<IDeleteFolderOperation, DeleteFolderOperation>();
-            _serviceCollection.AddScoped<IFolderCommandsFactory, FolderCommandsFactory>();
+            _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
+            _serviceCollection.AddScoped<IItemCommandsFactory, ItemCommandsFactory>();
         }
 
         private void AddViewModelsAndWindows()

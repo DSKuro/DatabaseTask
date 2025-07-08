@@ -30,24 +30,6 @@ namespace DatabaseTask.ViewModels
         }
 
         [RelayCommand]
-        public async Task DeleteFolder()
-        {
-            await _fileManagerFolderCommandsViewModel.DeleteFolderImpl();
-        }
-
-        [RelayCommand]
-        public async Task RenameFolder()
-        {
-            await _fileManagerFolderCommandsViewModel.RenameFolderImpl();
-        }
-
-        [RelayCommand]
-        public async Task CreateFolder()
-        {
-            await _fileManagerFolderCommandsViewModel.CreateFolderImpl();
-        }
-
-        [RelayCommand]
         public async Task OpenDb()
         {
             await _openDataViewModel.ChooseDbFile();
@@ -57,6 +39,36 @@ namespace DatabaseTask.ViewModels
         public async Task OpenFolder()
         {
             await _openDataViewModel.OpenFolder();
+        }
+
+        [RelayCommand]
+        public async Task CreateFolder()
+        {
+            await _fileManagerFolderCommandsViewModel.CreateFolderImpl();
+        }
+
+        [RelayCommand]
+        public async Task RenameFolder()
+        {
+            await _fileManagerFolderCommandsViewModel.RenameFolderImpl();
+        }
+
+        [RelayCommand]
+        public async Task DeleteFolder()
+        {
+            await _fileManagerFolderCommandsViewModel.DeleteFolderImpl();
+        }
+
+        [RelayCommand]
+        public async Task CopyFolder()
+        {
+
+        }
+
+        [RelayCommand]
+        public async Task DeleteFile()
+        {
+            await _fileManagerFolderCommandsViewModel.DeleteFileImpl();
         }
     }
 }

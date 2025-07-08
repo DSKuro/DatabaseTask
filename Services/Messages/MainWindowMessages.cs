@@ -6,4 +6,5 @@ namespace DatabaseTask.Services.Messages
     public class MainWindowDialogueMessage : AsyncRequestMessage<string> { }
     public class MainWindowCreateFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowRenameFolderMessage : MainWindowDialogueMessage { }
+    public class MainWindowCopyFolderMessage : MainWindowDialogueMessage { }
 }

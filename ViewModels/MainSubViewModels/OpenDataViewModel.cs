@@ -9,6 +9,7 @@ using DatabaseTask.ViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -93,7 +94,10 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         {
             IEnumerable<IStorageFolder> folders = await _storageService.OpenFoldersAsync("MainDialogueWindow",
                     new FolderPickerOptions(false));
-            WeakReferenceMessenger.Default.Send<MainWindowEnableManagerButtons>();
+            if (folders.Count() != 0)
+            {
+                WeakReferenceMessenger.Default.Send<MainWindowEnableManagerButtons>();
+            }
             return folders;
         }
     }

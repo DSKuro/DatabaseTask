@@ -66,6 +66,12 @@ namespace DatabaseTask.ViewModels
         }
 
         [RelayCommand]
+        public async Task CopyFile()
+        {
+            await _fileManagerFolderCommandsViewModel.CopyFileImpl();
+        }
+
+        [RelayCommand]
         public async Task DeleteFile()
         {
             await _fileManagerFolderCommandsViewModel.DeleteFileImpl();

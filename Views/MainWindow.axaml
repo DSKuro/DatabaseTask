@@ -128,6 +128,7 @@
 					Name="BtnCopyFile"
 					Grid.Column="5"
 					IconSource="/Assets/ButtonIcons/file-copy.svg"
+					Command="{Binding CopyFileCommand}"
 					Content="Копировать файл"/>
 			<controls:IconButton
 					Name="BtnDeleteFile"

@@ -2,6 +2,7 @@
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
+using System.Linq;
 
 namespace DatabaseTask.Services.FileManagerOperations.Accessibility
 { 
@@ -29,6 +30,36 @@ namespace DatabaseTask.Services.FileManagerOperations.Accessibility
                     {
                         throw new FileManagerOperationsException("Выбран каталог, не файл");
                     }
+                }
+            }
+        }
+
+        public void CanCopyFile()
+        {
+            if (_treeView.SelectedNodes.Count == 0)
+            {
+                throw new FileManagerOperationsException("Каталог и файл не выбраны");
+            }
+            else if (_treeView.SelectedNodes.Count == 1)
+            {
+                throw new FileManagerOperationsException("Не выбран целевой каталог");
+            }
+            else if (_treeView.SelectedNodes.Count > 2)
+            {
+                throw new FileManagerOperationsException("Выбрано больше двух элементов");
+            }
+            else if (_treeView.SelectedNodes[0] is NodeViewModel node)
+            {
+                if (node.IsFolder)
+                {
+                    throw new FileManagerOperationsException("Выбран каталог, не файл");
+                }
+            }
+            else if (_treeView.SelectedNodes[1] is NodeViewModel folderNode)
+            {
+                if (!folderNode.IsFolder)
+                {
+                    throw new FileManagerOperationsException("Вместо целевого каталога выбран файл");
                 }
             }
         }

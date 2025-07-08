@@ -8,6 +8,7 @@ namespace DatabaseTask.ViewModels.Interfaces
         public Task RenameFolderImpl();
         public Task DeleteFolderImpl();
         public Task CopyFolderImpl();
+        public Task CopyFileImpl();
         public Task DeleteFileImpl();
     }
 }

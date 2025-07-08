@@ -33,5 +33,13 @@
                     "Вы точно хотите копировать выделенный каталог?");
             }
         }
+        public static MessageBoxCategory CopyFileMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Копировать файл",
+                    "Вы точно хотите копировать выделенный файл?");
+            }
+        }
     }
 }

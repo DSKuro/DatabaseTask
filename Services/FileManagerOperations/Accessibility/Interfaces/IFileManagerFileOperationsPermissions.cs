@@ -2,6 +2,7 @@
 {
     public interface IFileManagerFileOperationsPermissions
     {
-        public void CanDeleteFile(); 
+        public void CanDeleteFile();
+        public void CanCopyFile();
     }
 }

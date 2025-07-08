@@ -2,6 +2,6 @@
 {
     public interface ICopyFolderOperation
     {
-        public void CopyFolder();
+        public void CopyFolder(bool IsCopy);
     }
 }

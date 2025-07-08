@@ -5,6 +5,6 @@
         public ICommand CreateCreateFolderCommand(string folderName);
         public ICommand CreateRenameFolderCommand(string newName);
         public ICommand CreateDeleteItemCommand();
-        public ICommand CreateCopyFolderCommand();
+        public ICommand CreateCopyFolderCommand(bool isCopy);
     }
 }

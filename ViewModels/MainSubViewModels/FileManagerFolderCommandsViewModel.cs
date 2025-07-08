@@ -124,7 +124,27 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                 ButtonEnum.YesNo), null);
             if (result.HasValue && result.Value == ButtonResult.Yes)
             {
-                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand();
+                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand(true);
+                deleteItemCommand.Execute();
+            }
+        }
+
+        public async Task MoveFileImpl()
+        {
+            await ProcessCommand(_fileManager.FilePermissions.CanCopyFile,
+                MoveFileCommand);
+        }
+
+        private async Task MoveFileCommand()
+        {
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
+                new MessageBoxOptions(
+                MessageBoxCategory.MoveFileMessageBox.Title,
+                MessageBoxCategory.MoveFileMessageBox.Content,
+                ButtonEnum.YesNo), null);
+            if (result.HasValue && result.Value == ButtonResult.Yes)
+            {
+                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand(false);
                 deleteItemCommand.Execute();
             }
         }
@@ -144,7 +164,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                 ButtonEnum.YesNo), null);
             if (result.HasValue && result.Value == ButtonResult.Yes)
             {
-                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand();
+                ICommand deleteItemCommand = _itemCommandsFactory.CreateCopyFolderCommand(true);
                 deleteItemCommand.Execute();
             }
         }

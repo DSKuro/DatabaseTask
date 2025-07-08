@@ -123,6 +123,7 @@
 					Name="BtnMoveFile"
 					Grid.Column="4"
 					IconSource="/Assets/ButtonIcons/file-move.svg"
+					Command="{Binding MoveFileCommand}"
 					Content="Перенести файл"/>
 			<controls:IconButton
 					Name="BtnCopyFile"

@@ -33,6 +33,14 @@
                     "Вы точно хотите копировать выделенный каталог?");
             }
         }
+        public static MessageBoxCategory MoveFileMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Перенести файл",
+                    "Вы точно хотите перенести выделенный файл?");
+            }
+        }
         public static MessageBoxCategory CopyFileMessageBox
         {
             get

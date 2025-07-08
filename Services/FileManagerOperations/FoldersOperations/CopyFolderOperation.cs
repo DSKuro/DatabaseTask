@@ -21,10 +21,15 @@ namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
             _dataGrid = dataGrid;
         }
 
-        public void CopyFolder()
+        public void CopyFolder(bool IsCopy)
         {
             (INode oldNode, INode newNode) = AddNewNode();
-            AddNewProperties(oldNode, newNode);
+            FileProperties properties = AddNewProperties(oldNode, newNode);
+            if (!IsCopy)
+            {
+                oldNode.Parent.Children.Remove(oldNode);
+                _dataGrid.SavedFilesProperties.Remove(properties);
+            }
         }
 
         private (INode, INode) AddNewNode()
@@ -54,12 +59,13 @@ namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
             return null;
         }
 
-        private void AddNewProperties(INode oldNode, INode newNode)
+        private FileProperties AddNewProperties(INode oldNode, INode newNode)
         {
             FileProperties properties = _dataGrid.SavedFilesProperties.Find(x => x.Node == oldNode);
             FileProperties newProperties = GetNewProperties(properties, newNode);
             int i = _dataGrid.SavedFilesProperties.FindIndex(x => x.Node == _treeView.SelectedNodes[1]);
             _dataGrid.SavedFilesProperties.Insert(i + 1, newProperties);
+            return properties;
         }
 
         private FileProperties GetNewProperties(FileProperties oldProperties, INode node) 

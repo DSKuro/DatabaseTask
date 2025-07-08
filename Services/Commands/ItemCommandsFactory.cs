@@ -28,9 +28,9 @@ namespace DatabaseTask.Services.Commands
             return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
         }
 
-        public ICommand CreateCopyFolderCommand()
+        public ICommand CreateCopyFolderCommand(bool isCopy)
         {
-            return ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider);
+            return ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider, isCopy);
         }
     }
 }

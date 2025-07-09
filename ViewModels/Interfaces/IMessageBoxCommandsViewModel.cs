@@ -2,10 +2,8 @@
 
 namespace DatabaseTask.ViewModels.Interfaces
 {
-    public interface IFileManagerFolderCommandsViewModel
+    public interface IMessageBoxCommandsViewModel
     {
-        public Task CreateFolderImpl();
-        public Task RenameFolderImpl();
         public Task DeleteFolderImpl();
         public Task CopyFolderImpl();
         public Task CopyFileImpl();

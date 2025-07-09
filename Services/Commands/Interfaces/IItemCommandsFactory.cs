@@ -1,10 +1,9 @@
-﻿namespace DatabaseTask.Services.Commands.Interfaces
+﻿using DatabaseTask.Services.Commands.Info;
+
+namespace DatabaseTask.Services.Commands.Interfaces
 {
     public interface IItemCommandsFactory
     {
-        public ICommand CreateCreateFolderCommand(string folderName);
-        public ICommand CreateRenameFolderCommand(string newName);
-        public ICommand CreateDeleteItemCommand();
-        public ICommand CreateCopyFolderCommand(bool isCopy);
+        public ICommand CreateCommand(CommandInfo info);
     }
 }

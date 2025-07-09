@@ -68,7 +68,7 @@
 							<DataTemplate DataType="models:FileProperties">
 								<StackPanel Orientation="Horizontal" Spacing="5">
 									<Svg Path="{Binding IconPath}" Css="{DynamicResource SvgFill}"/>
-									<TextBlock Text="{Binding Name}"
+									<TextBlock Text="{Binding Name, Mode=TwoWay}"
 									  VerticalAlignment="Center"/>
 								</StackPanel>
 							</DataTemplate>

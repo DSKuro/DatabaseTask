@@ -1,7 +1,7 @@
 ﻿namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces
 {
-    public interface ICopyFolderOperation
+    public interface ICopyItemOperation
     {
-        public void CopyFolder(bool IsCopy);
+        public void CopyItem();
     }
 }

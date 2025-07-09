@@ -1,4 +1,5 @@
-﻿using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Models;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView.Interfaces;
@@ -30,7 +31,11 @@ namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
         private void RenameFolderImpl(string newName, NodeViewModel node)
         {
             node.Name = newName;
-            _dataGrid.SavedFilesProperties.Where(x => x.Node == node).First().Name = newName;
+            FileProperties item = _dataGrid.SavedFilesProperties.FirstOrDefault(x => x.Node == node);
+            if (item != null)
+            {
+                item.Name = newName;
+            }
         }
     }
 }

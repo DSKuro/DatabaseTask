@@ -6,6 +6,7 @@ using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.FileManagerOperations.Accessibility;
 using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
@@ -57,7 +58,7 @@ namespace DatabaseTask.Configuration
 
         private void AddFileManager()
         {
-            _serviceCollection.AddTransient<INode, NodeViewModel>();
+            _serviceCollection.AddScoped<INode, NodeViewModel>();
             _serviceCollection.AddScoped<ITreeView, TreeViewService>();
             _serviceCollection.AddScoped<IDataGrid, DataGridService>();
             _serviceCollection.AddScoped<IFileManager, FileManager>();
@@ -81,14 +82,16 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
             _serviceCollection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
-            _serviceCollection.AddScoped<ICopyFolderOperation, CopyFolderOperation>();
+            _serviceCollection.AddScoped<ICopyItemOperation, CopyItemOperation>();
+            _serviceCollection.AddScoped<MoveOperationDecorator>();
             _serviceCollection.AddScoped<IItemCommandsFactory, ItemCommandsFactory>();
         }
 
         private void AddViewModelsAndWindows()
         {
-            _serviceCollection.AddScoped<IFileManagerFolderCommandsViewModel, FileManagerFolderCommandsViewModel>();
+            _serviceCollection.AddScoped<IMessageBoxCommandsViewModel, MessageBoxCommandsViewModel>();
             _serviceCollection.AddScoped<IOpenDataViewModel, OpenDataViewModel>();
+            _serviceCollection.AddScoped<IFolderCommandsViewModel, FolderCommandsViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();

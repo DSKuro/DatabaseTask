@@ -13,7 +13,8 @@ namespace DatabaseTask.ViewModels
         private readonly IFileManager _fileManager;
 
         private readonly IOpenDataViewModel _openDataViewModel;
-        private readonly IFileManagerFolderCommandsViewModel _fileManagerFolderCommandsViewModel;
+        private readonly IMessageBoxCommandsViewModel _messageBoxCommandsViewModel;
+        private readonly IFolderCommandsViewModel _folderCommandsViewModel;
 
         public ObservableCollection<INode> Nodes { get; set;  }
 
@@ -22,11 +23,13 @@ namespace DatabaseTask.ViewModels
         public MainWindowViewModel(IMessageBoxService messageBoxService,
             IFileManager fileManager,
             IOpenDataViewModel openDataViewModel,
-            IFileManagerFolderCommandsViewModel fileManagerFolderCommandsViewModel) : base(messageBoxService)
+            IMessageBoxCommandsViewModel messageBoxCommandsViewModel,
+            IFolderCommandsViewModel folderCommandsViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _openDataViewModel = openDataViewModel;
-            _fileManagerFolderCommandsViewModel = fileManagerFolderCommandsViewModel;
+            _messageBoxCommandsViewModel = messageBoxCommandsViewModel;
+            _folderCommandsViewModel = folderCommandsViewModel;
         }
 
         [RelayCommand]
@@ -44,43 +47,43 @@ namespace DatabaseTask.ViewModels
         [RelayCommand]
         public async Task CreateFolder()
         {
-            await _fileManagerFolderCommandsViewModel.CreateFolderImpl();
+            await _folderCommandsViewModel.CreateFolderImpl();
         }
 
         [RelayCommand]
         public async Task RenameFolder()
         {
-            await _fileManagerFolderCommandsViewModel.RenameFolderImpl();
+            await _folderCommandsViewModel.RenameFolderImpl();
         }
 
         [RelayCommand]
         public async Task DeleteFolder()
         {
-            await _fileManagerFolderCommandsViewModel.DeleteFolderImpl();
+            await _messageBoxCommandsViewModel.DeleteFolderImpl();
         }
 
         [RelayCommand]
         public async Task CopyFolder()
         {
-            await _fileManagerFolderCommandsViewModel.CopyFolderImpl();
+            await _messageBoxCommandsViewModel.CopyFolderImpl();
         }
 
         [RelayCommand]
         public async Task MoveFile()
         {
-            await _fileManagerFolderCommandsViewModel.MoveFileImpl();
+            await _messageBoxCommandsViewModel.MoveFileImpl();
         }
 
         [RelayCommand]
         public async Task CopyFile()
         {
-            await _fileManagerFolderCommandsViewModel.CopyFileImpl();
+            await _messageBoxCommandsViewModel.CopyFileImpl();
         }
 
         [RelayCommand]
         public async Task DeleteFile()
         {
-            await _fileManagerFolderCommandsViewModel.DeleteFileImpl();
+            await _messageBoxCommandsViewModel.DeleteFileImpl();
         }
     }
 }

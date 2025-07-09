@@ -1,4 +1,7 @@
-﻿using DatabaseTask.Services.Commands.Interfaces;
+﻿using DatabaseTask.Services.Commands.Enum;
+using DatabaseTask.Services.Commands.Info;
+using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -13,24 +16,28 @@ namespace DatabaseTask.Services.Commands
             _serviceProvider = serviceProvider;
         }
 
-        public ICommand CreateCreateFolderCommand(string folderName) 
-        {
-            return ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, folderName);
-        }
 
-        public ICommand CreateRenameFolderCommand(string newName)
+        public ICommand CreateCommand(CommandInfo info)
         {
-            return ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, newName);
-        }
-        
-        public ICommand CreateDeleteItemCommand()
-        {
-            return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
-        }
+            switch (info.CommandType) 
+            {
+                case CommandType.CreateFolder:
+                    return ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, info.Data);
 
-        public ICommand CreateCopyFolderCommand(bool isCopy)
-        {
-            return ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider, isCopy);
+                case CommandType.RenameFolder:
+                    return ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, info.Data);
+
+                case CommandType.DeleteItem:
+                    return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
+
+                case CommandType.CopyItem:
+                    return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider);
+
+                case CommandType.MoveFile:
+                    return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider, _serviceProvider.GetRequiredService<MoveOperationDecorator>());
+                default:
+                    return null;
+            }
         }
     }
 }

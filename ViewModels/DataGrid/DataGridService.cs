@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DatabaseTask.Models;
+﻿using DatabaseTask.Models;
 using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using System;

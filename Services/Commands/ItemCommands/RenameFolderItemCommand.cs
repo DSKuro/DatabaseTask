@@ -1,14 +1,15 @@
 ﻿using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 
-namespace DatabaseTask.Services.Commands
+namespace DatabaseTask.Services.Commands.ItemCommands
 {
-    public class RenameFolderCommand : ICommand
+    public class RenameFolderItemCommand : ICommand
     {
         private readonly string _newName;
         private readonly IRenameFolderOperation _renameOperation;
 
-        public RenameFolderCommand(IRenameFolderOperation renameOperation, string newName)
+        public RenameFolderItemCommand(IRenameFolderOperation renameOperation,
+            string newName)
         {
             _renameOperation = renameOperation;
             _newName = newName;

@@ -1,5 +1,7 @@
 ﻿using DatabaseTask.Services.Commands;
+using DatabaseTask.Services.Commands.FilesCommands;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.ItemCommands;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
@@ -8,6 +10,8 @@ using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.Services.LoggerOperations;
+using DatabaseTask.Services.LoggerOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
@@ -16,6 +20,8 @@ using DatabaseTask.ViewModels.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.FileManager;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
+using DatabaseTask.ViewModels.Logger;
+using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainSubViewModels;
 using DatabaseTask.ViewModels.Nodes;
 using DatabaseTask.ViewModels.TreeView;
@@ -44,6 +50,7 @@ namespace DatabaseTask.Configuration
             AddStorage();
             AddFileManager();
             AddVisualTreeView();
+            AddLogger();
             AddCommands();
             AddViewModelsAndWindows();
         }
@@ -77,6 +84,12 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();
         }
 
+        private void AddLogger()
+        {
+            _serviceCollection.AddScoped<ILogger, Logger>();
+            _serviceCollection.AddScoped<ILoggerOperations, LoggerOperations>();
+        }
+
         private void AddCommands()
         {
             _serviceCollection.AddScoped<ICreateFolderOperation, CreateFolderOperation>();
@@ -84,7 +97,10 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
             _serviceCollection.AddScoped<ICopyItemOperation, CopyItemOperation>();
             _serviceCollection.AddScoped<MoveOperationDecorator>();
-            _serviceCollection.AddScoped<IItemCommandsFactory, ItemCommandsFactory>();
+            _serviceCollection.AddScoped<ICompositeCommandBuilder, CompositeCommandBuilder>();
+            _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();
+            _serviceCollection.AddScoped<IFileCommandsFactory, FilesCommandsFactory>();
+
         }
 
         private void AddViewModelsAndWindows()

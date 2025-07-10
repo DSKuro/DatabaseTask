@@ -1,7 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DatabaseTask.Services.Collection;
+using DatabaseTask.Services.Commands.FilesCommands;
+using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
+using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -11,25 +15,33 @@ namespace DatabaseTask.ViewModels
     public partial class MainWindowViewModel : ViewModelMessageBox
     {
         private readonly IFileManager _fileManager;
+        private readonly ILogger _logger;
 
         private readonly IOpenDataViewModel _openDataViewModel;
         private readonly IMessageBoxCommandsViewModel _messageBoxCommandsViewModel;
         private readonly IFolderCommandsViewModel _folderCommandsViewModel;
 
+        private readonly IFileCommandsFactory _fileCommandsFactory;
+
         public ObservableCollection<INode> Nodes { get; set;  }
 
         public IFileManager FileManager { get => _fileManager; }
+        public ILogger Logger { get => _logger; }
 
         public MainWindowViewModel(IMessageBoxService messageBoxService,
             IFileManager fileManager,
+            ILogger logger,
             IOpenDataViewModel openDataViewModel,
             IMessageBoxCommandsViewModel messageBoxCommandsViewModel,
-            IFolderCommandsViewModel folderCommandsViewModel) : base(messageBoxService)
+            IFolderCommandsViewModel folderCommandsViewModel,
+            IFileCommandsFactory fileCommandsFactory) : base(messageBoxService)
         {
             _fileManager = fileManager;
+            _logger = logger;
             _openDataViewModel = openDataViewModel;
             _messageBoxCommandsViewModel = messageBoxCommandsViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
+            _fileCommandsFactory = fileCommandsFactory;
         }
 
         [RelayCommand]

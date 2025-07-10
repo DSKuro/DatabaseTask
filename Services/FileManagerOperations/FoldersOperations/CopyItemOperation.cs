@@ -25,11 +25,6 @@ namespace DatabaseTask.Services.FileManagerOperations.FoldersOperations
         {
             (INode oldNode, INode newNode) = AddNewNode();
             FileProperties properties = AddNewProperties(oldNode, newNode);
-            //if (!IsCopy)
-            //{
-            //    oldNode.Parent.Children.Remove(oldNode);
-            //    _dataGrid.SavedFilesProperties.Remove(properties);
-            //}
         }
 
         private (INode, INode) AddNewNode()

@@ -6,7 +6,7 @@
 		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
 		dialogues:DialogueManager.Register="MainDialogueWindow"
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
-		Width="500" Height="600"
+		Width="500" Height="800"
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
 		xmlns:models="using:DatabaseTask.Models"
         x:Class="DatabaseTask.Views.MainWindow"
@@ -139,7 +139,19 @@
 					Command="{Binding DeleteFileCommand}"
 					Content="Удалить файл"/>
 		</Grid>
-		<DataGrid Grid.Row="3"/>
+		<Grid Margin="10, 10, 0, 0" Grid.Row="3" RowDefinitions="0.7*, 1.25*">
+			<TextBlock Text="Operation log" Grid.Row="0"/>
+			<DataGrid Margin="0, 5, 0, 0" Grid.Row="1" HorizontalAlignment="Stretch"
+					IsReadOnly="True"
+					CanUserResizeColumns="True"
+					Height="100"
+					ItemsSource="{Binding Logger.LogOperations}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Width="*" Header="Время" Binding="{Binding Time}"/>
+					<DataGridTextColumn Width="*" Header="Операция" Binding="{Binding Operation}"/>
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
 		<DataGrid Grid.Row="4"/>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="5">

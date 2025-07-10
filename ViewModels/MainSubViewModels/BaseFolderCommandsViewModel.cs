@@ -1,4 +1,5 @@
 ﻿using DatabaseTask.Models;
+using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Info;
 using DatabaseTask.Services.Commands.Interfaces;
@@ -12,21 +13,22 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 {
     public class BaseFolderCommandsViewModel : ViewModelMessageBox
     {
-        private readonly IItemCommandsFactory _itemCommandsFactory;
+        private readonly ICommandsFactory _itemCommandsFactory;
 
-        public IItemCommandsFactory ItemCommandsFactory
+        public ICommandsFactory ItemCommandsFactory
         {
             get => _itemCommandsFactory;
         }
         
         public BaseFolderCommandsViewModel(IMessageBoxService messageBoxService,
-            IItemCommandsFactory itemCommandsFactory)
+            ICommandsFactory itemCommandsFactory)
             : base(messageBoxService)
         { 
             _itemCommandsFactory = itemCommandsFactory;
         }
 
-        protected async Task ProcessCommand(Action permission, Func<Task<object?>> getData, CommandType type)
+        protected async Task ProcessCommand(Action permission, Func<Task<object?>> getData, CommandType type,
+            LogCategory category)
         {
             try
             {
@@ -38,14 +40,15 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                                    (MessageBoxConstants.Error.Value, ex.Message,
                                    ButtonEnum.Ok), null);
             }
-            ProcessCommandImpl(await getData.Invoke(), type);
+            ProcessCommandImpl(await getData.Invoke(), type, category);
         }
         
-        private void ProcessCommandImpl(object? data, CommandType type)
+        private void ProcessCommandImpl(object? data, CommandType type,
+            LogCategory category)
         {
             if (CanExecuteCommand(data))
             {
-                ExecuteCommand(data, type);
+                ExecuteCommand(data, type, category);
             }
         }
 
@@ -54,9 +57,10 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             return true;
         }
 
-        private void ExecuteCommand(object? data, CommandType type)
+        private void ExecuteCommand(object? data, CommandType type, LogCategory category)
         {
-            ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, type));
+            ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, type),
+                new LoggerDTO(category));
             command.Execute();
         }
     }

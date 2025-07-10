@@ -15,7 +15,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         private readonly IFileManager _fileManager;
 
         public MessageBoxCommandsViewModel(IMessageBoxService messageBoxService,
-            IFileManager fileManager, IItemCommandsFactory itemCommandsFactory)
+            IFileManager fileManager, ICommandsFactory itemCommandsFactory)
             : base(messageBoxService, itemCommandsFactory) 
         { 
             _fileManager = fileManager;

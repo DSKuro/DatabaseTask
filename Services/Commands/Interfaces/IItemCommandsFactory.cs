@@ -1,9 +1,6 @@
-﻿using DatabaseTask.Services.Commands.Info;
-
-namespace DatabaseTask.Services.Commands.Interfaces
+﻿namespace DatabaseTask.Services.Commands.Interfaces
 {
-    public interface IItemCommandsFactory
+    public interface IItemCommandsFactory : ICommandsFactory
     {
-        public ICommand CreateCommand(CommandInfo info);
     }
 }

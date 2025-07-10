@@ -1,7 +1,7 @@
 ﻿using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
 
-namespace DatabaseTask.Services.Commands
+namespace DatabaseTask.Services.Commands.ItemCommands
 {
     public class CopyItemCommand : ICommand
     {

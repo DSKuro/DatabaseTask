@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
@@ -15,7 +16,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 
         public FolderCommandsViewModel(IMessageBoxService messageBoxService,
             IFileManager fileManager,
-            IItemCommandsFactory itemCommandsFactory)
+            ICommandsFactory itemCommandsFactory)
             : base(messageBoxService, itemCommandsFactory)
         {
             _fileManager = fileManager;
@@ -34,7 +35,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         {
             await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
                 async() => await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>(),
-            CommandType.CreateFolder);
+            CommandType.CreateFolder, LogCategory.CreateFolderCategory);
         }
         
         public async Task RenameFolderImpl()

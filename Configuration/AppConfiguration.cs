@@ -2,6 +2,7 @@
 using DatabaseTask.Services.Commands.FilesCommands;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Commands.ItemCommands;
+using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
@@ -96,6 +97,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
             _serviceCollection.AddScoped<ICopyItemOperation, CopyItemOperation>();
+            _serviceCollection.AddTransient<IGetParamsForLog, GetParamsForLog>();
             _serviceCollection.AddScoped<MoveOperationDecorator>();
             _serviceCollection.AddTransient<ICompositeCommandBuilder, CompositeCommandBuilder>();
             _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();

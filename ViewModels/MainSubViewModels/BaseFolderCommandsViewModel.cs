@@ -1,13 +1,12 @@
 ﻿using DatabaseTask.Models;
-using DatabaseTask.Services.Collection;
-using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Info;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia.Enums;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -15,26 +14,28 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
     public class BaseFolderCommandsViewModel : ViewModelMessageBox
     {
         private readonly ICommandsFactory _itemCommandsFactory;
+        private readonly IServiceProvider _serviceProvider;
 
         public ICommandsFactory ItemCommandsFactory
         {
             get => _itemCommandsFactory;
         }
         
-        public BaseFolderCommandsViewModel(IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory)
+        public BaseFolderCommandsViewModel(
+            IMessageBoxService messageBoxService,
+            ICommandsFactory itemCommandsFactory,
+            IServiceProvider serviceProvider)
             : base(messageBoxService)
         { 
             _itemCommandsFactory = itemCommandsFactory;
+            _serviceProvider = serviceProvider;
         }
 
-        protected async Task ProcessCommand(Action permission, Func<Task<object?>> getData, CommandType type,
-            LogCategory category, bool isFirst,
-            params object[] parameters)
+        protected async Task ProcessCommand(LoggerCommandDTO commandData)
         {
             try
             {
-                permission.Invoke();
+                commandData.Permission.Invoke();
             }
             catch (FileManagerOperationsException ex)
             {
@@ -42,37 +43,19 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                                    (MessageBoxConstants.Error.Value, ex.Message,
                                    ButtonEnum.Ok), null);
             }
-            ProcessCommandImpl(await getData.Invoke(), type, category, isFirst, parameters);
+            await ProcessCommandImpl(commandData);
         }
         
-        private void ProcessCommandImpl(object? data, CommandType type,
-            LogCategory category,
-            bool isFirst,
-            params object[] parameters)
+        private async Task ProcessCommandImpl(LoggerCommandDTO commandData)
         {
+            object? data = await commandData.GetDataFunction.Invoke();
             if (CanExecuteCommand(data))
             {
                 object[] newParameters;
-                if (data == null || data is ButtonResult)
-                {
-                    newParameters = parameters;
-                }
-                else
-                {
-                    if (isFirst)
-                    {
-                        newParameters = new object[] { data }.Concat(parameters).ToArray();
-                    }
-                    else
-                    {
-                        newParameters = new object[parameters.Length + 1];
-                        Array.Copy(parameters, newParameters, parameters.Length);
-                        newParameters[parameters.Length] = data;
-                    }
-                }
-                ExecuteCommand(data, type,
-                    category,
-                    newParameters);
+                commandData.Parameters =
+                    ActivatorUtilities.CreateInstance<GetParamsForLog>(_serviceProvider, data, commandData)
+                    .GetParams();
+                ExecuteCommand(data, commandData);
             }
         }
 
@@ -81,11 +64,10 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             return true;
         }
 
-        private void ExecuteCommand(object? data, CommandType type, LogCategory category,
-            object[] parameters)
+        private void ExecuteCommand(object? data, LoggerCommandDTO commandData)
         {
-            ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, type),
-                new LoggerDTO(category, parameters));
+            ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, commandData.Type),
+                new LoggerDTO(commandData.Category, commandData.Parameters));
             command.Execute();
         }
     }

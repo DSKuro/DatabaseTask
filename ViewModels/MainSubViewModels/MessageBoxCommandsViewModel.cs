@@ -7,6 +7,7 @@ using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
 using MsBox.Avalonia.Enums;
+using System;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -16,63 +17,70 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         private readonly IFileManager _fileManager;
 
         public MessageBoxCommandsViewModel(IMessageBoxService messageBoxService,
-            IFileManager fileManager, ICommandsFactory itemCommandsFactory)
-            : base(messageBoxService, itemCommandsFactory) 
+            IFileManager fileManager, ICommandsFactory itemCommandsFactory,
+            IServiceProvider serviceProvider)
+            : base(messageBoxService, itemCommandsFactory, serviceProvider) 
         { 
             _fileManager = fileManager;
         }
 
         public async Task DeleteFolderImpl()
         {
-            await ProcessCommand(_fileManager.FolderPermissions.CanDeleteFolder,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.DeleteItem,
+                _fileManager.FolderPermissions.CanDeleteFolder,
                 async () => await OpenMessageBox(MessageBoxCategory.DeleteFolderMessageBox.Title,
                 MessageBoxCategory.DeleteFolderMessageBox.Content),
-                CommandType.DeleteItem, LogCategory.DeleteFolderCategory,
-                false, (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name);
+                LogCategory.DeleteFolderCategory,
+                false, 
+                (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name));
         }
 
         public async Task CopyFolderImpl()
         {
-            await ProcessCommand(_fileManager.FolderPermissions.CanCopyCatalog,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.CopyItem,
+                _fileManager.FolderPermissions.CanCopyCatalog,
                 async () => await OpenMessageBox(MessageBoxCategory.CopyFolderMessageBox.Title,
                 MessageBoxCategory.CopyFolderMessageBox.Content),
-                CommandType.CopyItem, LogCategory.CopyFolderCategory,
+                LogCategory.CopyFolderCategory,
                 false,
                 (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name,
-                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name);
+                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name));
         }
 
 
         public async Task MoveFileImpl()
         {
-            await ProcessCommand(_fileManager.FilePermissions.CanCopyFile,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.MoveFile, 
+                _fileManager.FilePermissions.CanCopyFile,
                 async () => await OpenMessageBox(MessageBoxCategory.MoveFileMessageBox.Title,
                 MessageBoxCategory.MoveFileMessageBox.Content),
-                CommandType.MoveFile, LogCategory.MoveFileCategory,
+                 LogCategory.MoveFileCategory,
                 false,
                  (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name,
-                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name);
+                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name));
         }
 
         public async Task CopyFileImpl()
         {
-            await ProcessCommand(_fileManager.FilePermissions.CanCopyFile,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.CopyItem, 
+                _fileManager.FilePermissions.CanCopyFile,
                 async () => await OpenMessageBox(MessageBoxCategory.CopyFileMessageBox.Title,
                 MessageBoxCategory.CopyFileMessageBox.Content),
-                CommandType.CopyItem, LogCategory.CopyFileCategory,
+                LogCategory.CopyFileCategory,
                 false,
                 (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name,
-                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name);
+                (_fileManager.TreeView.SelectedNodes[1] as NodeViewModel).Name));
         }
 
         public async Task DeleteFileImpl()
         {
-            await ProcessCommand(_fileManager.FilePermissions.CanDeleteFile,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.DeleteItem,
+                _fileManager.FilePermissions.CanDeleteFile,
                 async () => await OpenMessageBox(MessageBoxCategory.DeleteFileMessageBox.Title,
                 MessageBoxCategory.DeleteFileMessageBox.Content),
-                CommandType.DeleteItem, LogCategory.DeleteFileCategory,
+                LogCategory.DeleteFileCategory,
                 false,
-                (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name);
+                (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name));
         }
 
         private async Task<ButtonResult?> OpenMessageBox(string title, string content)

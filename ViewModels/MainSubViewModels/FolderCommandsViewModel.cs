@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using DatabaseTask.Models;
 using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Interfaces;
@@ -7,6 +8,7 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
+using System;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -17,8 +19,9 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 
         public FolderCommandsViewModel(IMessageBoxService messageBoxService,
             IFileManager fileManager,
-            ICommandsFactory itemCommandsFactory)
-            : base(messageBoxService, itemCommandsFactory)
+            ICommandsFactory itemCommandsFactory,
+            IServiceProvider serviceProvider)
+            : base(messageBoxService, itemCommandsFactory, serviceProvider)
         {
             _fileManager = fileManager;
         }
@@ -34,19 +37,20 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
 
         public async Task CreateFolderImpl()
         {
-            await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
+            await ProcessCommand(new LoggerCommandDTO(CommandType.CreateFolder,
+                _fileManager.FolderPermissions.CanDoOperationOnFolder,
                 async () => await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>(),
-            CommandType.CreateFolder, LogCategory.CreateFolderCategory,
-            true
-            );
+                LogCategory.CreateFolderCategory,
+                true));
         }
         
         public async Task RenameFolderImpl()
         {
-            await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
-               async () => await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>(),
-           CommandType.RenameFolder, LogCategory.RenameFolderCategory,
-           false, (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name);
+            await ProcessCommand(new LoggerCommandDTO(CommandType.RenameFolder,
+                _fileManager.FolderPermissions.CanDoOperationOnFolder,
+                async () => await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>(),
+                LogCategory.RenameFolderCategory,
+                false, (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name));
         }
     }
 }

@@ -6,6 +6,7 @@ using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
 
 namespace DatabaseTask.Services.Commands.ItemCommands
 {
@@ -20,6 +21,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands
 
         public ICommand CreateCommand(CommandInfo info, LoggerDTO data)
         {
+            Debug.WriteLine("Test");
             ICompositeCommandBuilder builder = _serviceProvider.GetRequiredService<ICompositeCommandBuilder>();
             switch (info.CommandType) 
             {

@@ -97,7 +97,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
             _serviceCollection.AddScoped<ICopyItemOperation, CopyItemOperation>();
             _serviceCollection.AddScoped<MoveOperationDecorator>();
-            _serviceCollection.AddScoped<ICompositeCommandBuilder, CompositeCommandBuilder>();
+            _serviceCollection.AddTransient<ICompositeCommandBuilder, CompositeCommandBuilder>();
             _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();
             _serviceCollection.AddScoped<IFileCommandsFactory, FilesCommandsFactory>();
 

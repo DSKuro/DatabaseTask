@@ -6,6 +6,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
+using DatabaseTask.ViewModels.Nodes;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -34,15 +35,18 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         public async Task CreateFolderImpl()
         {
             await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
-                async() => await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>(),
-            CommandType.CreateFolder, LogCategory.CreateFolderCategory);
+                async () => await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>(),
+            CommandType.CreateFolder, LogCategory.CreateFolderCategory,
+            true
+            );
         }
         
         public async Task RenameFolderImpl()
         {
             await ProcessCommand(_fileManager.FolderPermissions.CanDoOperationOnFolder,
                async () => await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>(),
-           CommandType.RenameFolder);
+           CommandType.RenameFolder, LogCategory.RenameFolderCategory,
+           false, (_fileManager.TreeView.SelectedNodes[0] as NodeViewModel).Name);
         }
     }
 }

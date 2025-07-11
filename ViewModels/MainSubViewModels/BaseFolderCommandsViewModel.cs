@@ -7,6 +7,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
 using MsBox.Avalonia.Enums;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainSubViewModels
@@ -28,7 +29,8 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         }
 
         protected async Task ProcessCommand(Action permission, Func<Task<object?>> getData, CommandType type,
-            LogCategory category)
+            LogCategory category, bool isFirst,
+            params object[] parameters)
         {
             try
             {
@@ -40,15 +42,37 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                                    (MessageBoxConstants.Error.Value, ex.Message,
                                    ButtonEnum.Ok), null);
             }
-            ProcessCommandImpl(await getData.Invoke(), type, category);
+            ProcessCommandImpl(await getData.Invoke(), type, category, isFirst, parameters);
         }
         
         private void ProcessCommandImpl(object? data, CommandType type,
-            LogCategory category)
+            LogCategory category,
+            bool isFirst,
+            params object[] parameters)
         {
             if (CanExecuteCommand(data))
             {
-                ExecuteCommand(data, type, category);
+                object[] newParameters;
+                if (data == null || data is ButtonResult)
+                {
+                    newParameters = parameters;
+                }
+                else
+                {
+                    if (isFirst)
+                    {
+                        newParameters = new object[] { data }.Concat(parameters).ToArray();
+                    }
+                    else
+                    {
+                        newParameters = new object[parameters.Length + 1];
+                        Array.Copy(parameters, newParameters, parameters.Length);
+                        newParameters[parameters.Length] = data;
+                    }
+                }
+                ExecuteCommand(data, type,
+                    category,
+                    newParameters);
             }
         }
 
@@ -57,10 +81,11 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             return true;
         }
 
-        private void ExecuteCommand(object? data, CommandType type, LogCategory category)
+        private void ExecuteCommand(object? data, CommandType type, LogCategory category,
+            object[] parameters)
         {
             ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, type),
-                new LoggerDTO(category));
+                new LoggerDTO(category, parameters));
             command.Execute();
         }
     }

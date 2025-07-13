@@ -11,6 +11,8 @@ using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.Services.FilesOperations;
+using DatabaseTask.Services.FilesOperations.Interfaces;
 using DatabaseTask.Services.LoggerOperations;
 using DatabaseTask.Services.LoggerOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
@@ -53,6 +55,7 @@ namespace DatabaseTask.Configuration
             AddVisualTreeView();
             AddLogger();
             AddCommands();
+            AddFilesCommands();
             AddViewModelsAndWindows();
         }
 
@@ -101,8 +104,14 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<MoveOperationDecorator>();
             _serviceCollection.AddTransient<ICompositeCommandBuilder, CompositeCommandBuilder>();
             _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();
-            _serviceCollection.AddScoped<IFileCommandsFactory, FilesCommandsFactory>();
+        }
 
+        private void AddFilesCommands()
+        {
+            _serviceCollection.AddSingleton<IFullPath, FullPath>();
+            _serviceCollection.AddScoped<IFilesOperations, FilesOperations>();
+            _serviceCollection.AddScoped<IFileCommandsFactory, FilesCommandsFactory>();
+            _serviceCollection.AddSingleton<ICommandsHistory, CommandsHistory>();
         }
 
         private void AddViewModelsAndWindows()

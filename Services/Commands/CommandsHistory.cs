@@ -16,5 +16,13 @@ namespace DatabaseTask.Services.Commands
         {
             _commands.Dequeue();
         }
+
+        public void ExecuteAllCommands()
+        {
+            foreach (ICommand command in _commands)
+            {
+                command.Execute();
+            }
+        }
     }
 }

@@ -4,5 +4,6 @@
     {
         public void AddCommand(ICommand command);
         public void RemoveCommand();
+        public void ExecuteAllCommands();
     }
 }

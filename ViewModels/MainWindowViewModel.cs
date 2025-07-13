@@ -2,11 +2,13 @@
 using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.FilesCommands;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -21,7 +23,7 @@ namespace DatabaseTask.ViewModels
         private readonly IMessageBoxCommandsViewModel _messageBoxCommandsViewModel;
         private readonly IFolderCommandsViewModel _folderCommandsViewModel;
 
-        private readonly IFileCommandsFactory _fileCommandsFactory;
+        private readonly ICommandsHistory _commandsHistory;
 
         public ObservableCollection<INode> Nodes { get; set;  }
 
@@ -34,14 +36,15 @@ namespace DatabaseTask.ViewModels
             IOpenDataViewModel openDataViewModel,
             IMessageBoxCommandsViewModel messageBoxCommandsViewModel,
             IFolderCommandsViewModel folderCommandsViewModel,
-            IFileCommandsFactory fileCommandsFactory) : base(messageBoxService)
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
             _openDataViewModel = openDataViewModel;
             _messageBoxCommandsViewModel = messageBoxCommandsViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
-            _fileCommandsFactory = fileCommandsFactory;
+            _commandsHistory = commandsHistory;
         }
 
         [RelayCommand]
@@ -96,6 +99,12 @@ namespace DatabaseTask.ViewModels
         public async Task DeleteFile()
         {
             await _messageBoxCommandsViewModel.DeleteFileImpl();
+        }
+
+        [RelayCommand]
+        public void ApplyChanges()
+        {
+            _commandsHistory.ExecuteAllCommands();
         }
     }
 }

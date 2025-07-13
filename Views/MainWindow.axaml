@@ -160,7 +160,10 @@
 		</Grid>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="6">
-			<Button Classes="ApplyButton" Grid.Column="0">Внести изменения</Button>
+			<Button 
+				Classes="ApplyButton" 
+				Grid.Column="0"
+				Command="{Binding ApplyChangesCommand}">Внести изменения</Button>
 			<Button Grid.Column="1">Отменить</Button>
 		</Grid>
 	</Grid>

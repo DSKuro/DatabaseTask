@@ -4,6 +4,7 @@ using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
+using DatabaseTask.Services.FilesOperations.Interfaces;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
@@ -20,8 +21,13 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         public FolderCommandsViewModel(IMessageBoxService messageBoxService,
             IFileManager fileManager,
             ICommandsFactory itemCommandsFactory,
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory,
+            IFullPath fullPath,
             IServiceProvider serviceProvider)
-            : base(messageBoxService, itemCommandsFactory, serviceProvider)
+            : base(messageBoxService, itemCommandsFactory,
+                  fileCommandsFactory, commandsHistory, fullPath,
+                  serviceProvider)
         {
             _fileManager = fileManager;
         }

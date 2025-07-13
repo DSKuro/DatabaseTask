@@ -4,6 +4,7 @@ using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
+using DatabaseTask.Services.FilesOperations.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia.Enums;
 using System;
@@ -14,6 +15,9 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
     public class BaseFolderCommandsViewModel : ViewModelMessageBox
     {
         private readonly ICommandsFactory _itemCommandsFactory;
+        private readonly IFileCommandsFactory _fileCommandsFactory;
+        private readonly ICommandsHistory _commandsHistory;
+        private readonly IFullPath _fullPath;
         private readonly IServiceProvider _serviceProvider;
 
         public ICommandsFactory ItemCommandsFactory
@@ -24,10 +28,16 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         public BaseFolderCommandsViewModel(
             IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory,
+            IFullPath fullPath,
             IServiceProvider serviceProvider)
             : base(messageBoxService)
         { 
             _itemCommandsFactory = itemCommandsFactory;
+            _fileCommandsFactory = fileCommandsFactory;
+            _commandsHistory = commandsHistory;
+            _fullPath = fullPath;
             _serviceProvider = serviceProvider;
         }
 
@@ -56,6 +66,7 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
                     ActivatorUtilities.CreateInstance<GetParamsForLog>(_serviceProvider, data, commandData)
                     .GetParams();
                 ExecuteCommand(data, commandData);
+                AddCommandToHistory(data, commandData);
             }
         }
 
@@ -69,6 +80,12 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
             ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(data, commandData.Type),
                 new LoggerDTO(commandData.Category, commandData.Parameters));
             command.Execute();
+        }
+
+        private void AddCommandToHistory(object? data, LoggerCommandDTO commandData)
+        {
+            ICommand command = _fileCommandsFactory.CreateCommand(new CommandInfo(_fullPath.GetFullpath((string)data), commandData.Type));
+            _commandsHistory.AddCommand(command);
         }
     }
 }

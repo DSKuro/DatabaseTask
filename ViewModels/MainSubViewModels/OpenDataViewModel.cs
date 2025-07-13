@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.Services.FilesOperations.Interfaces;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
@@ -18,14 +19,17 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
     {
         private readonly IStorageService _storageService;
         private readonly IFileManager _fileManager;
+        private readonly IFullPath _fullPath;
 
         public OpenDataViewModel(IMessageBoxService messageBoxService,
             IStorageService storageService,
-            IFileManager fileManager)
+            IFileManager fileManager,
+            IFullPath fullPath)
             : base(messageBoxService)
         {
             _storageService = storageService;
             _fileManager = fileManager;
+            _fullPath = fullPath;
         }
 
         public async Task<IEnumerable<IStorageFile>> ChooseDbFile()
@@ -60,6 +64,10 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         public async Task OpenFolder()
         {
             IEnumerable<IStorageFolder> folders = await ChooseMainFolder();
+            foreach (IStorageFolder folder in folders)
+            {
+                _fullPath.PathToCoreFolder = folder.Path.AbsolutePath;   
+            }
             await _fileManager.GetCollectionFromFolders(folders);
         }
 

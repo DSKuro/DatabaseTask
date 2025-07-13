@@ -3,6 +3,7 @@ using DatabaseTask.Services.Collection;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
+using DatabaseTask.Services.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.FileManager.Interfaces;
 using DatabaseTask.ViewModels.Interfaces;
 using DatabaseTask.ViewModels.Nodes;
@@ -17,9 +18,14 @@ namespace DatabaseTask.ViewModels.MainSubViewModels
         private readonly IFileManager _fileManager;
 
         public MessageBoxCommandsViewModel(IMessageBoxService messageBoxService,
-            IFileManager fileManager, ICommandsFactory itemCommandsFactory,
+            IFileManager fileManager,
+            ICommandsFactory itemCommandsFactory,
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory,
+            IFullPath fullPath,
             IServiceProvider serviceProvider)
-            : base(messageBoxService, itemCommandsFactory, serviceProvider) 
+            : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
+                  commandsHistory, fullPath, serviceProvider) 
         { 
             _fileManager = fileManager;
         }

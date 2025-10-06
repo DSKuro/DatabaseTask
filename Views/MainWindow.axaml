@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:DatabaseTask.ViewModels"
+        xmlns:vm="using:DatabaseTask.ViewModels.MainViewModel"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
@@ -42,13 +42,13 @@
 					  SelectionMode="Multiple" 
 					  ItemsSource="{Binding FileManager.TreeView.Nodes}" Height="250">
 				<TreeView.Styles>
-						<Style Selector="TreeViewItem" x:DataType="vm:Nodes.NodeViewModel">
+						<Style Selector="TreeViewItem" x:DataType="vm:Controls.Nodes.NodeViewModel">
 							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
 							<Setter Property="ContextMenu" Value="{DynamicResource TreeViewItemContextMenu}"/>
 						</Style>
 				</TreeView.Styles>
 				<TreeView.ItemTemplate>
-					<TreeDataTemplate x:DataType="vm:Nodes.NodeViewModel" ItemsSource="{Binding Children}">
+					<TreeDataTemplate x:DataType="vm:Controls.Nodes.NodeViewModel" ItemsSource="{Binding Children}">
 						<StackPanel Orientation="Horizontal" Spacing="5">
 							<Svg Path="{Binding IconPath}" Css="{DynamicResource SvgFill}"/>
 							<TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>

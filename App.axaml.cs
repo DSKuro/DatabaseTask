@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 using DatabaseTask.Configuration;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.Views;
 using Microsoft.Extensions.DependencyInjection;
 

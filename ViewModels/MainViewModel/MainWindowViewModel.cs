@@ -9,7 +9,7 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels
+namespace DatabaseTask.ViewModels.MainViewModel
 {
     public partial class MainWindowViewModel : ViewModelMessageBox
     {

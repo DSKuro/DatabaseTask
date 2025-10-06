@@ -20,6 +20,7 @@ using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Logger;
 using DatabaseTask.ViewModels.Logger.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager;

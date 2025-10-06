@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using DatabaseTask.Models;
+using DatabaseTask.Models.StorageOptions;
 using DatabaseTask.Services.Dialogues.Base;
 using System.Collections.Generic;
 using System.Threading.Tasks;

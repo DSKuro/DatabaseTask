@@ -1,6 +1,6 @@
 ﻿using DatabaseTask.Services.FilesOperations.Interfaces;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 
 namespace DatabaseTask.Services.FilesOperations
 {
@@ -8,17 +8,17 @@ namespace DatabaseTask.Services.FilesOperations
     {
         private readonly ITreeView _treeView;
 
+        public string? PathToCoreFolder { get; set; }
+
         public FullPath(ITreeView treeView)
         {
             _treeView = treeView;
         }
 
-        public string PathToCoreFolder { get; set; }
-
         public string GetFullpath(string pathToItem)
         {
-            string fullPath = PathToCoreFolder;
-            NodeViewModel node = _treeView.SelectedNodes[0] as NodeViewModel;
+            string fullPath = PathToCoreFolder ?? "";
+            NodeViewModel? node = _treeView.SelectedNodes[0] as NodeViewModel;
             while (node != null)
             {
                 fullPath += "/" + node.Name;

@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 
 namespace DatabaseTask.Models
 {

@@ -1,9 +1,9 @@
 ﻿using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
-using DatabaseTask.ViewModels.DataGrid.Interfaces;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView.EventArguments;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using ExCSS;
 using System;
 using System.Collections.Generic;

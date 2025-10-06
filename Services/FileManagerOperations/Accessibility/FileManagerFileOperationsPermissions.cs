@@ -1,8 +1,7 @@
 ﻿using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.FileManagerOperations.Exceptions;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
-using System.Linq;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 
 namespace DatabaseTask.Services.FileManagerOperations.Accessibility
 { 

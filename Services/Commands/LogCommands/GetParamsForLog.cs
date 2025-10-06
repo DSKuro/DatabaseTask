@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Models;
+﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Interfaces;
 using MsBox.Avalonia.Enums;
 using System;

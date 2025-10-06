@@ -1,8 +1,8 @@
 ﻿using DatabaseTask.Models;
 using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
-using DatabaseTask.ViewModels.DataGrid.Interfaces;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
 

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Platform.Storage;
-using DatabaseTask.Models;
+using DatabaseTask.Models.StorageOptions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

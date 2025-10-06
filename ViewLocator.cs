@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.Base;
 
 namespace DatabaseTask
 {

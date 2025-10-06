@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.TreeViewItemLogic

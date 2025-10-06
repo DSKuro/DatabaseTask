@@ -18,17 +18,18 @@ using DatabaseTask.Services.LoggerOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
-using DatabaseTask.ViewModels.DataGrid;
-using DatabaseTask.ViewModels.DataGrid.Interfaces;
-using DatabaseTask.ViewModels.FileManager;
-using DatabaseTask.ViewModels.FileManager.Interfaces;
-using DatabaseTask.ViewModels.Interfaces;
 using DatabaseTask.ViewModels.Logger;
 using DatabaseTask.ViewModels.Logger.Interfaces;
-using DatabaseTask.ViewModels.MainSubViewModels;
-using DatabaseTask.ViewModels.Nodes;
-using DatabaseTask.ViewModels.TreeView;
-using DatabaseTask.ViewModels.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager;
+using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DatabaseTask.Configuration

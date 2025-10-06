@@ -4,7 +4,7 @@ using Avalonia.VisualTree;
 using DatabaseTask.Services.Interactions;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
-using DatabaseTask.ViewModels.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
 
 namespace DatabaseTask.Services.TreeViewItemLogic

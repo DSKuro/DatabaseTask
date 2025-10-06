@@ -1,14 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using DatabaseTask.Services.Collection;
-using DatabaseTask.Services.Commands.FilesCommands;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Dialogues.MessageBox;
-using DatabaseTask.ViewModels.FileManager.Interfaces;
-using DatabaseTask.ViewModels.Interfaces;
+using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
-using DatabaseTask.ViewModels.Nodes;
-using Microsoft.EntityFrameworkCore;
+using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 

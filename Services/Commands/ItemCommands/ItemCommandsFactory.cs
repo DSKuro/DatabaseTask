@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Models;
+﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Enum;
 using DatabaseTask.Services.Commands.Info;
 using DatabaseTask.Services.Commands.Interfaces;

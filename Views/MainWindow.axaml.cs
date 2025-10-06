@@ -7,7 +7,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
-using DatabaseTask.ViewModels.TreeView.EventArguments;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Transactions;

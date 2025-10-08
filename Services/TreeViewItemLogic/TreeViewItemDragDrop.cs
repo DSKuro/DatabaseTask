@@ -5,6 +5,7 @@ using DatabaseTask.Services.Interactions;
 using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.UI.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;

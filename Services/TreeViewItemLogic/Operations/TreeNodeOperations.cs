@@ -1,48 +1,60 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using DatabaseTask.Models;
 using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel;
+using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.Services.TreeViewItemLogic
+namespace DatabaseTask.Services.TreeViewItemLogic.Operations
 {
     public class TreeNodeOperations : ITreeNodeOperations
     {
         private readonly ITreeViewData _treeViewData;
+        private readonly ITreeView _treeView;
+        private readonly IDataGrid _dataGrid;
         private readonly ITreeViewControlsHelper _helper;
-        private readonly MainWindowViewModel _viewModel;
 
-        private List<NodeViewModel?> _sortedFolders;
-        private List<NodeViewModel?> _sortedFiles;
+        private List<NodeViewModel> _sortedFolders;
+        private List<NodeViewModel> _sortedFiles;
 
         public TreeNodeOperations(
             ITreeViewData treeViewData,
-            ITreeViewControlsHelper helper,
-            MainWindowViewModel viewModel)
+            ITreeView treeView,
+            IDataGrid dataGrid,
+            ITreeViewControlsHelper helper)
         {
             _treeViewData = treeViewData;
+            _treeView = treeView;
+            _dataGrid = dataGrid;
             _helper = helper;
-            _viewModel = viewModel;
+            _sortedFiles = new List<NodeViewModel>();
+            _sortedFolders = new List<NodeViewModel>(); 
         }
 
         public bool CanDrop(INode target)
         {
-            foreach (INode item in _viewModel.FileManager.TreeView.SelectedNodes)
+            foreach (INode item in _treeView.SelectedNodes)
             {
                 if (item == target)
                 {
                     return false;
                 }
 
-                NodeViewModel node = target as NodeViewModel;
+                NodeViewModel? node = target as NodeViewModel;
+
+                if (node == null)
+                {
+                    return false;
+                }
 
                 if (!(IsTargetAboveSource(item, target) && node.IsFolder && item.Parent != target))
                 {
@@ -55,7 +67,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         private bool IsTargetAboveSource(INode source, INode target)
         {
-            INode parent = target.Parent;
+            INode? parent = target.Parent;
             while (parent != null)
             {
                 if (parent == source)
@@ -80,17 +92,18 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         private (bool, bool) IsOverrideTopOrDownZone()
         {
-            bool isInBottomZone = _treeViewData.DragStartPosition.Y >
-                (_treeViewData.Control.Bounds.Height - _treeViewData.DraggedItemView.Bounds.Height - 5);
-            bool isInTopZone = _treeViewData.DragStartPosition.Y <
-                _treeViewData.DraggedItemView.Bounds.Height - 5;
+            double startPosition = _treeViewData.DragStartPosition.Y;
+            double itemHeight = _treeViewData.DraggedItemView.Bounds.Height;
+            double controlHeight = _treeViewData.Control.Bounds.Height;
+            bool isInBottomZone = startPosition > controlHeight - itemHeight - 5;
+            bool isInTopZone = startPosition < itemHeight - 5;
             return (isInBottomZone, isInTopZone);
         }
 
         private void Scroll(bool isInTopZone)
         {
             double newOffset = _treeViewData.ScrollViewer.Offset.Y +
-                (_treeViewData.DraggedItemView.Bounds.Height * (isInTopZone ? -1 : 1));
+                _treeViewData.DraggedItemView.Bounds.Height * (isInTopZone ? -1 : 1);
             newOffset = Math.Clamp(newOffset, 0, _treeViewData.ScrollViewer.ScrollBarMaximum.Y);
             _treeViewData.ScrollViewer.Offset = new Vector(_treeViewData.ScrollViewer.Offset.X, newOffset);
         }
@@ -98,12 +111,15 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         public void BringIntoView(INode item)
         {
             TreeViewItem? treeItem = _helper.GetVisualForData(item);
-            treeItem.BringIntoView();
+            if (treeItem != null)
+            {
+                treeItem.BringIntoView();
+            }
         }
 
         public async void DragItem(INode item, DragEventArgs args)
         {
-            List<INode> nodes = _viewModel.FileManager.TreeView.SelectedNodes.ToList();
+            List<INode> nodes = _treeView.SelectedNodes.ToList();
             PlaceNode(nodes, item);
             GetSortedCategories(item);
             FillNodes(item, nodes);
@@ -115,19 +131,28 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         {
             for (int i = 0; i < nodes.Count; i++)
             {
-                if (nodes[i].Parent != null)
+                INode? parent = nodes[i].Parent;
+                if (parent != null)
                 {
-                    nodes[i].Parent.Children.Remove(nodes[i]);
+                    parent.Children.Remove(nodes[i]);
                 }
                 else
                 {
-                    _viewModel.FileManager.TreeView.Nodes.Remove(nodes[i]);
+                    _treeView.Nodes.Remove(nodes[i]);
                 }
                 targetNode.Children.Add(nodes[i]);
-                _viewModel.FileManager.DataGrid.SavedFilesProperties
-                    .Find(x => x.Node == nodes[i]).Node.Parent = targetNode;
-                nodes[i].Parent = targetNode;
-                nodes[i].Parent.IsExpanded = true;
+                FileProperties? elem = _dataGrid.SavedFilesProperties
+                    .Find(x => x.Node == nodes[i]);
+                if (elem != null)
+                {
+                    elem.Node.Parent = targetNode;
+                    parent = targetNode;
+                    if (parent != null)
+                    {
+                        parent.IsExpanded = true;
+                    }
+                }
+
             }
         }
 
@@ -144,7 +169,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             targetNode.Children.Clear();
             targetNode.Children.AddRange(_sortedFolders);
             targetNode.Children.AddRange(_sortedFiles);
-            _viewModel.FileManager.TreeView.SelectedNodes.AddRange(nodes);
+            _treeView.SelectedNodes.AddRange(nodes);
         }
     }
 }

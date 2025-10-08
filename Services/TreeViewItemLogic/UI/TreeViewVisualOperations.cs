@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using DatabaseTask.Services.Interactions.Interfaces.InteractionData;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.UI.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
@@ -14,11 +15,13 @@ namespace DatabaseTask.Services.TreeViewItemLogic.UI
         private string _style;
         private DragEventArgs _args;
 
-        private ITreeViewData _treeViewData;
+        private IInteractionData _data;
+        private ITreeViewDragVisual _visual;
 
         public TreeViewVisualOperations(ITreeViewData treeViewData)
         {
-            _treeViewData = treeViewData;
+            _data = treeViewData;
+            _visual = treeViewData;
             _style = "";
             _args = null!;
         }
@@ -44,13 +47,13 @@ namespace DatabaseTask.Services.TreeViewItemLogic.UI
 
         private Visual? GetContainer()
         {
-            Point positionInTree = _args.GetPosition(_treeViewData.Control);
+            Point positionInTree = _args.GetPosition(_data.Control);
             return GetVisualAtPosition(positionInTree);
         }
 
         private TreeViewItem? GetVisualAtPosition(Point point)
         {
-            IEnumerable<Visual> visuals = _treeViewData.Control.GetVisualsAt(point);
+            IEnumerable<Visual> visuals = _data.Control.GetVisualsAt(point);
             return GetVisualImpl(visuals);
         }
 
@@ -83,10 +86,9 @@ namespace DatabaseTask.Services.TreeViewItemLogic.UI
             }
         }
 
-        // ?
         public void ClearDropHighlight(string style)
         {
-            _treeViewData.DraggedItemView.Classes.Remove(style);
+            _visual.DraggedItemView.Classes.Remove(style);
         }
     }
 }

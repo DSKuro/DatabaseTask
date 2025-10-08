@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
 using System;
 
 namespace DatabaseTask.Services.TreeViewItemLogic

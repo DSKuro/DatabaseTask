@@ -14,7 +14,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic.InteractionData
         public double TreeViewItemHeight { get; set; }
         public string DataFormat { get; set; } = "NODE";
         public Point DragStartPosition { get; set; }
-        public Visual DraggedItemView { get; set; }
+        public Visual DraggedItemView { get; set; } = null!;
         public Visual Window { get; set; }
         public Visual Control { get; set; } = null!;
         public ScrollViewer ScrollViewer { get; set; }

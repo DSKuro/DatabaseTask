@@ -37,6 +37,8 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using DatabaseTask.Services.TreeViewItemLogic.Operations;
+using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
 
 namespace DatabaseTask.Configuration
 {

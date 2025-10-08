@@ -3,7 +3,7 @@ using DatabaseTask.Services.Interactions.Interfaces.InteractionData;
 
 namespace DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces
 {
-    public interface ITreeViewData : IScrolledInteractionData
+    public interface ITreeViewData : IScrolledInteractionData, ITreeViewDragVisual
     {
         public bool IsDragging { get; set; }
         public bool IsPressed { get; set; }
@@ -11,6 +11,5 @@ namespace DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces
         public double TreeViewItemHeight { get; set; }
         public string DataFormat { get; set; }
         public Point DragStartPosition { get; set; }
-        public Visual DraggedItemView { get; set; }
     }
 }

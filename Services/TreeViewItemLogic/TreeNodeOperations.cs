@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;

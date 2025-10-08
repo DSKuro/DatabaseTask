@@ -2,34 +2,39 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.Services.Interactions.Interfaces.InteractionData;
+using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;  
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.TreeViewItemLogic
 {
     public class TreeViewControlsHelper : ITreeViewControlsHelper
     {
-        private readonly ITreeViewData _treeViewData;
+        private readonly IInteractionData _data;
 
-        public TreeViewControlsHelper(ITreeViewData treeViewData)
+        public TreeViewControlsHelper(ITreeViewData data)
         {
-            _treeViewData = treeViewData;
+            _data = data;
         }
 
-        public INode GetDataFromRoutedControl(RoutedEventArgs e) 
-        { 
+        public INode? GetDataFromRoutedControl(RoutedEventArgs e)
+        {
             if (e.Source is Control control)
             {
-                TreeViewItem item = control.FindAncestorOfType<TreeViewItem>();
-                return item.DataContext as INode; 
+                TreeViewItem? item = control.FindAncestorOfType<TreeViewItem>();
+                if (item != null)
+                {
+                    return item.DataContext as INode;
+                }
             }
             return null;
         }
 
-        public TreeViewItem GetVisualForData(INode data)
+        public TreeViewItem? GetVisualForData(INode data)
         {
-            return FindTreeViewItemRecursive(_treeViewData.Control, data);
+            return FindTreeViewItemRecursive(_data.Control, data);
         }
 
         private TreeViewItem? FindTreeViewItemRecursive(Visual parent, INode node)

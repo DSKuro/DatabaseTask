@@ -2,11 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.UI.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
 
-namespace DatabaseTask.Services.TreeViewItemLogic
+namespace DatabaseTask.Services.TreeViewItemLogic.UI
 {
     public class TreeViewVisualOperations : ITreeViewVisualOperations
     {
@@ -18,14 +19,16 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         public TreeViewVisualOperations(ITreeViewData treeViewData)
         {
             _treeViewData = treeViewData;
+            _style = "";
+            _args = null!;
         }
 
         public void SetDropHighlight(DragEventArgs args, string style)
         {
             SetVariables(args, style);
-            Visual container = GetContainer();
+            Visual? container = GetContainer();
 
-            if (container == null || container.DataContext is not INode targetNode)
+            if (container == null || container.DataContext is not INode)
             {
                 return;
             }
@@ -39,19 +42,19 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             _style = style;
         }
 
-        private Visual GetContainer()
+        private Visual? GetContainer()
         {
             Point positionInTree = _args.GetPosition(_treeViewData.Control);
             return GetVisualAtPosition(positionInTree);
         }
 
-        private TreeViewItem GetVisualAtPosition(Point point)
+        private TreeViewItem? GetVisualAtPosition(Point point)
         {
             IEnumerable<Visual> visuals = _treeViewData.Control.GetVisualsAt(point);
             return GetVisualImpl(visuals);
         }
 
-        private TreeViewItem GetVisualImpl(IEnumerable<Visual> visuals)
+        private TreeViewItem? GetVisualImpl(IEnumerable<Visual> visuals)
         {
             foreach (Visual visual in visuals)
             {
@@ -60,7 +63,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
                     return item;
                 }
 
-                TreeViewItem parent = visual.FindAncestorOfType<TreeViewItem>();
+                TreeViewItem? parent = visual.FindAncestorOfType<TreeViewItem>();
                 if (parent != null)
                 {
                     return parent;
@@ -80,6 +83,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
             }
         }
 
+        // ?
         public void ClearDropHighlight(string style)
         {
             _treeViewData.DraggedItemView.Classes.Remove(style);

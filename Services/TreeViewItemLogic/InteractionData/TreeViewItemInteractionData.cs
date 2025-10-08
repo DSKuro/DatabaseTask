@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 
-namespace DatabaseTask.Services.TreeViewItemLogic
+namespace DatabaseTask.Services.TreeViewItemLogic.InteractionData
 {
     public class TreeViewItemInteractionData : ITreeViewData
     {
@@ -16,7 +16,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         public Point DragStartPosition { get; set; }
         public Visual DraggedItemView { get; set; }
         public Visual Window { get; set; }
-        public Visual Control { get; set; }
+        public Visual Control { get; set; } = null!;
         public ScrollViewer ScrollViewer { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Avalonia;
-using DatabaseTask.Services.Interactions.Interfaces;
+using DatabaseTask.Services.Interactions.Interfaces.InteractionData;
 
-namespace DatabaseTask.Services.TreeViewItemLogic.Interfaces
+namespace DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces
 {
     public interface ITreeViewData : IScrolledInteractionData
     {

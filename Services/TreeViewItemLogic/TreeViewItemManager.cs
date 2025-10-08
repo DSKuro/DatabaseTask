@@ -3,8 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
 using System;
 
 namespace DatabaseTask.Services.TreeViewItemLogic
@@ -13,24 +14,30 @@ namespace DatabaseTask.Services.TreeViewItemLogic
     {
         private readonly ITreeViewItemInteractions _treeViewInteractions;
         private readonly ITreeViewItemDragDrop _treeViewDragDrop;
-        private readonly ITreeNodeOperations _treeNodeOperations;
-
-        public ITreeViewData TreeViewItemInteractionData { get; }
-        public ITreeNodeOperations TreeNodeOperations { get => _treeNodeOperations; }
+        private readonly ITreeViewData _treeViewItemInteractionData;
 
         public EventHandler<ContainerPreparedEventArgs> ContainerPreparedEvent { get; }
 
         public TreeViewItemManager(
             ITreeViewItemInteractions treeViewInteractions,
             ITreeViewItemDragDrop treeViewDragDrop,
-            ITreeViewData treeViewItemInteractionData,
-            ITreeNodeOperations treeNodeOperations)
+            ITreeViewData treeViewItemInteractionData)
         {
             _treeViewInteractions = treeViewInteractions;
             _treeViewDragDrop = treeViewDragDrop;
-            TreeViewItemInteractionData = treeViewItemInteractionData;
+            _treeViewItemInteractionData = treeViewItemInteractionData;
             ContainerPreparedEvent += OnContainerPrepared;
-            _treeNodeOperations = treeNodeOperations;
+        }
+
+        public void Initialize(TreeView control, Window window)
+        {
+            _treeViewItemInteractionData.Control = control;
+            _treeViewItemInteractionData.Window = window;
+        }
+
+        public void InitializeScrollViewer(ScrollViewer scroll)
+        {
+            _treeViewItemInteractionData.ScrollViewer = scroll;
         }
 
         private void OnContainerPrepared(object? sender, ContainerPreparedEventArgs e)

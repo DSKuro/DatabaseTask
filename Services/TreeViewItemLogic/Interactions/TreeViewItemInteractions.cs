@@ -3,13 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using DatabaseTask.Services.Interactions;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
 
-namespace DatabaseTask.Services.TreeViewItemLogic
+namespace DatabaseTask.Services.TreeViewItemLogic.Interactions
 {
-    internal class TreeViewItemInteractions : BaseElementInteractionHandlers, ITreeViewItemInteractions
+    public class TreeViewItemInteractions : BaseElementInteractionHandlers, ITreeViewItemInteractions
     {
 
         private readonly ITreeViewData _data;
@@ -73,7 +73,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         private void OnPointerMovedOverThreshold(PointerEventArgs e)
         {
             DataObject data = new DataObject();
-            data.Set(_data.DataFormat, null);
+            data.Set(_data.DataFormat, e.Route);
             DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
             _data.IsDragging = false;
             _data.IsPressed = false;

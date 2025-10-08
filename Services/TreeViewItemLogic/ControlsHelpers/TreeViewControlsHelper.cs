@@ -12,7 +12,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 {
     public class TreeViewControlsHelper : ITreeViewControlsHelper
     {
-        private readonly IInteractionData _data;
+        private readonly IControlData _data;
 
         public TreeViewControlsHelper(ITreeViewData data)
         {

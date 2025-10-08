@@ -3,15 +3,14 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.Interactions;
 using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.UI.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
 
-namespace DatabaseTask.Services.TreeViewItemLogic
+namespace DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop
 {
     public class TreeViewItemDragDrop : BaseDragDropHandlers, ITreeViewItemDragDrop
     {
@@ -19,36 +18,37 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         private readonly ITreeViewControlsHelper _controlsHelper;
         private readonly ITreeNodeOperations _nodeOperations;
         private readonly ITreeViewVisualOperations _visualOperations;
-        private readonly MainWindowViewModel _viewModel;
 
         public EventHandler<DragEventArgs> DragEnterEvent { get; }
         public EventHandler<DragEventArgs> DragLeaveEvent { get; }
         public EventHandler<DragEventArgs> DragOverEvent { get; }
         public EventHandler<DragEventArgs> DropEvent { get; }
 
-        public TreeViewItemDragDrop(ITreeViewData data, 
+        public TreeViewItemDragDrop(
+            ITreeViewData data, 
             ITreeViewControlsHelper controlsHelper, 
             ITreeNodeOperations nodeOperations,
-            ITreeViewVisualOperations visualOperations,
-            MainWindowViewModel viewModel)
+            ITreeViewVisualOperations visualOperations)
         {
             _data = data;
             _controlsHelper = controlsHelper;
             _nodeOperations = nodeOperations;
             _visualOperations = visualOperations;
-            _viewModel = viewModel;
             DragEnterEvent += OnDragEnter;
             DragLeaveEvent += OnDragLeave;
             DragOverEvent += OnDragOver;
             DropEvent += OnDrop;
         }
+
         protected override void OnDragEnter(object? sender, DragEventArgs e)
         {
-            Control control = e.Source as Control;
+            Control? control = e.Source as Control;
+
             if (control != null)
             {
-                _data.DraggedItemView = control.FindAncestorOfType<TreeViewItem>();
+                 _data.DraggedItemView = control.FindAncestorOfType<TreeViewItem>();
             }
+
             if (_controlsHelper.GetDataFromRoutedControl(e) is INode targetNode &&
                 e.Data.Contains(_data.DataFormat))
             {
@@ -57,7 +57,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         }
 
         private void OnDragEnterImpl(object? sender,
-            Control control,
+            Control? control,
             INode targetNode,
             DragEventArgs e)
         {
@@ -120,7 +120,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic
 
         protected override void OnDrop(object? sender, DragEventArgs e)
         {
-            INode targetNode = _controlsHelper.GetDataFromRoutedControl(e);
+            INode? targetNode = _controlsHelper.GetDataFromRoutedControl(e);
             if (targetNode == null ||
                 !e.Data.Contains(_data.DataFormat))
             {
@@ -161,7 +161,10 @@ namespace DatabaseTask.Services.TreeViewItemLogic
         private void SetData()
         {
             ResetData();
-            _data.DraggedItemView.Classes.Remove("drop");
+            if (_data.DraggedItemView != null)
+            {
+                _data.DraggedItemView.Classes.Remove("drop");
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DatabaseTask.Services.Interactions.Interfaces
+namespace DatabaseTask.Services.Interactions.Interfaces.Operations
 {
     public interface IItemOperations<T, V> where V : EventArgs
     {

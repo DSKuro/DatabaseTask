@@ -92,8 +92,14 @@ namespace DatabaseTask.Services.TreeViewItemLogic.Operations
 
         private (bool, bool) IsOverrideTopOrDownZone()
         {
+            Visual? itemView = _treeViewData.DraggedItemView;
+            if (itemView == null)
+            {
+                return (false, false);
+            }
+
             double startPosition = _treeViewData.DragStartPosition.Y;
-            double itemHeight = _treeViewData.DraggedItemView.Bounds.Height;
+            double itemHeight = itemView.Bounds.Height;
             double controlHeight = _treeViewData.Control.Bounds.Height;
             bool isInBottomZone = startPosition > controlHeight - itemHeight - 5;
             bool isInTopZone = startPosition < itemHeight - 5;
@@ -102,8 +108,14 @@ namespace DatabaseTask.Services.TreeViewItemLogic.Operations
 
         private void Scroll(bool isInTopZone)
         {
+            Visual? itemView = _treeViewData.DraggedItemView;
+            if (itemView == null)
+            {
+                return;
+            }
+
             double newOffset = _treeViewData.ScrollViewer.Offset.Y +
-                _treeViewData.DraggedItemView.Bounds.Height * (isInTopZone ? -1 : 1);
+                itemView.Bounds.Height * (isInTopZone ? -1 : 1);
             newOffset = Math.Clamp(newOffset, 0, _treeViewData.ScrollViewer.ScrollBarMaximum.Y);
             _treeViewData.ScrollViewer.Offset = new Vector(_treeViewData.ScrollViewer.Offset.X, newOffset);
         }

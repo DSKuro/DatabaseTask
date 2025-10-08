@@ -1,14 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
-using DatabaseTask.ViewModels.MainViewModel;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -16,49 +12,19 @@ namespace DatabaseTask.Views
 {
     public partial class MainWindow : Window
     {
-        private readonly ITreeViewItemManager _treeViewManager;
+        private readonly ITreeViewInitializer _treeViewInitializer;
         private readonly IServiceProvider _serviceProvider;
 
-        public MainWindow(ITreeViewItemManager treeViewItemManager,
+        public MainWindow(ITreeViewInitializer treeViewInitializer,
             IMessageBoxService messageBoxService,
             IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
-            _treeViewManager = treeViewItemManager;
+            _treeViewInitializer = treeViewInitializer;
             _serviceProvider = serviceProvider;
-            InitializeTree();
+            _treeViewInitializer.Initialize(TreeViewControl, this);
             InitializeMessages();
-        }
-
-        private void InitializeTree()
-        {
-            _treeViewManager.TreeViewItemInteractionData.Control = TreeViewControl;
-            _treeViewManager.TreeViewItemInteractionData.Window = this;
-            InitializeTreeEvents();
-        }
-
-        private void InitializeTreeEvents()
-        {
-            TreeViewControl.Loaded += (object? sender, RoutedEventArgs e) =>
-            {
-                _treeViewManager.TreeViewItemInteractionData.ScrollViewer = TreeViewControl.FindDescendantOfType<ScrollViewer>();
-            };
-
-            TreeViewControl.ContainerPrepared += (object? sender, ContainerPreparedEventArgs e) =>
-            {
-                _treeViewManager.ContainerPreparedEvent?.Invoke(this, e);
-            };
-
-            TreeViewControl.SelectionChanged += (object? sender, SelectionChangedEventArgs e) =>
-            {
-                ((MainWindowViewModel)DataContext).FileManager.TreeView.SelectionChanged?.Invoke(this, e);
-            };
-        }
-
-        private void OnScrollChanged(object? sender, TreeViewEventArgs e)
-        {
-            _treeViewManager.TreeNodeOperations.BringIntoView(e.Node);
         }
 
         private void InitializeMessages()
@@ -108,13 +74,6 @@ namespace DatabaseTask.Views
             window.DataContext = _serviceProvider.GetRequiredService<FolderOperationWindowViewModel>();
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             return window;
-        }
-
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
-
-            ((MainWindowViewModel)DataContext).FileManager.TreeView.ScrollChanged += OnScrollChanged;
         }
     }
 }

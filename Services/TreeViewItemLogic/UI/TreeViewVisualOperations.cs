@@ -15,7 +15,7 @@ namespace DatabaseTask.Services.TreeViewItemLogic.UI
         private string _style;
         private DragEventArgs _args;
 
-        private IInteractionData _data;
+        private IControlData _data;
         private ITreeViewDragVisual _visual;
 
         public TreeViewVisualOperations(ITreeViewData treeViewData)
@@ -88,7 +88,13 @@ namespace DatabaseTask.Services.TreeViewItemLogic.UI
 
         public void ClearDropHighlight(string style)
         {
-            _visual.DraggedItemView.Classes.Remove(style);
+            Visual? itemView = _visual.DraggedItemView;
+            if (itemView == null)
+            {
+                return;
+            }
+
+            itemView.Classes.Remove(style);
         }
     }
 }

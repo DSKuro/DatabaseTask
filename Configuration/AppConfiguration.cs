@@ -39,6 +39,10 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using DatabaseTask.Services.TreeViewItemLogic.Operations;
 using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop;
+using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
+using DatabaseTask.Services.TreeViewItemLogic.Interactions;
 
 namespace DatabaseTask.Configuration
 {
@@ -94,7 +98,8 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             _serviceCollection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             _serviceCollection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
-            _serviceCollection.AddTransient<ITreeViewItemManager, TreeViewItemManager>();
+            _serviceCollection.AddScoped<ITreeViewItemManager, TreeViewItemManager>();
+            _serviceCollection.AddScoped<ITreeViewInitializer, TreeViewInitializer>();
         }
 
         private void AddLogger()

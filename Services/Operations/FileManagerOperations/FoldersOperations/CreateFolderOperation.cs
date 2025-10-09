@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
@@ -71,7 +72,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (index > 0)
             {
                 _dataGrid.SavedFilesProperties.Insert(index + nodeIndex, 
-                    new Models.FileProperties
+                    new FileProperties
                     (   
                         node.Name,
                         "",

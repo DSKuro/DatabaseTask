@@ -12,17 +12,17 @@ public partial class FolderOperationWindow : Window
     public FolderOperationWindow()
     {
         InitializeComponent();
-
+        Watermark = "";
         InitializeMessages();
     }
 
     private void InitializeMessages()
     {
         WeakReferenceMessenger.Default.Register<FolderOperationWindow, DialogueWindowCloseMessage>(this,
-            (window, message) =>
-            {
-                window.Close(message.StringValue);
-            });
+        (window, message) =>
+        {
+            window.Close(message.StringValue);
+        });
     }
 
     protected override void OnOpened(EventArgs e)

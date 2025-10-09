@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using DatabaseTask.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
@@ -11,10 +11,14 @@ namespace DatabaseTask.ViewModels
 {
     public partial class FolderOperationWindowViewModel : ViewModelMessageBox
     {
-        public string FolderName { get; set; }
+        [ObservableProperty]
+        private string _folderName;
 
         public FolderOperationWindowViewModel(IMessageBoxService messageBoxService)
-            : base(messageBoxService) { }
+            : base(messageBoxService) 
+        {
+            _folderName = "";
+        }
 
         public async Task OnApplyButtonClick()
         {

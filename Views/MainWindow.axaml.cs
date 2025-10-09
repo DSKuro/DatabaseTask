@@ -30,31 +30,31 @@ namespace DatabaseTask.Views
         private void InitializeMessages()
         {
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowEnableManagerButtons>(this,
-                (window, message) =>
+            (window, message) =>
+            {
+                if (!BtnCreateFolder.IsEnabled)
                 {
-                    if (!BtnCreateFolder.IsEnabled)
-                    {
-                        EnableManagerButtons();
-                    }
-                });
+                    EnableManagerButtons();
+                }
+            });
 
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowCreateFolderMessage>(this,
-                (window, message) =>
-                {
-                    FolderOperationWindow createFolderWindow = CreateFolderDialogueWindow();
-                    createFolderWindow.Title = WindowCategory.CreateFolderCategory.Value;
-                    createFolderWindow.Watermark = TextBoxWatermark.CreateFolderWatermark.Value;
-                    message.Reply(createFolderWindow.ShowDialog<string>(window));
-                });
+            (window, message) =>
+            {
+                FolderOperationWindow createFolderWindow =
+                ProcessFolderWindowMessage(WindowCategory.CreateFolderCategory.Value,
+                    TextBoxWatermark.CreateFolderWatermark.Value);
+                message.Reply(createFolderWindow.ShowDialog<string>(window));
+            });
 
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowRenameFolderMessage>(this,
-                (window, message) =>
-                {
-                    FolderOperationWindow createFolderWindow = CreateFolderDialogueWindow();
-                    createFolderWindow.Title = WindowCategory.RenameFolderCategory.Value;
-                    createFolderWindow.Watermark = TextBoxWatermark.RenameFolderWatermark.Value;
-                    message.Reply(createFolderWindow.ShowDialog<string>(window));
-                });
+            (window, message) =>
+            {
+                FolderOperationWindow createFolderWindow = 
+                ProcessFolderWindowMessage(WindowCategory.RenameFolderCategory.Value,
+                    TextBoxWatermark.RenameFolderWatermark.Value);
+                message.Reply(createFolderWindow.ShowDialog<string>(window));
+            });
         }
 
         private void EnableManagerButtons()
@@ -66,6 +66,14 @@ namespace DatabaseTask.Views
             BtnMoveFile.IsEnabled = true;
             BtnCopyFile.IsEnabled = true;
             BtnDeleteFile.IsEnabled = true;
+        }
+
+        private FolderOperationWindow ProcessFolderWindowMessage(string title, string watermark)
+        {
+            FolderOperationWindow createFolderWindow = CreateFolderDialogueWindow();
+            createFolderWindow.Title = title;
+            createFolderWindow.Watermark = watermark;
+            return createFolderWindow;
         }
 
         private FolderOperationWindow CreateFolderDialogueWindow()

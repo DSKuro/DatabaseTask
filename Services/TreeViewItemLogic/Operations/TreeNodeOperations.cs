@@ -1,10 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using DatabaseTask.Models;
 using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;

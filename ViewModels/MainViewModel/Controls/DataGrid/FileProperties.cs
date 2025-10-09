@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 
-namespace DatabaseTask.Models
+namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid
 {
     public partial class FileProperties : ObservableObject
     {

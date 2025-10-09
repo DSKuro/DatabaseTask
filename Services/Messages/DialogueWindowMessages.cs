@@ -2,9 +2,9 @@
 { 
     public class DialogueWindowCloseMessage
     {
-        public string StringValue { get; }
+        public string? StringValue { get; }
 
-        public DialogueWindowCloseMessage(string stringValue)
+        public DialogueWindowCloseMessage(string? stringValue)
         {
             StringValue = stringValue;
         }

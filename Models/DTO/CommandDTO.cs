@@ -1,20 +1,16 @@
 ﻿using DatabaseTask.Services.Commands.Utility.Enum;
-using System;
-using System.Threading.Tasks;
 
 namespace DatabaseTask.Models.DTO
 {
     public class CommandDTO
     {
         public CommandType Type { get; set; }
-        public Action Permission { get; set; }
-        public Func<Task<object?>> GetDataFunction { get; set; }
+        public object? Data { get; set; }
 
-        public CommandDTO(CommandType type, Action permission, Func<Task<object?>> getDataFunction)
+        public CommandDTO(CommandType type, object? data = null)
         {
             Type = type;
-            Permission = permission;
-            GetDataFunction = getDataFunction;
+            Data = data;
         }
     }
 }

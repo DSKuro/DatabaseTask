@@ -1,9 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using DatabaseTask.Models;
 using DatabaseTask.Models.Categories;
-using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.ViewModels.Base;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
@@ -21,25 +20,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
     {
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
-        private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
-        private readonly IFileManagerFileOperationsPermissions _filePermissions;
 
-        // ? публичные ?
-        public ITreeView TreeView { get => _treeView; }
         public IDataGrid DataGrid { get => _dataGrid; }
-        public IFileManagerFolderOperationsPermissions FolderPermissions { get => _folderPermissions; }
-        public IFileManagerFileOperationsPermissions FilePermissions { get => _filePermissions; }
+        public ITreeView TreeView { get => _treeView; }
 
         public FileManager(ITreeView treeView,
-            IDataGrid dataGrid,
-            IFileManagerFolderOperationsPermissions folderPermissions,
-            IFileManagerFileOperationsPermissions filePermissions)
+            IDataGrid dataGrid)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += OnSelectionChanged;
             _dataGrid = dataGrid;
-            _folderPermissions = folderPermissions;
-            _filePermissions = filePermissions;
         }
 
         public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)

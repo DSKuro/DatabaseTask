@@ -1,5 +1,5 @@
-﻿using DatabaseTask.Services.FileManagerOperations.Exceptions;
-using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
+﻿using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 

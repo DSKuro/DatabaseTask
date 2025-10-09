@@ -1,4 +1,6 @@
-﻿namespace DatabaseTask.Services.Commands.Interfaces
+﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+
+namespace DatabaseTask.Services.Commands.Interfaces
 {
     public interface ICommandsHistory
     {

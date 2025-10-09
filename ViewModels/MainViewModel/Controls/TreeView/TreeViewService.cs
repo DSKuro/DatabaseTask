@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using DatabaseTask.Services._serviceCollection;
+using DatabaseTask.Models;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
@@ -12,7 +12,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView
     {
         private SmartCollection<INode> _nodes = new SmartCollection<INode>();
 
-        public INode DraggedItem { get; set; }
+        public INode? DraggedItem { get; set; }
 
         public SmartCollection<INode> SelectedNodes { get; } = new();
 
@@ -22,7 +22,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView
             set => SetProperty(ref _nodes, value);
         }
 
-        public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
-        public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; }
+        public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; } = null!;
+        public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; } = null!;
     }
 }

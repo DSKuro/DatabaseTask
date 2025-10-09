@@ -1,8 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using DatabaseTask.Models;
-using DatabaseTask.Services._serviceCollection;
-using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
@@ -24,6 +24,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
 
+        // ? публичные ?
         public ITreeView TreeView { get => _treeView; }
         public IDataGrid DataGrid { get => _dataGrid; }
         public IFileManagerFolderOperationsPermissions FolderPermissions { get => _folderPermissions; }
@@ -62,11 +63,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         {
             StorageItemProperties properties = await item.GetBasicPropertiesAsync();
             NodeViewModel node = CreateMainNode(item, parent);
-            await CreateNode(item, properties, parent, node);
+            await CreateNode(item, properties, node);
             return node;
         }
 
-        private NodeViewModel CreateMainNode(IStorageItem item, INode parent)
+        private NodeViewModel CreateMainNode(IStorageItem item, INode? parent)
         {
             return new NodeViewModel
             {
@@ -80,9 +81,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         }
 
         private async Task CreateNode(IStorageItem item, StorageItemProperties properties,
-            INode parent, INode node)
+            INode node)
         {
-            AddFileProperties(item, properties, parent, node);
+            AddFileProperties(item, properties, node);
             await CreateChildren(item, node);
             node.Expanded += ExpandHandler;
             node.Collapsed += CollapsedHandler;
@@ -91,7 +92,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         private void AddFileProperties(
             IStorageItem item,
             StorageItemProperties properties,
-            INode parent,
             INode node)
         {
             string modifiedString = _dataGrid.TimeToString(properties.DateModified);

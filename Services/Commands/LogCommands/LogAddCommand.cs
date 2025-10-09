@@ -1,6 +1,6 @@
 ﻿using DatabaseTask.Models.DTO;
-using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.LoggerOperations.Interfaces;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Operations.LoggerOperations.Interfaces;
 using System;
 
 namespace DatabaseTask.Services.Commands.LogCommands

@@ -22,12 +22,12 @@ namespace DatabaseTask.Models
             get => _size;
             set => SetProperty(ref _size, value);
         }
+
         public string Modificated 
         {
             get => _modificated;
             set => SetProperty(ref _modificated, value);
         }
-
 
         public string IconPath
         {
@@ -47,11 +47,11 @@ namespace DatabaseTask.Models
             string iconPath,
             INode node)
         {
-            Name = name;
-            Size = size;
-            Modificated = modificated;
-            IconPath = iconPath;
-            Node = node;
+            _name = name;
+            _size = size;
+            _modificated = modificated;
+            _iconPath = iconPath;
+            _node = node;
         }
     }
 }

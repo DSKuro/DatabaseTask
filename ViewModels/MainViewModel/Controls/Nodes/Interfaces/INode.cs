@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services._serviceCollection;
+﻿using DatabaseTask.Models;
 using System;
 
 namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces

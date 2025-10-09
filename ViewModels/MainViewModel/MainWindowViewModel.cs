@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -21,8 +23,6 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly IFolderCommandsViewModel _folderCommandsViewModel;
 
         private readonly ICommandsHistory _commandsHistory;
-
-        public ObservableCollection<INode> Nodes { get; set;  }
 
         public IFileManager FileManager { get => _fileManager; }
         public ILogger Logger { get => _logger; }

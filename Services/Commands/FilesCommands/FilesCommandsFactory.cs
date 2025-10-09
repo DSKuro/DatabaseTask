@@ -1,6 +1,7 @@
-﻿using DatabaseTask.Services.Commands.Enum;
-using DatabaseTask.Services.Commands.Info;
-using DatabaseTask.Services.Commands.Interfaces;
+﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
+using DatabaseTask.Services.Commands.Utility.Enum;
+using DatabaseTask.Services.Commands.Utility.Info;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -20,6 +21,11 @@ namespace DatabaseTask.Services.Commands.FilesCommands
             switch (info.CommandType)
             {
                 case CommandType.CreateFolder:
+                    if (info.Data == null)
+                    {
+                        throw new ArgumentException("Данные пустые");
+                    }
+
                     return
                         ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, info.Data);
 
@@ -35,7 +41,7 @@ namespace DatabaseTask.Services.Commands.FilesCommands
                 //    case CommandType.MoveFile:
                 //        return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider, _serviceProvider.GetRequiredService<MoveOperationDecorator>());
                 default:
-                    return null;
+                    throw new ArgumentException("Данные пустые");
             }
         }
     }

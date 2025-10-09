@@ -39,7 +39,7 @@
 			<TreeView Grid.Column="0"
 					  Name="TreeViewControl" 
 					  SelectedItems="{Binding FileManager.TreeView.SelectedNodes, Mode=TwoWay}"
-					  SelectionMode="Multiple" 
+					  SelectionMode="Multiple"
 					  ItemsSource="{Binding FileManager.TreeView.Nodes}" Height="250">
 				<TreeView.Styles>
 						<Style Selector="TreeViewItem" x:DataType="vm:Controls.Nodes.NodeViewModel">

@@ -6,15 +6,6 @@ using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
-using DatabaseTask.Services.FileManagerOperations.Accessibility;
-using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
-using DatabaseTask.Services.FileManagerOperations.FoldersOperations;
-using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
-using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Interfaces;
-using DatabaseTask.Services.FilesOperations;
-using DatabaseTask.Services.FilesOperations.Interfaces;
-using DatabaseTask.Services.LoggerOperations;
-using DatabaseTask.Services.LoggerOperations.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData;
 using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
@@ -43,6 +34,21 @@ using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop;
 using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interactions;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.Base;
+using DatabaseTask.Services.Commands.LogCommands.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
+using DatabaseTask.Services.Operations.LoggerOperations;
+using DatabaseTask.Services.Operations.FilesOperations;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations;
+using DatabaseTask.Services.Operations.LoggerOperations.Interfaces;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 
 namespace DatabaseTask.Configuration
 {

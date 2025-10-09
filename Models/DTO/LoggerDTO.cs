@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services.Collection;
+﻿using DatabaseTask.Models.Categories;
 
 namespace DatabaseTask.Models.DTO
 {

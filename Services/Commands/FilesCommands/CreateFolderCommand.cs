@@ -1,5 +1,5 @@
-﻿using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.FilesOperations.Interfaces;
+﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 
 namespace DatabaseTask.Services.Commands.FilesCommands
 {

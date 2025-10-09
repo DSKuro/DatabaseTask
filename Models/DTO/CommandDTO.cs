@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services.Commands.Enum;
+﻿using DatabaseTask.Services.Commands.Utility.Enum;
 using System;
 using System.Threading.Tasks;
 

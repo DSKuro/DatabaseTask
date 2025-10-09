@@ -35,6 +35,5 @@ namespace DatabaseTask.Services.ParametrizedStringImplementation
             stringWithParams += temp[i];
             return stringWithParams;
         }
-
     }
 }

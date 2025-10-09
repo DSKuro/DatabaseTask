@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Services._serviceCollection;
+﻿using DatabaseTask.Models;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
@@ -8,11 +8,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
     public class NodeViewModel : ViewModelBase, INode
     {
         private bool _isExpanded;
-        private string _name;
-        private string _iconPath;
+        private string _name = null!;
+        private string _iconPath = null!;
 
-        public event Action<INode> Expanded;
-        public event Action<INode> Collapsed;
+        public event Action<INode> Expanded = null!;
+        public event Action<INode> Collapsed = null!;
 
         public bool IsFolder { get; set; }
         public INode? Parent { get; set; }

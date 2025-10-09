@@ -1,12 +1,13 @@
 ﻿using DatabaseTask.Models.DTO;
-using DatabaseTask.Services.Commands.Enum;
-using DatabaseTask.Services.Commands.Info;
-using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.ItemCommands.Commands;
+using DatabaseTask.Services.Commands.ItemCommands.Interfaces;
 using DatabaseTask.Services.Commands.LogCommands;
-using DatabaseTask.Services.FileManagerOperations.FoldersOperations.Decorator;
+using DatabaseTask.Services.Commands.Utility.Enum;
+using DatabaseTask.Services.Commands.Utility.Info;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Diagnostics;
 
 namespace DatabaseTask.Services.Commands.ItemCommands
 {
@@ -21,18 +22,27 @@ namespace DatabaseTask.Services.Commands.ItemCommands
 
         public ICommand CreateCommand(CommandInfo info, LoggerDTO data)
         {
-            Debug.WriteLine("Test");
             ICompositeCommandBuilder builder = _serviceProvider.GetRequiredService<ICompositeCommandBuilder>();
             switch (info.CommandType) 
             {
                 case CommandType.CreateFolder:
+                    if (info.Data == null)
+                    {
+                        throw new ArgumentException("Данные команды не заданы");
+                    }
+
                     builder
-                        .Add<CreateFolderItemCommand>(info.Data);
+                        .Add<CreateFolderItemCommand>(info.Data!);
                     break;
 
                 case CommandType.RenameFolder:
+                    if (info.Data == null)
+                    {
+                        throw new ArgumentException("Данные команды не заданы");
+                    }
+
                     builder
-                        .Add<RenameFolderItemCommand>(info.Data);
+                        .Add<RenameFolderItemCommand>(info.Data!);
                     break;
 
                 case CommandType.DeleteItem:
@@ -51,7 +61,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands
                     break;
 
                 default:
-                    return null;
+                    throw new ArgumentException("Тип команды задан неправильно");
             }
             return builder.Add<LogAddCommand>(data).Build();
         }

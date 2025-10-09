@@ -1,5 +1,5 @@
 ﻿using DatabaseTask.Models.DTO;
-using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.LogCommands.Interfaces;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Linq;
@@ -19,7 +19,6 @@ namespace DatabaseTask.Services.Commands.LogCommands
 
         public object[] GetParams()
         {
-            object[] newParameters;
             if (_data == null || _data is ButtonResult)
             {
                 return _commandDto.Parameters;
@@ -32,7 +31,7 @@ namespace DatabaseTask.Services.Commands.LogCommands
         {
             if (_commandDto.IsFirstData)
             {
-                return new object[] { _data }.Concat(_commandDto.Parameters).ToArray();
+                return new object[] { _data! }.Concat(_commandDto.Parameters).ToArray();
             }
 
             return GetNewParamsWithLastData();
@@ -42,7 +41,7 @@ namespace DatabaseTask.Services.Commands.LogCommands
         {
             object[] newParameters = new object[_commandDto.Parameters.Length + 1];
             Array.Copy(_commandDto.Parameters, newParameters, _commandDto.Parameters.Length);
-            newParameters[_commandDto.Parameters.Length] = _data;
+            newParameters[_commandDto.Parameters.Length] = _data!;
             return newParameters;
         }
     }

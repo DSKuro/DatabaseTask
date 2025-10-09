@@ -1,11 +1,12 @@
 ﻿using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
+using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Models.StorageOptions;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
-using DatabaseTask.Services.FilesOperations.Interfaces;
 using DatabaseTask.Services.Messages;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Platform.Storage;
-using DatabaseTask.Services.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;

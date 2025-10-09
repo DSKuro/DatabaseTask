@@ -1,5 +1,4 @@
 ﻿using DatabaseTask.Models;
-using DatabaseTask.Services._serviceCollection;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 
 namespace DatabaseTask.ViewModels.Logger

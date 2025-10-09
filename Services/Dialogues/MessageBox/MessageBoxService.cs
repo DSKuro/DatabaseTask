@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using DatabaseTask.Models;
+using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Dialogues.Base;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;

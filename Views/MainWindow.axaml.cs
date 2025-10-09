@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
-using DatabaseTask.Services._serviceCollection;
+using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;

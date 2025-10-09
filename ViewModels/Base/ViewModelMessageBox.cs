@@ -1,4 +1,4 @@
-﻿using DatabaseTask.Models;
+﻿using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using MsBox.Avalonia.Enums;
 using System;

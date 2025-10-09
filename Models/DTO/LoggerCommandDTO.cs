@@ -1,5 +1,5 @@
-﻿using DatabaseTask.Services.Collection;
-using DatabaseTask.Services.Commands.Enum;
+﻿using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Commands.Utility.Enum;
 using System;
 using System.Threading.Tasks;
 

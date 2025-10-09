@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using DatabaseTask.Services._serviceCollection;
+using DatabaseTask.Models;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using System;

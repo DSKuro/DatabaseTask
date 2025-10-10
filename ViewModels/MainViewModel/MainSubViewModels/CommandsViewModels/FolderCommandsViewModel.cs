@@ -40,10 +40,15 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 object? data = await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>();
                 if (data != null)
                 {
-                    ProcessCommand(new Models.DTO.LoggerCommandDTO
-                    (
-                        CommandType.CreateFolder, LogCategory.CreateFolderCategory, data
-                    ));   
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.CreateFolder, data
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.CreateFolderCategory
+                        )
+                    );   
                 }
             }
             catch (FileManagerOperationsException ex)
@@ -62,10 +67,15 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 object? data = await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>();
                 if (data != null)
                 {
-                    ProcessCommand(new Models.DTO.LoggerCommandDTO
-                    (
-                        CommandType.RenameFolder, LogCategory.RenameFolderCategory, data
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.RenameFolder, data
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.RenameFolderCategory
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)

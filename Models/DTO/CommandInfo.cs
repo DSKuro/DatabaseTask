@@ -1,16 +1,16 @@
 ﻿using DatabaseTask.Services.Commands.Utility.Enum;
 
-namespace DatabaseTask.Services.Commands.Utility.Info
+namespace DatabaseTask.Models.DTO
 {
     public class CommandInfo
     {
-        public object? Data { get; set; }
         public CommandType CommandType { get; set; }
+        public object? Data { get; set; }
 
-        public CommandInfo(object? data, CommandType commandType)
+        public CommandInfo(CommandType commandType, object? data = null)
         {
-            Data = data;
             CommandType = commandType;
+            Data = data;
         }
     }
 }

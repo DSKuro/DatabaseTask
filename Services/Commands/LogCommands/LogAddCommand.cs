@@ -1,7 +1,6 @@
 ﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.LoggerOperations.Interfaces;
-using System;
 
 namespace DatabaseTask.Services.Commands.LogCommands
 {
@@ -21,8 +20,7 @@ namespace DatabaseTask.Services.Commands.LogCommands
         {
             if (_loggerOperations != null)
             {
-                _loggerOperations.AddLog(_data.LogCategory,
-                    Array.ConvertAll(_data.Parameters, x => x?.ToString() ?? string.Empty));
+                _loggerOperations.AddLog(_data);
             }
         }
 

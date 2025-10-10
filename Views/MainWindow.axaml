@@ -65,7 +65,7 @@
 				<DataGrid.Columns>
 					<DataGridTemplateColumn Header="Имя">
 						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate DataType="models:FileProperties">
+							<DataTemplate DataType="vm:Controls.DataGrid.FileProperties">
 								<StackPanel Orientation="Horizontal" Spacing="5">
 									<Svg Path="{Binding IconPath}" Css="{DynamicResource SvgFill}"/>
 									<TextBlock Text="{Binding Name, Mode=TwoWay}"

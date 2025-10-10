@@ -2,7 +2,6 @@
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Info;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
@@ -35,28 +34,28 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _fullPath = fullPath;
         }
         
-        protected void ProcessCommand(LoggerCommandDTO dto)
+        protected void ProcessCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
         {
-            ExecuteCommand(dto);
-            AddCommandToHistory(dto);
+            ExecuteCommand(commandInfo, loggerDto);
+            AddCommandToHistory(commandInfo);
         }
 
-        private void ExecuteCommand(LoggerCommandDTO dto)
+        private void ExecuteCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
         {
-            ICommand command = _itemCommandsFactory.CreateCommand(new CommandInfo(dto.Data, dto.Type),
-                new LoggerDTO(dto.Category, dto.Parameters));
+            ICommand command = _itemCommandsFactory.CreateCommand(commandInfo,
+                loggerDto);
             command.Execute();
         }
 
-        private void AddCommandToHistory(LoggerCommandDTO dto)
+        private void AddCommandToHistory(CommandInfo commandInfo)
         {
             string? data = null;
-            if (dto.Data != null)
+            if (commandInfo.Data != null)
             {
-                data = _fullPath.GetFullpath(dto.Data.ToString()!);
+                data = _fullPath.GetFullpath(commandInfo.Data.ToString()!);
             }
             ICommand command = _fileCommandsFactory.CreateCommand(
-                new CommandInfo(data, dto.Type));
+                new CommandInfo(commandInfo.CommandType, data));
             _commandsHistory.AddCommand(command);
         }
     }

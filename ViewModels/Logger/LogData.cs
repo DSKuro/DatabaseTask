@@ -1,4 +1,4 @@
-﻿namespace DatabaseTask.Models
+﻿namespace DatabaseTask.ViewModels.Logger
 {
     public class LogData
     {

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces
+﻿namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces
 {
     public interface IDeleteItemOperation
     {

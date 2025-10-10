@@ -4,7 +4,6 @@ using DatabaseTask.Services.Commands.ItemCommands.Commands;
 using DatabaseTask.Services.Commands.ItemCommands.Interfaces;
 using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Commands.Utility.Enum;
-using DatabaseTask.Services.Commands.Utility.Info;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
 using Microsoft.Extensions.DependencyInjection;
 using System;

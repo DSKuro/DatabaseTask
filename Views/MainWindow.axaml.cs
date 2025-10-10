@@ -29,13 +29,10 @@ namespace DatabaseTask.Views
 
         private void InitializeMessages()
         {
-            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowEnableManagerButtons>(this,
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowToggleManagerButtons>(this,
             (window, message) =>
             {
-                if (!BtnCreateFolder.IsEnabled)
-                {
-                    EnableManagerButtons();
-                }
+                EnableManagerButtons(message.Value);
             });
 
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowCreateFolderMessage>(this,
@@ -57,15 +54,15 @@ namespace DatabaseTask.Views
             });
         }
 
-        private void EnableManagerButtons()
+        private void EnableManagerButtons(bool value)
         {
-            BtnCreateFolder.IsEnabled = true;
-            BtnRenameFolder.IsEnabled = true;
-            BtnDeleteFolder.IsEnabled = true;
-            BtnCopyFolder.IsEnabled = true;
-            BtnMoveFile.IsEnabled = true;
-            BtnCopyFile.IsEnabled = true;
-            BtnDeleteFile.IsEnabled = true;
+            BtnCreateFolder.IsEnabled = value;
+            BtnRenameFolder.IsEnabled = value;
+            BtnDeleteFolder.IsEnabled = value;
+            BtnCopyFolder.IsEnabled = value;
+            BtnMoveFile.IsEnabled = value;
+            BtnCopyFile.IsEnabled = value;
+            BtnDeleteFile.IsEnabled = value;
         }
 
         private FolderOperationWindow ProcessFolderWindowMessage(string title, string watermark)

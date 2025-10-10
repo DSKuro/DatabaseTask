@@ -1,5 +1,4 @@
 ﻿using DatabaseTask.Models.Categories;
-using DatabaseTask.Models.DTO;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
@@ -49,11 +48,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.DeleteFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new LoggerCommandDTO
-                    (
-                        CommandType.CreateFolder, LogCategory.CreateFolderCategory,
-                        null, (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.DeleteItem
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.DeleteFolderCategory, 
+                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)
@@ -73,12 +77,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.CopyFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new LoggerCommandDTO
-                    (
-                        CommandType.CopyItem, LogCategory.CopyFolderCategory,
-                        null, (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                        (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.CopyItem
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.CopyFolderCategory,
+                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
+                            (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)
@@ -89,7 +98,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             }
         }
 
-
         public async Task MoveFileImpl()
         {
             try
@@ -99,12 +107,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.DeleteFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new LoggerCommandDTO
-                    (
-                       CommandType.MoveFile, LogCategory.MoveFileCategory,
-                       null, (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                       (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.MoveFile
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.MoveFileCategory,
+                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
+                            (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)
@@ -124,12 +137,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.DeleteFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new LoggerCommandDTO
-                    (
-                       CommandType.CopyItem, LogCategory.CopyFileCategory,
-                       null, (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                       (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.CopyItem
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.CopyFileCategory,
+                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
+                            (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)
@@ -149,11 +167,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.DeleteFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new LoggerCommandDTO
-                    (
-                       CommandType.DeleteItem, LogCategory.DeleteFileCategory,
-                       null, (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
-                    ));
+                    ProcessCommand(new Models.DTO.CommandInfo
+                        (
+                            CommandType.DeleteItem
+                        ),
+                        new Models.DTO.LoggerDTO
+                        (
+                            LogCategory.DeleteFileCategory,
+                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
+                        )
+                    );
                 }
             }
             catch (FileManagerOperationsException ex)

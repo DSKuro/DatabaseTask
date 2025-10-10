@@ -1,6 +1,6 @@
-﻿using DatabaseTask.Models;
-using DatabaseTask.Models.Categories;
+﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Operations.LoggerOperations.Interfaces;
+using DatabaseTask.ViewModels.Logger;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using System;
 
@@ -15,11 +15,11 @@ namespace DatabaseTask.Services.Operations.LoggerOperations
             _logger = logger;
         }
 
-        public void AddLog(LogCategory category, params string[] parameters)
+        public void AddLog(LoggerDTO dto)
         {
             _logger.LogOperations.Add(new LogData
             (
-                category.Value.GetStringWithParams(parameters),
+                dto.LogCategory.Value.GetStringWithParams(dto.Parameters),
                 TimeToString()
             ));
         }

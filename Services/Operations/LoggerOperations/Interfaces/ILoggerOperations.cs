@@ -1,9 +1,9 @@
-﻿using DatabaseTask.Models.Categories;
+﻿using DatabaseTask.Models.DTO;
 
 namespace DatabaseTask.Services.Operations.LoggerOperations.Interfaces
 {
     public interface ILoggerOperations
     {
-        public void AddLog(LogCategory category, params string[] parameters);
+        public void AddLog(LoggerDTO dto);
     }
 }

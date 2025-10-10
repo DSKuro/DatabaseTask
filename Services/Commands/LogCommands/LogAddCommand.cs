@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.LoggerOperations.Interfaces;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.LogCommands
 {
@@ -16,12 +17,13 @@ namespace DatabaseTask.Services.Commands.LogCommands
             _data = data;
         }
 
-        public void Execute()
+        public Task Execute()
         {
             if (_loggerOperations != null)
             {
                 _loggerOperations.AddLog(_data);
             }
+            return Task.CompletedTask;
         }
 
         public void Undo()

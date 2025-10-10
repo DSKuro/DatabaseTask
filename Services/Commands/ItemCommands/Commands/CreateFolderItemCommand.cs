@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 {
@@ -14,11 +15,11 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
             _folderName = folderName;
         }
 
-        public void Execute()
+        public async Task Execute()
         {
             if (_folderOperation != null)
             {
-                _folderOperation.CreateFolder(_folderName);
+                await _folderOperation.CreateFolder(_folderName);
             }
         }
 

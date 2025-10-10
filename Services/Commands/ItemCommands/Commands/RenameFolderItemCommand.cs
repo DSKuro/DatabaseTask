@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 {
@@ -15,12 +16,13 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
             _newName = newName;
         }
 
-        public void Execute()
+        public Task Execute()
         {
             if (_renameOperation != null)
             {
                 _renameOperation.RenameFolder(_newName);
             }
+            return Task.CompletedTask;
         }
 
         public void Undo()

@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.Base
 {
@@ -12,11 +13,11 @@ namespace DatabaseTask.Services.Commands.Base
             _commands.Add(command);
         }
 
-        public void Execute()
+        public async Task Execute()
         {
             foreach (ICommand command in _commands)
             {
-                command.Execute();
+                await command.Execute();
             }
         }
 

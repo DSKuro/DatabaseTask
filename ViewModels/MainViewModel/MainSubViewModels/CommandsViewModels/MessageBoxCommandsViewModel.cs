@@ -10,12 +10,11 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
     public class MessageBoxCommandsViewModel : BaseFolderCommandsViewModel, IMessageBoxCommandsViewModel
     {
@@ -48,7 +47,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxCategory.DeleteFolderMessageBox.Content);
                 if (result != null && result == ButtonResult.Yes)
                 {
-                    ProcessCommand(new Models.DTO.CommandInfo
+                    await ProcessCommand(new Models.DTO.CommandInfo
                         (
                             CommandType.DeleteItem
                         ),

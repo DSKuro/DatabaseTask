@@ -32,6 +32,7 @@
 										Css="{TemplateBinding Css}"/>
 						<ContentPresenter Name="textPart"
                                           Content="{TemplateBinding Content}"
+										  TextAlignment="Center"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
 										  FontWeight="{TemplateBinding FontWeight}"
                                           VerticalAlignment="Center"/>

@@ -1,8 +1,10 @@
-﻿namespace DatabaseTask.Services.Commands.Base.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace DatabaseTask.Services.Commands.Base.Interfaces
 {
     public interface ICommand
     {
-        public void Execute();
+        public Task Execute();
         public void Undo();
     }
 }

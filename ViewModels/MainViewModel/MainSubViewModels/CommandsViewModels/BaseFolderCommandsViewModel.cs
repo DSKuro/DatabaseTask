@@ -5,6 +5,7 @@ using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
@@ -34,17 +35,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _fullPath = fullPath;
         }
         
-        protected void ProcessCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
+        protected async Task ProcessCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
         {
-            ExecuteCommand(commandInfo, loggerDto);
-            AddCommandToHistory(commandInfo);
+            await ExecuteCommand(commandInfo, loggerDto);
+            //AddCommandToHistory(commandInfo);
         }
 
-        private void ExecuteCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
+        private async Task ExecuteCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
         {
             ICommand command = _itemCommandsFactory.CreateCommand(commandInfo,
                 loggerDto);
-            command.Execute();
+            await command.Execute();
         }
 
         private void AddCommandToHistory(CommandInfo commandInfo)

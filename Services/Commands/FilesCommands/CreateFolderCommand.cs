@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.FilesCommands
 {
@@ -14,9 +15,10 @@ namespace DatabaseTask.Services.Commands.FilesCommands
             _filesOperations = filesOperations;           
         }   
 
-        public void Execute()
+        public Task Execute()
         {
             _filesOperations.CreateFolder(_path);
+            return Task.CompletedTask;
         }
 
         public void Undo()

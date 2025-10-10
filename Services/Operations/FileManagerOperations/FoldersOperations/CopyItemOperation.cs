@@ -53,9 +53,10 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 SmartCollection<INode> children = new SmartCollection<INode>();
                 children.AddRange(node.Children);
+                string name = GetNodeName(node.Name);
                 return new NodeViewModel()
                 {
-                    Name = node.Name,
+                    Name = name,
                     IsExpanded = node.IsExpanded,
                     IsFolder = node.IsFolder,
                     IconPath = node.IconPath,
@@ -64,6 +65,15 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 };
             }
             return null;
+        }
+
+        private string GetNodeName(string oldNodeName)
+        {
+            bool isExist = _treeView.SelectedNodes[1].Children
+                .Select(x => x! as NodeViewModel)
+                .Where(x => x != null)
+                .Any(x => x!.Name == oldNodeName);
+            return oldNodeName;
         }
 
         private void AddNewProperties(INode? oldNode, INode? newNode)

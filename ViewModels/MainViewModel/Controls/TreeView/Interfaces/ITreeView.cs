@@ -12,5 +12,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces
         public SmartCollection<INode> Nodes { get; set; }
         public EventHandler<SelectionChangedEventArgs> SelectionChanged { get; set; }
         public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; }
+
+        public bool IsNodeExist(int selectedNodeIndex, string name);
+        public void AddSelectedNodeByIndex(int index);
     }
 }

@@ -6,6 +6,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces
     public interface INode
     {
         public bool IsExpanded { get; set; }
+        public string Name { get; set; }
         public INode? Parent { get; set; }
         public event Action<INode> Expanded;
         public event Action<INode> Collapsed;

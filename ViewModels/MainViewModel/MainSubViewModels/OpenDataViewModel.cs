@@ -76,6 +76,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                 _fullPath.PathToCoreFolder = folder.Path.AbsolutePath;   
             }
             await _fileManager.GetCollectionFromFolders(folders);
+            _fileManager.TreeView.AddSelectedNodeByIndex(0);
         }
 
         private async Task<IEnumerable<IStorageFolder>?> ChooseMainFolder()

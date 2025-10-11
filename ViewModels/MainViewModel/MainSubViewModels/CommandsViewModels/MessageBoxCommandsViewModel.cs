@@ -10,7 +10,7 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 

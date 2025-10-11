@@ -4,85 +4,69 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using System.Linq;
-
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
-    internal class CopyItemOperation : ICopyItemOperation
+    public class CopyItemOperation : ICopyItemOperation
     {
-        private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
 
-        public CopyItemOperation(ITreeView treeView,
+        public CopyItemOperation(
             IDataGrid dataGrid)
         {
-            _treeView = treeView;
             _dataGrid = dataGrid;
         }
 
-        public void CopyItem()
+        public void CopyItem(INode copied, INode target)
         {
-            (INode? oldNode, INode? newNode) = AddNewNode();
-            if (oldNode != null && newNode != null)
+            INode? newNode = AddNewNode(copied, target);
+            if (copied != null && newNode != null)
             {
-                AddNewProperties(oldNode, newNode);
+                AddNewProperties(copied, newNode, target);
             }
         }
 
-        private (INode?, INode?) AddNewNode()
+        private INode? AddNewNode(INode copied, INode target)
         {
-            INode? oldNode = _treeView.SelectedNodes.FirstOrDefault();
             INode? node = null;
-            if (oldNode != null)
+            if (copied != null)
             {
-                node = GetNewNode(oldNode);
+                node = GetNewNode(copied, target);
                 if (node != null)
                 {
-                    _treeView.SelectedNodes[1].Children.Add(node);
+                    target.Children.Add(node);
                 }
             }
 
-            return (oldNode, node);
+            return node;
         }
 
-        private NodeViewModel? GetNewNode(INode oldNode)
+        private NodeViewModel? GetNewNode(INode oldNode, INode target)
         {
             if (oldNode is NodeViewModel node)
             {
                 SmartCollection<INode> children = new SmartCollection<INode>();
                 children.AddRange(node.Children);
-                string name = GetNodeName(node.Name);
                 return new NodeViewModel()
                 {
-                    Name = name,
+                    Name = node.Name,
                     IsExpanded = node.IsExpanded,
                     IsFolder = node.IsFolder,
                     IconPath = node.IconPath,
-                    Parent = _treeView.SelectedNodes[1],
+                    Parent = target,
                     Children = children,
                 };
             }
             return null;
         }
 
-        private string GetNodeName(string oldNodeName)
-        {
-            bool isExist = _treeView.SelectedNodes[1].Children
-                .Select(x => x! as NodeViewModel)
-                .Where(x => x != null)
-                .Any(x => x!.Name == oldNodeName);
-            return oldNodeName;
-        }
-
-        private void AddNewProperties(INode? oldNode, INode? newNode)
+        private void AddNewProperties(INode? oldNode, INode? newNode, INode target)
         {
             FileProperties? properties = _dataGrid.SavedFilesProperties.Find(x => x.Node == oldNode);
             if (properties != null && newNode != null)
             {
                 FileProperties newProperties = GetNewProperties(properties, newNode);
-                int i = _dataGrid.SavedFilesProperties.FindIndex(x => x.Node == _treeView.SelectedNodes[1]);
+                int i = _dataGrid.SavedFilesProperties.FindIndex(x => x.Node == target);
                 _dataGrid.SavedFilesProperties.Insert(i + 1, newProperties);
             }
         }

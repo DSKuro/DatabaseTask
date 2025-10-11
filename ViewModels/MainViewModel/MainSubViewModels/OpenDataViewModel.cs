@@ -66,7 +66,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         public async Task OpenFolder()
         {
             IEnumerable<IStorageFolder>? folders = await ChooseMainFolder();
-            if (folders == null)
+            if (folders == null || folders.Count() == 0)
             {
                 return;
             }

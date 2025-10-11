@@ -1,45 +1,25 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator
 {
     public class MoveOperationDecorator : AbstractCopyOperationDecorator
     {
-        private readonly ITreeView _treeView;
-        private readonly IDataGrid _dataGrid;
+        private readonly IDeleteItemOperation _deleteItemOperation;
 
         public MoveOperationDecorator(
             ICopyItemOperation itemOperation,
-            ITreeView treeView,
-            IDataGrid dataGrid)
+            IDeleteItemOperation deleteItemOperation)
             : base(itemOperation) 
         {
-            _treeView = treeView;
-            _dataGrid = dataGrid;
+            _deleteItemOperation = deleteItemOperation;
         }
 
-        public override void CopyItem()
+        public override void CopyItem(INode copied, INode target)
         {
-            base.CopyItem();
-            RemoveItem();
-        }
-
-        private void RemoveItem()
-        {
-            INode? node = _treeView.SelectedNodes.FirstOrDefault();
-            if (node != null)
-            {
-                node.Parent?.Children.Remove(node);
-                FileProperties? properties = _dataGrid.SavedFilesProperties.Find(x => x.Node == node);
-                if (properties != null)
-                {
-                    _dataGrid.SavedFilesProperties.Remove(properties);
-                }
-            }
+            base.CopyItem(copied, target);
+            _deleteItemOperation.DeleteItem(new List<INode> { copied });
         }
     }
 }

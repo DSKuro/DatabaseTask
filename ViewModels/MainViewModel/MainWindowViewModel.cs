@@ -18,7 +18,8 @@ namespace DatabaseTask.ViewModels.MainViewModel
 
         private readonly IOpenDataViewModel _openDataViewModel;
         private readonly IMessageBoxCommandsViewModel _messageBoxCommandsViewModel;
-        private readonly IFolderCommandsViewModel _folderCommandsViewModel;
+        private readonly ICreateFolderCommandsViewModel _folderCommandsViewModel;
+        private readonly IRenameFolderCommandsViewModel _renameCommandsViewModel;
 
         private readonly ICommandsHistory _commandsHistory;
 
@@ -30,7 +31,8 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ILogger logger,
             IOpenDataViewModel openDataViewModel,
             IMessageBoxCommandsViewModel messageBoxCommandsViewModel,
-            IFolderCommandsViewModel folderCommandsViewModel,
+            ICreateFolderCommandsViewModel folderCommandsViewModel,
+            IRenameFolderCommandsViewModel renameFolderCommandsViewModel,
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory) : base(messageBoxService)
         {
@@ -39,6 +41,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _openDataViewModel = openDataViewModel;
             _messageBoxCommandsViewModel = messageBoxCommandsViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
+            _renameCommandsViewModel = renameFolderCommandsViewModel;
             _commandsHistory = commandsHistory;
         }
 
@@ -57,13 +60,13 @@ namespace DatabaseTask.ViewModels.MainViewModel
         [RelayCommand]
         public async Task CreateFolder()
         {
-            await _folderCommandsViewModel.CreateFolderImpl();
+            await _folderCommandsViewModel.CreateFolder();
         }
 
         [RelayCommand]
         public async Task RenameFolder()
         {
-            await _folderCommandsViewModel.RenameFolderImpl();
+            await _renameCommandsViewModel.RenameFolder();
         }
 
         [RelayCommand]

@@ -135,7 +135,8 @@ namespace DatabaseTask.Configuration
         {
             _serviceCollection.AddScoped<IMessageBoxCommandsViewModel, MessageBoxCommandsViewModel>();
             _serviceCollection.AddScoped<IOpenDataViewModel, OpenDataViewModel>();
-            _serviceCollection.AddScoped<IFolderCommandsViewModel, FolderCommandsViewModel>();
+            _serviceCollection.AddScoped<ICreateFolderCommandsViewModel, FolderCommandsViewModel>();
+            _serviceCollection.AddScoped<IRenameFolderCommandsViewModel, RenameFolderCommandViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();

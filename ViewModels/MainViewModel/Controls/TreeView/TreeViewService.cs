@@ -41,6 +41,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView
                 .Any(x => x!.Name == name);
         }
 
+        public bool IsParentHasNodeWithName(INode node, string name)
+        {
+            if (node != null && node.Parent != null)
+            {
+                return node.Parent.Children
+                    .Any(x => x.Name == name);
+            }
+
+            return false;
+        }
+
         public void AddSelectedNodeByIndex(int index)
         {
             if (index < 0 || index > Nodes.Count)

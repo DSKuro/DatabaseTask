@@ -2,9 +2,8 @@
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces
 {
-    public interface IFolderCommandsViewModel
+    public interface IRenameFolderCommandsViewModel
     {
-        public Task CreateFolderImpl();
-        public Task RenameFolderImpl();
+        public Task RenameFolder();
     }
 }

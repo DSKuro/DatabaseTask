@@ -4,7 +4,6 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
@@ -19,16 +18,15 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGrid = dataGrid;
         }
 
-        public void DeleteItem()
+        public void DeleteItem(List<INode> nodes)
         {
-            RemoveNodes();
+            RemoveNodes(nodes);
             _treeView.SelectedNodes.Clear();
         }
 
-        private void RemoveNodes()
+        private void RemoveNodes(List<INode> nodes)
         {
-            List<INode> selectedNodes = _treeView.SelectedNodes.ToList();
-            foreach (INode node in selectedNodes)
+            foreach (INode node in nodes)
             {
                 RemoveNode(node);
                 RemoveProperties(node);

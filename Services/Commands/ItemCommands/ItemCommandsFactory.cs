@@ -5,8 +5,12 @@ using DatabaseTask.Services.Commands.ItemCommands.Interfaces;
 using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DatabaseTask.Services.Commands.ItemCommands
 {
@@ -46,17 +50,21 @@ namespace DatabaseTask.Services.Commands.ItemCommands
 
                 case CommandType.DeleteItem:
                     builder
-                        .Add<DeleteItemCommand>();
+                        .Add<DeleteItemCommand>(
+                        info.Data!
+                        );
                     break;
 
                 case CommandType.CopyItem:
                     builder
-                      .Add<CopyItemCommand>();
+                      .Add<CopyItemCommand>(info.Data!);
                     break;
 
                 case CommandType.MoveFile:
+                    MoveOperationDecorator decorator = _serviceProvider.GetRequiredService<MoveOperationDecorator>();
+                    object[]? parameters = info.Data!.Concat(new object[] { decorator }).ToArray();
                     builder
-                     .Add<CopyItemCommand>(_serviceProvider.GetRequiredService<MoveOperationDecorator>());
+                     .Add<CopyItemCommand>(parameters);
                     break;
 
                 default:

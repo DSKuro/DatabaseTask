@@ -6,6 +6,7 @@ using DatabaseTask.Configuration;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +33,7 @@ namespace DatabaseTask
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
                 desktop.MainWindow = new MainWindow(services.GetRequiredService<ITreeViewInitializer>(),
+                    services.GetRequiredService<ITreeView>(),
                     services.GetRequiredService<IMessageBoxService>(), services)
                 {
               
@@ -41,6 +43,7 @@ namespace DatabaseTask
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
                 singleViewPlatform.MainView = new MainWindow(services.GetRequiredService<ITreeViewInitializer>(),
+                    services.GetRequiredService<ITreeView>(),
                     services.GetRequiredService<IMessageBoxService>(),
                     services)
                 {

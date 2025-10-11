@@ -8,11 +8,13 @@ namespace DatabaseTask;
 public partial class FolderOperationWindow : Window
 {
     public string Watermark { get; set; }
+    public string Text { get; set; }
 
     public FolderOperationWindow()
     {
         InitializeComponent();
         Watermark = "";
+        Text = "";
         InitializeMessages();
     }
 
@@ -29,5 +31,6 @@ public partial class FolderOperationWindow : Window
     {
         base.OnOpened(e);
         textBox.Watermark = Watermark;
+        textBox.Text = Text;
     }
 }

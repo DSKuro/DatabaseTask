@@ -47,6 +47,8 @@ using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.Services.Operations.Utils.Interfaces;
+using DatabaseTask.Services.Operations.Utils;
 
 namespace DatabaseTask.Configuration
 {
@@ -118,6 +120,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IRenameFolderOperation, RenameFolderOperation>();
             _serviceCollection.AddScoped<IDeleteItemOperation, DeleteItemOperation>();
             _serviceCollection.AddScoped<ICopyItemOperation, CopyItemOperation>();
+            _serviceCollection.AddScoped<INameGenerator, NameGenerator>();
             _serviceCollection.AddScoped<MoveOperationDecorator>();
             _serviceCollection.AddTransient<ICompositeCommandBuilder, CompositeCommandBuilder>();
             _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();

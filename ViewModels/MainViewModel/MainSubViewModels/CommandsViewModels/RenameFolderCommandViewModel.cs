@@ -10,6 +10,7 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
@@ -18,15 +19,14 @@ using MsBox.Avalonia.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
     public class RenameFolderCommandViewModel : BaseFolderCommandsViewModel, IRenameFolderCommandsViewModel
     {
-        
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly ITreeView _treeView;
+        private readonly INameGenerator _generator;
 
         public RenameFolderCommandViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
@@ -34,12 +34,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
-            ITreeView treeView)
+            ITreeView treeView,
+            INameGenerator generator)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
             _treeView = treeView;
+            _generator = generator;
         }
 
         public async Task RenameFolder()
@@ -87,127 +89,140 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return;
             }
 
-            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                  (MessageBoxConstants.Error.Value, "TEST",
-                                  ButtonEnum.YesNo));
+            await ProcessDeepRename(name);
+        }
+
+        private async Task ProcessDeepRename(string name)
+        {
+            ButtonResult? result =
+                await GetResultOfCatalogMessage(ParametrizedMessageBoxCategory.RenameCatalogMergeMessageBox.Content
+                .GetStringWithParams(name,
+                _treeView.SelectedNodes[0].Parent!.Name));
             if (result != null && result == ButtonResult.Yes)
             {
-                INode node = _treeView.SelectedNodes[0]
-                    .Parent
-                    .Children
-                    .FirstOrDefault(x => x.Name == name);
-                await ProcessDeepRename(node);
+                INode? parent = _treeView.SelectedNodes[0].Parent;
+                if (parent != null)
+                {
+                    INode? node = parent.Children.FirstOrDefault(x => x.Name == name);
+                    if (node != null)
+                    {
+                        await ProcessDeepRenameImplementation(node);
+                    }
+                }
             }
         }
 
-        private async Task ProcessDeepRename(INode targetNode)
+        private async Task ProcessDeepRenameImplementation(INode targetNode)
         {
             INode sourceNode = _treeView.SelectedNodes[0];
+            List<INode> children = sourceNode.Children.ToList();
 
-            foreach (var sourceChild in sourceNode.Children.ToList())
+            foreach (INode sourceChild in children)
             {
                 await ProcessNodeRecursive(sourceChild, targetNode);
             }
 
-            if (sourceNode.Children.Count == 0)
-            {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                (
-                    CommandType.DeleteItem, new List<INode> { sourceNode }
-                ),
-                new Models.DTO.LoggerDTO
-                (
-                    LogCategory.DeleteFolderCategory,
-                    sourceNode.Name
-                )
-                );
-            }
+            await DeleteFolder(sourceNode);
         }
 
         private async Task ProcessNodeRecursive(INode sourceChild, INode targetParent)
         {
-            var existingChild = targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name);
+            INode? existingChild = targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name);
 
             if (existingChild == null)
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.MoveFile, sourceChild, targetParent
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.MoveFileCategory,
-                            sourceChild.Name,
-                            targetParent.Name
-                        )
-                );
+                await MoveFile(sourceChild, targetParent);
             }
             else
             {
-                if ((sourceChild as NodeViewModel).IsFolder && (existingChild as NodeViewModel).IsFolder)
-                {
-                    ButtonResult? result = await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                  (MessageBoxConstants.Error.Value, "TEST",
-                                  ButtonEnum.YesNo));
-                    if (result != null && result == ButtonResult.Yes)
-                    {
-                        foreach (var nestedChild in sourceChild.Children.ToList())
-                        {
-                            await ProcessNodeRecursive(nestedChild, existingChild);
-                        }
-
-                        if (sourceChild.Children.Count == 0)
-                        {
-                            await ProcessCommand(new Models.DTO.CommandInfo
-                            (
-                                CommandType.DeleteItem, new List<INode> { sourceChild }
-                            ),
-                            new Models.DTO.LoggerDTO
-                            (
-                                LogCategory.DeleteFolderCategory,
-                                sourceChild.Name
-                            )
-                            );
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    ButtonResult? result = await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                  (MessageBoxConstants.Error.Value, "TEST",
-                                  ButtonEnum.YesNo));
-                    if (result != null && result == ButtonResult.Yes)
-                    {
-                        string newName = GenerateUniqueName(targetParent, sourceChild.Name);
-                        sourceChild.Name = newName;
-                        await ProcessCommand(new Models.DTO.CommandInfo
-                            (
-                                CommandType.MoveFile, sourceChild, targetParent
-                            ),
-                            new Models.DTO.LoggerDTO
-                            (
-                                LogCategory.MoveFileCategory,
-                                sourceChild.Name,
-                                targetParent.Name
-                            ));
-                    }
-                }
+                await ProcessMerge(sourceChild, targetParent, existingChild);
             }
         }
 
-        private string GenerateUniqueName(INode parent, string baseName)
+        private async Task ProcessMerge(INode sourceChild, INode targetParent, INode existingChild)
         {
-            string newName = baseName;
-            int copyNumber = 1;
-
-            while (parent.Children.Any(x => x.Name == newName))
+            if (sourceChild is NodeViewModel sourceNode && existingChild is NodeViewModel existChild)
             {
-                newName = $"{baseName} ({copyNumber})";
-                copyNumber++;
-            }
+                if (sourceNode.IsFolder && existChild.IsFolder)
+                {
+                    await ProcessCatalogMerge(sourceNode, existChild);
+                }
+                else
+                {
+                    await ProcessFilesMerge(sourceNode, targetParent);
+                }
+            }  
+        }
 
-            return newName;
+        private async Task ProcessCatalogMerge(INode sourceChild, INode existingChild)
+        {
+            ButtonResult? result = await GetResultOfCatalogMessage(
+                ParametrizedMessageBoxCategory.RenameCatalogMergeMessageBox.Content
+                .GetStringWithParams(sourceChild.Name, existingChild.Parent!.Name));
+            if (result != null && result == ButtonResult.Yes)
+            {
+                foreach (INode nestedChild in sourceChild.Children.ToList())
+                {
+                    await ProcessNodeRecursive(nestedChild, existingChild);
+                }
+
+                await DeleteFolder(sourceChild);
+            }
+        }
+
+        private async Task ProcessFilesMerge(INode sourceChild, INode targetParent)
+        {
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                  (ParametrizedMessageBoxCategory.RenameFileMergeMessageBox.Title,
+                                  ParametrizedMessageBoxCategory.RenameFileMergeMessageBox.Content
+                                  .GetStringWithParams(sourceChild.Name, targetParent.Name),
+                                  ButtonEnum.YesNo));
+            if (result != null && result == ButtonResult.Yes)
+            {
+                string newName = _generator.GenerateUniqueName(targetParent, sourceChild.Name);
+                sourceChild.Name = newName;
+                await MoveFile(sourceChild, targetParent);
+            }
+        }
+
+        private async Task<ButtonResult?> GetResultOfCatalogMessage(string content)
+        {
+            return await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                (ParametrizedMessageBoxCategory.RenameCatalogMergeMessageBox.Title,
+                content,
+                ButtonEnum.YesNo));
+        }
+
+        private async Task DeleteFolder(INode node)
+        {
+            if (node.Children.Count == 0)
+            {
+                await ProcessCommand(new Models.DTO.CommandInfo
+                    (
+                        CommandType.DeleteItem, new List<INode> { node }
+                    ),
+                    new Models.DTO.LoggerDTO
+                    (
+                        LogCategory.DeleteFolderCategory,
+                        node.Name
+                    )
+                );
+            }
+        }
+
+        private async Task MoveFile(INode sourceChild, INode targetParent)
+        {
+            await ProcessCommand(new Models.DTO.CommandInfo
+                (
+                    CommandType.MoveFile, sourceChild, targetParent
+                ),
+                new Models.DTO.LoggerDTO
+                (
+                    LogCategory.MoveFileCategory,
+                    sourceChild.Name,
+                    targetParent.Name
+                )
+            );
         }
     }
 }

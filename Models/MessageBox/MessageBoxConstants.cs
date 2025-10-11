@@ -10,5 +10,6 @@
         }
 
         public static MessageBoxConstants Error { get { return new MessageBoxConstants("Ошибка"); } }
+        public static MessageBoxConstants Warning { get { return new MessageBoxConstants("Предупреждение"); } }
     }
 }

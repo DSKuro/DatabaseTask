@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.ParametrizedStringImplementation.Exceptions;
 using DatabaseTask.Services.ParametrizedStringImplementation.Interfaces;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DatabaseTask.Services.ParametrizedStringImplementation
 {
@@ -15,7 +16,7 @@ namespace DatabaseTask.Services.ParametrizedStringImplementation
 
         public string GetStringWithParams(params string[] parameters)
         {
-            if (parameters.Length != _value.Count(x => x.Equals('?')))
+            if (parameters.Length != Regex.Matches(_value, @"\{\?\}").Count)
             {
                 throw new ParametrizedStringException("Количество параметров не совпадает");
             }
@@ -25,7 +26,7 @@ namespace DatabaseTask.Services.ParametrizedStringImplementation
 
         private string GetStringWithParamsImpl(params string[] parameters)
         {
-            string[] temp = _value.Split('?');
+            string[] temp = _value.Split("{?}");
             string stringWithParams = "";
             int i = 0;
             for (i = 0; i < temp.Length - 1; i++)

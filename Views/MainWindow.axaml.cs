@@ -5,6 +5,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -13,15 +14,18 @@ namespace DatabaseTask.Views
     public partial class MainWindow : Window
     {
         private readonly ITreeViewInitializer _treeViewInitializer;
+        private readonly ITreeView _treeView;
         private readonly IServiceProvider _serviceProvider;
 
         public MainWindow(ITreeViewInitializer treeViewInitializer,
+            ITreeView treeView,
             IMessageBoxService messageBoxService,
             IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
             _treeViewInitializer = treeViewInitializer;
+            _treeView = treeView;
             _serviceProvider = serviceProvider;
             _treeViewInitializer.Initialize(TreeViewControl, this);
             InitializeMessages();
@@ -50,6 +54,7 @@ namespace DatabaseTask.Views
                 FolderOperationWindow createFolderWindow = 
                 ProcessFolderWindowMessage(WindowCategory.RenameFolderCategory.Value,
                     TextBoxWatermark.RenameFolderWatermark.Value);
+                createFolderWindow.Text = _treeView.SelectedNodes[0].Name;
                 message.Reply(createFolderWindow.ShowDialog<string>(window));
             });
         }

@@ -155,7 +155,7 @@
 		<DataGrid Grid.Row="4"/>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="5">
-			<Button Grid.Column="0">Дубликаты в чертежах</Button>
+			<Button CornerRadius="15" Grid.Column="0">Дубликаты в чертежах</Button>
 			<Button Grid.Column="1">Неиспользуемые файлы</Button>
 		</Grid>
 

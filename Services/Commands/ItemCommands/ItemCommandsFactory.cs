@@ -5,11 +5,8 @@ using DatabaseTask.Services.Commands.ItemCommands.Interfaces;
 using DatabaseTask.Services.Commands.LogCommands;
 using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator;
-using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DatabaseTask.Services.Commands.ItemCommands
@@ -49,10 +46,13 @@ namespace DatabaseTask.Services.Commands.ItemCommands
                     break;
 
                 case CommandType.DeleteItem:
+                    if (info.Data == null)
+                    {
+                        throw new ArgumentException("Данные команды не заданы");
+                    }
+
                     builder
-                        .Add<DeleteItemCommand>(
-                        info.Data!
-                        );
+                        .Add<DeleteItemCommand>(info.Data!);
                     break;
 
                 case CommandType.CopyItem:

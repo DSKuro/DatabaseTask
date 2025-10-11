@@ -73,7 +73,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private FileProperties GetNewProperties(FileProperties oldProperties, INode node) 
         {
-            return new FileProperties(oldProperties.Name, oldProperties.Size, oldProperties.Modificated,
+            return new FileProperties(node.Name, oldProperties.Size, oldProperties.Modificated,
                 oldProperties.IconPath, node);
         }
     }

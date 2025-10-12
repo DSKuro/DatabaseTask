@@ -10,47 +10,37 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class FolderCommandsViewModel : BaseFolderCommandsViewModel, ICreateFolderCommandsViewModel
+    public class CreateFolderCommandsViewModel : BaseFolderCommandsViewModel, ICreateFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
+        private readonly ITreeView _treeView;
 
-        public FolderCommandsViewModel(IMessageBoxService messageBoxService,
+        public CreateFolderCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
-            IFileManagerFolderOperationsPermissions folderPermissions)
+            IFileManagerFolderOperationsPermissions folderPermissions,
+            ITreeView treeView)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
+            _treeView = treeView;
         }
 
         public async Task CreateFolder()
         {
             try
             {
-                _folderPermissions.CanDoOperationOnFolder();
-                object? data = await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>();
-                if (data != null)
-                {
-                    await ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.CreateFolder, data
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.CreateFolderCategory,
-                            data.ToString()!
-                        )
-                    );   
-                }
+                await CreateFolderImplementation();
             }
             catch (FileManagerOperationsException ex)
             {
@@ -58,6 +48,42 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                                    (MessageBoxConstants.Error.Value, ex.Message,
                                    ButtonEnum.Ok), null);
             }
+        }
+
+        private async Task CreateFolderImplementation()
+        {
+            _folderPermissions.CanDoOperationOnFolder();
+            object? data = await WeakReferenceMessenger.Default.Send<MainWindowCreateFolderMessage>();
+            string? name = data?.ToString();
+            if (name == null)
+            {
+                return;
+            }
+
+            await ProcessCreateFolder(name);
+        }
+
+        private async Task ProcessCreateFolder(string name)
+        {
+            if (!_treeView.IsNodeExist(0, name))
+            {
+                await ProcessCommand(new Models.DTO.CommandInfo
+                    (
+                        CommandType.CreateFolder, name
+                    ),
+                    new Models.DTO.LoggerDTO
+                    (
+                        LogCategory.CreateFolderCategory,
+                        name.ToString()!
+                    )
+                );
+                return;
+            }
+
+            await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                MessageBoxConstants.Error.Value,
+                "Каталог с данным именем уже существует",
+                ButtonEnum.Ok));
         }
     }
 }

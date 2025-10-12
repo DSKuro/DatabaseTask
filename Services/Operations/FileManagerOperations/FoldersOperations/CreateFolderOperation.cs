@@ -39,10 +39,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private NodeViewModel CreateNode(string folderName)
         {
-            if (_treeView.IsNodeExist(0, folderName))
-            {
-                throw new FileManagerOperationsException("Каталог с данным именем уже существует");
-            }
             return new NodeViewModel()
             {
                 Name = folderName,

@@ -45,7 +45,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 _filePermissions.CanDeleteFile();
                 await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
+                    MessageBoxCategory.DeleteFolderMessageBox.Content,
+                    LogCategory.DeleteFileCategory);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -60,8 +61,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             try
             {
                 _folderPermissions.CanDeleteFolder();
-                await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
+                await ProcessDelete(MessageBoxCategory.DeleteFileMessageBox.Title,
+                    MessageBoxCategory.DeleteFileMessageBox.Content,
+                    LogCategory.DeleteFolderCategory);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -71,7 +73,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task ProcessDelete(string title, string content)
+        private async Task ProcessDelete(string title, string content, LogCategory category)
         {
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
                     new MessageBoxOptions(
@@ -80,11 +82,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     ButtonEnum.YesNo));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessDeleteCommand();
+                await ProcessDeleteCommand(category);
             }
         }
 
-        private async Task ProcessDeleteCommand()
+        private async Task ProcessDeleteCommand(LogCategory category)
         {
             foreach (INode node in _treeView.SelectedNodes.ToList())
             {
@@ -94,7 +96,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     ),
                     new Models.DTO.LoggerDTO
                     (
-                        LogCategory.DeleteFolderCategory,
+                        category,
                         node.Name
                     )
                 );

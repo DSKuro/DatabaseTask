@@ -96,7 +96,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         [RelayCommand]
         public async Task CopyFile()
         {
-            await _messageBoxCommandsViewModel.CopyFileImpl();
+            await _moveFileCommandsViewModel.CopyFile();
         }
 
         [RelayCommand]

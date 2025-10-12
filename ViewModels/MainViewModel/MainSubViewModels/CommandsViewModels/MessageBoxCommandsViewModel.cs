@@ -19,7 +19,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class MessageBoxCommandsViewModel : BaseFolderCommandsViewModel, IMessageBoxCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
-        private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeView _treeView;
 
         public MessageBoxCommandsViewModel(IMessageBoxService messageBoxService,
@@ -28,13 +27,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
-            IFileManagerFileOperationsPermissions filePermissions,
             ITreeView treeView)
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
                   commandsHistory, fullPath) 
         { 
             _folderPermissions = folderPermissions;
-            _filePermissions = filePermissions;
             _treeView = treeView;
         }
         public async Task CopyFolderImpl()
@@ -53,66 +50,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                         new Models.DTO.LoggerDTO
                         (
                             LogCategory.CopyFolderCategory,
-                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                            (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                        )
-                    );
-                }
-            }
-            catch (FileManagerOperationsException ex)
-            {
-                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                   (MessageBoxConstants.Error.Value, ex.Message,
-                                   ButtonEnum.Ok), null);
-            }
-        }
-
-        public async Task MoveFileImpl()
-        {
-            try
-            {
-                _filePermissions.CanCopyFile();
-                ButtonResult? result = await OpenMessageBox(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
-                if (result != null && result == ButtonResult.Yes)
-                {
-                    ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.MoveFile
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.MoveFileCategory,
-                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                            (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                        )
-                    );
-                }
-            }
-            catch (FileManagerOperationsException ex)
-            {
-                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                   (MessageBoxConstants.Error.Value, ex.Message,
-                                   ButtonEnum.Ok), null);
-            }
-        }
-
-        public async Task CopyFileImpl()
-        {
-            try
-            {
-                _filePermissions.CanCopyFile();
-                ButtonResult? result = await OpenMessageBox(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
-                if (result != null && result == ButtonResult.Yes)
-                {
-                    ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.CopyItem
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.CopyFileCategory,
                             (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
                             (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
                         )

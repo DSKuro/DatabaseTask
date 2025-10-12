@@ -4,6 +4,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public interface IMoveFileCommandsViewModel
     {
+        public Task CopyFile();
         public Task MoveFile();
     }
 }

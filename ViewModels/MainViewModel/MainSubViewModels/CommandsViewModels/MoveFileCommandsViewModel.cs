@@ -24,6 +24,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeView _treeView;
 
+        private bool _isMove;
+
         public MoveFileCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
@@ -37,12 +39,29 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             _filePermissions = filePermissions;
             _treeView = treeView;
+            _isMove = false;
+        }
+
+        public async Task CopyFile()
+        {
+            try
+            {
+                _isMove = false;
+                await MoveFileImplementation();
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
         }
 
         public async Task MoveFile()
         {
             try
             {
+                _isMove = true;
                 await MoveFileImplementation();
             }
             catch (FileManagerOperationsException ex)
@@ -125,14 +144,21 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessMoveCommand(INode file, INode target)
         {
+            CommandType commandType = CommandType.CopyItem;
+            LogCategory logCategory = LogCategory.CopyFileCategory;
+            if (_isMove)
+            {
+                commandType = CommandType.MoveFile;
+                logCategory = LogCategory.MoveFileCategory;
+            }
             await ProcessCommand(new Models.DTO.CommandInfo
                (
-                   CommandType.MoveFile, file,
+                   commandType, file,
                    target
                ),
                new Models.DTO.LoggerDTO
                (
-                   LogCategory.MoveFileCategory,
+                   logCategory,
                    file.Name,
                    target.Name
                )

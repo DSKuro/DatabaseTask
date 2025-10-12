@@ -199,7 +199,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 await ProcessCommand(new Models.DTO.CommandInfo
                     (
-                        CommandType.DeleteItem, new List<INode> { node }
+                        CommandType.DeleteItem, node
                     ),
                     new Models.DTO.LoggerDTO
                     (

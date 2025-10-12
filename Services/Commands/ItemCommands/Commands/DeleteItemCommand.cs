@@ -8,14 +8,14 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 {
     public class DeleteItemCommand : ICommand
     {
-        private readonly List<INode> _nodes;
+        private readonly INode _node;
         private readonly IDeleteItemOperation _folderOperation;
 
         public DeleteItemCommand(
             IDeleteItemOperation folderOperation,
-            List<INode> nodes)
+            INode node)
         {
-            _nodes = nodes;
+            _node = node;
             _folderOperation = folderOperation;
         }
 
@@ -23,7 +23,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
         {
             if (_folderOperation != null)
             {
-                _folderOperation.DeleteItem(_nodes);
+                _folderOperation.DeleteItem(_node);
             }
             return Task.CompletedTask;
         }

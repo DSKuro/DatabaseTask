@@ -4,10 +4,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public interface IMessageBoxCommandsViewModel
     {
-        public Task DeleteFolderImpl();
         public Task CopyFolderImpl();
         public Task CopyFileImpl();
         public Task MoveFileImpl();
-        public Task DeleteFileImpl();
     }
 }

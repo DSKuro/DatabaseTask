@@ -1,0 +1,104 @@
+﻿using DatabaseTask.Models.Categories;
+using DatabaseTask.Models.MessageBox;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
+using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.Utility.Enum;
+using DatabaseTask.Services.Dialogues.MessageBox;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using MsBox.Avalonia.Enums;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
+{
+    public class DeleteItemCommandViewModel : BaseFolderCommandsViewModel, IDeleteItemCommandsViewModel
+    {
+        private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
+        private readonly IFileManagerFileOperationsPermissions _filePermissions;
+        private readonly ITreeView _treeView;
+
+        public DeleteItemCommandViewModel(IMessageBoxService messageBoxService,
+            ICommandsFactory itemCommandsFactory,
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory,
+            IFullPath fullPath,
+            IFileManagerFolderOperationsPermissions folderPermissions,
+            IFileManagerFileOperationsPermissions filePermissions,
+            ITreeView treeView)
+            : base(messageBoxService, itemCommandsFactory,
+                  fileCommandsFactory, commandsHistory, fullPath)
+        {
+            _folderPermissions = folderPermissions;
+            _filePermissions = filePermissions;
+            _treeView = treeView;
+        }
+
+        public async Task DeleteFiles()
+        {
+            try
+            {
+                _filePermissions.CanDeleteFile();
+                await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
+                    MessageBoxCategory.DeleteFolderMessageBox.Content);
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
+        }
+
+        public async Task DeleteFolders()
+        {
+            try
+            {
+                _folderPermissions.CanDeleteFolder();
+                await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
+                    MessageBoxCategory.DeleteFolderMessageBox.Content);
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
+        }
+
+        private async Task ProcessDelete(string title, string content)
+        {
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
+                    new MessageBoxOptions(
+                    title,
+                    content,
+                    ButtonEnum.YesNo));
+            if (result != null && result == ButtonResult.Yes)
+            {
+                await ProcessDeleteCommand();
+            }
+        }
+
+        private async Task ProcessDeleteCommand()
+        {
+            foreach (INode node in _treeView.SelectedNodes.ToList())
+            {
+                await ProcessCommand(new Models.DTO.CommandInfo
+                    (
+                        CommandType.DeleteItem, node
+                    ),
+                    new Models.DTO.LoggerDTO
+                    (
+                        LogCategory.DeleteFolderCategory,
+                        node.Name
+                    )
+                );
+            }
+        }
+    }
+}

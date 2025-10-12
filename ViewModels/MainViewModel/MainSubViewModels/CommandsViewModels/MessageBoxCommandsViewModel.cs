@@ -37,36 +37,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _filePermissions = filePermissions;
             _treeView = treeView;
         }
-
-        public async Task DeleteFolderImpl()
-        {
-            try
-            {
-                _folderPermissions.CanDeleteFolder();
-                ButtonResult? result = await OpenMessageBox(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
-                if (result != null && result == ButtonResult.Yes)
-                {
-                    await ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.DeleteItem
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.DeleteFolderCategory, 
-                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
-                        )
-                    );
-                }
-            }
-            catch (FileManagerOperationsException ex)
-            {
-                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                   (MessageBoxConstants.Error.Value, ex.Message,
-                                   ButtonEnum.Ok), null);
-            }
-        }
-
         public async Task CopyFolderImpl()
         {
             try
@@ -145,35 +115,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                             LogCategory.CopyFileCategory,
                             (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
                             (_treeView.SelectedNodes[1] as NodeViewModel)!.Name
-                        )
-                    );
-                }
-            }
-            catch (FileManagerOperationsException ex)
-            {
-                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
-                                   (MessageBoxConstants.Error.Value, ex.Message,
-                                   ButtonEnum.Ok), null);
-            }
-        }
-
-        public async Task DeleteFileImpl()
-        {
-            try
-            {
-                _filePermissions.CanDeleteFile();
-                ButtonResult? result = await OpenMessageBox(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content);
-                if (result != null && result == ButtonResult.Yes)
-                {
-                    ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.DeleteItem
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.DeleteFileCategory,
-                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name
                         )
                     );
                 }

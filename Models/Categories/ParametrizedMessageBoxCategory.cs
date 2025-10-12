@@ -31,5 +31,13 @@ namespace DatabaseTask.Models.Categories
                     new ParametrizedString("Файл \"{?}\" уже существует в каталоге \"{?}\". Хотите выполнить слияние?"));
             }
         }
+        public static ParametrizedMessageBoxCategory MoveFileReplaceMessageBox
+        {
+            get
+            {
+                return new ParametrizedMessageBoxCategory("Предупреждение",
+                    new ParametrizedString("Файл \"{?}\" уже существует в каталоге \"{?}\". Хотите заменить файл?"));
+            }
+        }
     }
 }

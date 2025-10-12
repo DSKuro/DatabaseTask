@@ -1,0 +1,142 @@
+﻿using DatabaseTask.Models.Categories;
+using DatabaseTask.Models.MessageBox;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
+using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.Utility.Enum;
+using DatabaseTask.Services.Dialogues.MessageBox;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.Operations.Utils.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using MsBox.Avalonia.Enums;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
+{
+    public class MoveFileCommandsViewModel : BaseFolderCommandsViewModel, IMoveFileCommandsViewModel
+    {
+        private readonly IFileManagerFileOperationsPermissions _filePermissions;
+        private readonly ITreeView _treeView;
+
+        public MoveFileCommandsViewModel(IMessageBoxService messageBoxService,
+            ICommandsFactory itemCommandsFactory,
+            IFileCommandsFactory fileCommandsFactory,
+            ICommandsHistory commandsHistory,
+            IFullPath fullPath,
+            IFileManagerFileOperationsPermissions filePermissions,
+            ITreeView treeView,
+            INameGenerator generator)
+            : base(messageBoxService, itemCommandsFactory,
+                  fileCommandsFactory, commandsHistory, fullPath)
+        {
+            _filePermissions = filePermissions;
+            _treeView = treeView;
+        }
+
+        public async Task MoveFile()
+        {
+            try
+            {
+                await MoveFileImplementation();
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
+        }
+
+        private async Task MoveFileImplementation()
+        {
+            _filePermissions.CanCopyFile();
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
+                new MessageBoxOptions(
+                MessageBoxCategory.MoveFileMessageBox.Title,
+                MessageBoxCategory.MoveFileMessageBox.Content,
+                ButtonEnum.YesNo
+                ));
+            if (result != null && result == ButtonResult.Yes)
+            {
+                await ProcessMove();
+            }
+        }
+
+        private async Task ProcessMove()
+        {
+            List<INode> files = _treeView.SelectedNodes.SkipLast(1).ToList();
+            foreach (INode file in files)
+            {
+                await ProcessMoveForSingleFile(file, _treeView.SelectedNodes.Last());
+            }
+        }
+
+        private async Task ProcessMoveForSingleFile(INode file, INode target)
+        {
+            if (!_treeView.IsNodeExist(_treeView.SelectedNodes.Last(), file.Name))
+            {
+                await ProcessMoveCommand(file, target);
+                return;
+            }
+
+            await ProcessReplace(file, target);
+        }
+
+        private async Task ProcessReplace(INode file, INode target)
+        {
+            ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
+            new MessageBoxOptions(
+            ParametrizedMessageBoxCategory.MoveFileReplaceMessageBox.Title,
+            ParametrizedMessageBoxCategory.MoveFileReplaceMessageBox.Content
+            .GetStringWithParams(file.Name, target.Name),
+            ButtonEnum.YesNo
+            ));
+            if (result != null && result == ButtonResult.Yes)
+            {
+                await ProcessReplaceImplementation(file, target);
+            }
+        }
+
+        private async Task ProcessReplaceImplementation(INode file, INode target)
+        {
+            INode? node = target.Children.FirstOrDefault(x =>
+                x.Name == file.Name);
+            if (node != null)
+            {
+                await ProcessCommand(new Models.DTO.CommandInfo
+                    (
+                        CommandType.DeleteItem, node
+                    ),
+                    new Models.DTO.LoggerDTO
+                    (
+                        LogCategory.DeleteFileCategory,
+                        node.Name
+                    )
+                );
+                await ProcessMoveCommand(file, target);
+            }
+        }
+
+        private async Task ProcessMoveCommand(INode file, INode target)
+        {
+            await ProcessCommand(new Models.DTO.CommandInfo
+               (
+                   CommandType.MoveFile, file,
+                   target
+               ),
+               new Models.DTO.LoggerDTO
+               (
+                   LogCategory.MoveFileCategory,
+                   file.Name,
+                   target.Name
+               )
+            );
+        }
+    }
+}

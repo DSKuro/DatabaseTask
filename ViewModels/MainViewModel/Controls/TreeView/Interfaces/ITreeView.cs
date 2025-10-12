@@ -14,6 +14,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces
         public EventHandler<TreeViewEventArgs> ScrollChanged { get; set; }
 
         public bool IsNodeExist(int selectedNodeIndex, string name);
+        public bool IsNodeExist(INode node, string name);
         public bool IsParentHasNodeWithName(INode node, string name);
         public void AddSelectedNodeByIndex(int index);
     }

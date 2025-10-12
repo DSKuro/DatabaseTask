@@ -2,6 +2,8 @@
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 { 
@@ -43,20 +45,17 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             {
                 throw new FileManagerOperationsException("Не выбран целевой каталог");
             }
-            else if (_treeView.SelectedNodes.Count > 2)
+            else
             {
-                throw new FileManagerOperationsException("Выбрано больше двух элементов");
-            }
-            else if (_treeView.SelectedNodes[0] is NodeViewModel node)
-            {
-                if (node.IsFolder)
+                List<NodeViewModel> selectedNodes = _treeView.SelectedNodes.OfType<NodeViewModel>().ToList();
+                IEnumerable<NodeViewModel> nodesExceptLast = selectedNodes.Take(selectedNodes.Count - 1);
+
+                if (nodesExceptLast.Any(x => x.IsFolder))
                 {
                     throw new FileManagerOperationsException("Выбран каталог, не файл");
                 }
-            }
-            else if (_treeView.SelectedNodes[1] is NodeViewModel folderNode)
-            {
-                if (!folderNode.IsFolder)
+                
+                if (!selectedNodes.Last().IsFolder)
                 {
                     throw new FileManagerOperationsException("Вместо целевого каталога выбран файл");
                 }

@@ -4,6 +4,8 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
@@ -23,6 +25,25 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (copied != null && newNode != null)
             {
                 AddNewProperties(copied, newNode, target);
+
+                RecursiveCopyChildren(copied, newNode);
+            }
+        }
+
+        private void RecursiveCopyChildren(INode sourceParent, INode targetParent)
+        {
+            foreach (INode child in sourceParent.Children)
+            {
+                INode? newChildNode = AddNewNode(child, targetParent);
+                if (newChildNode != null)
+                {
+                    AddNewProperties(child, newChildNode, targetParent);
+
+                    if (child.Children.Any())
+                    {
+                        RecursiveCopyChildren(child, newChildNode);
+                    }
+                }
             }
         }
 
@@ -37,7 +58,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                     target.Children.Add(node);
                 }
             }
-
             return node;
         }
 
@@ -46,7 +66,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (oldNode is NodeViewModel node)
             {
                 SmartCollection<INode> children = new SmartCollection<INode>();
-                children.AddRange(node.Children);
                 return new NodeViewModel()
                 {
                     Name = node.Name,
@@ -71,7 +90,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        private FileProperties GetNewProperties(FileProperties oldProperties, INode node) 
+        private FileProperties GetNewProperties(FileProperties oldProperties, INode node)
         {
             return new FileProperties(node.Name, oldProperties.Size, oldProperties.Modificated,
                 oldProperties.IconPath, node);

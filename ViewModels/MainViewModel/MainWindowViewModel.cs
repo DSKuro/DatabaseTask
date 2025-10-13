@@ -22,6 +22,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly IRenameFolderCommandsViewModel _renameCommandsViewModel;
         private readonly IDeleteItemCommandsViewModel _deleteItemCommandsViewModel;
         private readonly IMoveFileCommandsViewModel _moveFileCommandsViewModel;
+        private readonly ICopyFolderCommandsViewModel _copyFolderCommandsViewModel;
 
         private readonly ICommandsHistory _commandsHistory;
 
@@ -38,7 +39,8 @@ namespace DatabaseTask.ViewModels.MainViewModel
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory,
             IDeleteItemCommandsViewModel deleteItemCommandsViewModel,
-            IMoveFileCommandsViewModel moveFileCommandsViewModel) : base(messageBoxService)
+            IMoveFileCommandsViewModel moveFileCommandsViewModel,
+            ICopyFolderCommandsViewModel copyFolderCommandsViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
@@ -49,6 +51,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _commandsHistory = commandsHistory;
             _deleteItemCommandsViewModel = deleteItemCommandsViewModel;
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
+            _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
         }
 
         [RelayCommand]
@@ -84,7 +87,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         [RelayCommand]
         public async Task CopyFolder()
         {
-            await _messageBoxCommandsViewModel.CopyFolderImpl();
+            await _copyFolderCommandsViewModel.CopyFolder();
         }
 
         [RelayCommand]

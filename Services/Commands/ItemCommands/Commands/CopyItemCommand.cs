@@ -9,22 +9,25 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
     {
         private readonly INode _copied;
         private readonly INode _target;
+        private readonly string _newName;
         private readonly ICopyItemOperation _folderOperation;
 
-        public CopyItemCommand(INode copied,
+        public CopyItemCommand(ICopyItemOperation folderOperation,
+            INode copied,
             INode target,
-            ICopyItemOperation folderOperation)
+            string newName)
         {
+            _folderOperation = folderOperation;
             _copied = copied;
             _target = target;
-            _folderOperation = folderOperation;
+            _newName = newName;
         }
 
         public Task Execute()
         {
             if (_folderOperation != null)
             {
-                _folderOperation.CopyItem(_copied, _target);
+                _folderOperation.CopyItem(_copied, _target, _newName);
             }
             return Task.CompletedTask;
         }

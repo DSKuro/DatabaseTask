@@ -8,6 +8,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
@@ -15,6 +16,7 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using MsBox.Avalonia.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
@@ -22,6 +24,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class CopyFolderCommandViewModel : BaseFolderCommandsViewModel, ICopyFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
+        private readonly INameGenerator _generator;
         private readonly ITreeView _treeView;
 
         public CopyFolderCommandViewModel(IMessageBoxService messageBoxService,
@@ -30,11 +33,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
+            INameGenerator generator,
             ITreeView treeView)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
+            _generator = generator;
             _treeView = treeView;
         }
 
@@ -94,6 +99,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return;
             }
 
+            if (target == file.Parent)
+            {
+                string newName = _generator.GenerateUniqueCopyName(target, file.Name);
+                await MoveFile(file, target, newName);
+                return;
+            }
+
             await ProcessDeepRename(file, target);
         }
 
@@ -105,20 +117,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 target.Name));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessDeepRenameImplementation(file, target);
+                await ProcessNodeRecursive(file, target);
             }
         }
 
-        private async Task ProcessDeepRenameImplementation(INode child, INode targetNode)
-        {
-            INode sourceNode = child;
-            List<INode> children = sourceNode.Children.ToList();
+        //private async Task ProcessDeepRenameImplementation(INode child, INode targetNode)
+        //{
+        //    INode sourceNode = child;
+        //    List<INode> children = sourceNode.Children.ToList();
 
-            foreach (INode sourceChild in children)
-            {
-                await ProcessNodeRecursive(sourceChild, targetNode);
-            }
-        }
+        //    foreach (INode sourceChild in children)
+        //    {
+        //        await ProcessNodeRecursive(sourceChild, targetNode);
+        //    }
+        //}
 
         private async Task ProcessNodeRecursive(INode sourceChild, INode targetParent)
         {
@@ -126,7 +138,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
             if (existingChild == null)
             {
-                await MoveFile(sourceChild, targetParent);
+                await MoveFile(sourceChild, targetParent, sourceChild.Name);
             }
             else
             {
@@ -173,7 +185,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             if (result != null && result == ButtonResult.Yes)
             {
                 await DeleteFolder(targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name)!);
-                await MoveFile(sourceChild, targetParent);
+                await MoveFile(sourceChild, targetParent, sourceChild.Name);
             }
         }
 
@@ -195,18 +207,18 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     ),
                     new Models.DTO.LoggerDTO
                     (
-                        LogCategory.DeleteFolderCategory,
+                        LogCategory.DeleteFileCategory,
                         node.Name
                     )
                 );
             }
         }
 
-        private async Task MoveFile(INode sourceChild, INode targetParent)
+        private async Task MoveFile(INode sourceChild, INode targetParent, string newName)
         {
             await ProcessCommand(new Models.DTO.CommandInfo
                 (
-                    CommandType.CopyItem, sourceChild, targetParent
+                    CommandType.CopyItem, sourceChild, targetParent, newName
                 ),
                 new Models.DTO.LoggerDTO
                 (

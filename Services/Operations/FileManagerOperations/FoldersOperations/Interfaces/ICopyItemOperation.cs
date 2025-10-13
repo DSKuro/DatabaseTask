@@ -4,6 +4,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 {
     public interface ICopyItemOperation
     {
-        public void CopyItem(INode copied, INode target);
+        public void CopyItem(INode copied, INode target, string newItemName);
     }
 }

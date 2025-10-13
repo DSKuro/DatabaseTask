@@ -4,7 +4,6 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -19,11 +18,12 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGrid = dataGrid;
         }
 
-        public void CopyItem(INode copied, INode target)
+        public void CopyItem(INode copied, INode target, string newItemName)
         {
             INode? newNode = AddNewNode(copied, target);
             if (copied != null && newNode != null)
             {
+                newNode.Name = newItemName;
                 AddNewProperties(copied, newNode, target);
 
                 RecursiveCopyChildren(copied, newNode);

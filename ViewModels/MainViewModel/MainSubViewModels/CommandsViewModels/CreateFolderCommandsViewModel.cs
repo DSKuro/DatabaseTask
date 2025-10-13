@@ -65,7 +65,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessCreateFolder(string name)
         {
-            if (!_treeView.IsNodeExist(0, name))
+            if (!_treeView.IsNodeExist(_treeView.SelectedNodes[0], name))
             {
                 await ProcessCommand(new Models.DTO.CommandInfo
                     (

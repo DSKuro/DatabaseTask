@@ -17,7 +17,6 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly ILogger _logger;
 
         private readonly IOpenDataViewModel _openDataViewModel;
-        private readonly IMessageBoxCommandsViewModel _messageBoxCommandsViewModel;
         private readonly ICreateFolderCommandsViewModel _folderCommandsViewModel;
         private readonly IRenameFolderCommandsViewModel _renameCommandsViewModel;
         private readonly IDeleteItemCommandsViewModel _deleteItemCommandsViewModel;
@@ -33,7 +32,6 @@ namespace DatabaseTask.ViewModels.MainViewModel
             IFileManager fileManager,
             ILogger logger,
             IOpenDataViewModel openDataViewModel,
-            IMessageBoxCommandsViewModel messageBoxCommandsViewModel,
             ICreateFolderCommandsViewModel folderCommandsViewModel,
             IRenameFolderCommandsViewModel renameFolderCommandsViewModel,
             IFileCommandsFactory fileCommandsFactory,
@@ -45,7 +43,6 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _fileManager = fileManager;
             _logger = logger;
             _openDataViewModel = openDataViewModel;
-            _messageBoxCommandsViewModel = messageBoxCommandsViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
             _renameCommandsViewModel = renameFolderCommandsViewModel;
             _commandsHistory = commandsHistory;

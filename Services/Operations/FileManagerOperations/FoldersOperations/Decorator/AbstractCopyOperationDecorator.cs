@@ -12,9 +12,9 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _copyOperation = copyOperation;
         }
 
-        public virtual void CopyItem(INode copied,INode target)
+        public virtual void CopyItem(INode copied,INode target, string? newItemName = null)
         {
-            _copyOperation.CopyItem(copied, target);
+            _copyOperation.CopyItem(copied, target, newItemName);
         } 
     }
 }

@@ -15,6 +15,7 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using MsBox.Avalonia.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
@@ -23,6 +24,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeView _treeView;
+        private readonly INameGenerator _generator;
 
         private bool _isMove;
 
@@ -39,6 +41,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             _filePermissions = filePermissions;
             _treeView = treeView;
+            _generator = generator;
             _isMove = false;
         }
 
@@ -98,14 +101,32 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessMoveForSingleFile(INode file, INode target)
         {
-            if (!_treeView.IsNodeExist(_treeView.SelectedNodes.Last(), file.Name))
+            if (!_treeView.IsNodeExist(target, file.Name))
             {
-                await ProcessMoveCommand(file, target);
+                await ProcessMoveCommand(file, target, file.Name);
+                return;
+            }
+
+            if (target == file.Parent)
+            {
+                if (_isMove)
+                {
+                    await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                    ParametrizedMessageBoxCategory.MoveFileToParentMessageBox.Title,
+                    ParametrizedMessageBoxCategory.MoveFileToParentMessageBox.Content
+                    .GetStringWithParams(file.Name, target.Name), ButtonEnum.Ok));
+                }
+                else
+                {
+                    string newName = _generator.GenerateUniqueCopyName(target, file.Name);           
+                    await ProcessMoveCommand(file, target, newName);
+                }
                 return;
             }
 
             await ProcessReplace(file, target);
         }
+
 
         private async Task ProcessReplace(INode file, INode target)
         {
@@ -138,11 +159,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                         node.Name
                     )
                 );
-                await ProcessMoveCommand(file, target);
+                await ProcessMoveCommand(file, target, file.Name);
             }
         }
 
-        private async Task ProcessMoveCommand(INode file, INode target)
+        private async Task ProcessMoveCommand(INode file, INode target, string newName)
         {
             CommandType commandType = CommandType.CopyItem;
             LogCategory logCategory = LogCategory.CopyFileCategory;
@@ -154,12 +175,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             await ProcessCommand(new Models.DTO.CommandInfo
                (
                    commandType, file,
-                   target
+                   target,
+                   newName
                ),
                new Models.DTO.LoggerDTO
                (
                    logCategory,
-                   file.Name,
+                   newName ?? file.Name,
                    target.Name
                )
             );

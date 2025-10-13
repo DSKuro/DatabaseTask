@@ -136,7 +136,6 @@ namespace DatabaseTask.Configuration
 
         private void AddViewModelsAndWindows()
         {
-            _serviceCollection.AddScoped<IMessageBoxCommandsViewModel, MessageBoxCommandsViewModel>();
             _serviceCollection.AddScoped<IOpenDataViewModel, OpenDataViewModel>();
             _serviceCollection.AddScoped<ICreateFolderCommandsViewModel, CreateFolderCommandsViewModel>();
             _serviceCollection.AddScoped<IRenameFolderCommandsViewModel, RenameFolderCommandViewModel>();

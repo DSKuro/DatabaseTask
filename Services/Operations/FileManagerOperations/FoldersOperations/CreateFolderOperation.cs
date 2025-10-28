@@ -28,7 +28,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         public async Task CreateFolder(string folderName)
         {
             NodeViewModel node = CreateNode(folderName);
-            int nodeIndex = GetNewNodeIndex(folderName);
+            int nodeIndex = _treeView.GetNodePositionIndex(_treeView.SelectedNodes[0], node);
+            if (nodeIndex == -1)
+            {
+                return;
+            }
             _treeView.SelectedNodes[0].Children.Insert(nodeIndex, node);
             CreateFolderProperties(node, nodeIndex);
             UpdateSelectedNodes(node);

@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels
 {
-    // КАК БУДТО ЛИШНИЙ вывод есть + лог
     public class CopyFolderCommandViewModel : BaseOperationsCommandsViewModel, ICopyFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;

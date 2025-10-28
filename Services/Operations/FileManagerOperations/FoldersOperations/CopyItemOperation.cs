@@ -4,6 +4,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -11,11 +12,14 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public class CopyItemOperation : ICopyItemOperation
     {
         private readonly IDataGrid _dataGrid;
+        private readonly ITreeView _treeView;
 
         public CopyItemOperation(
-            IDataGrid dataGrid)
+            IDataGrid dataGrid,
+            ITreeView treeView)
         {
             _dataGrid = dataGrid;
+            _treeView = treeView;
         }
 
         public void CopyItem(INode copied, INode target, string newItemName)
@@ -55,7 +59,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 node = GetNewNode(copied, target);
                 if (node != null)
                 {
-                    target.Children.Add(node);
+                    int index = _treeView.GetNodePositionIndex(target, node);
+                    if (index != -1)
+                    {
+                        target.Children.Insert(index, node);
+                    }
                 }
             }
             return node;

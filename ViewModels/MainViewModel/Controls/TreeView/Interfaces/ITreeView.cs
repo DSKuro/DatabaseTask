@@ -16,5 +16,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces
         public bool IsNodeExist(INode node, string name);
         public bool IsParentHasNodeWithName(INode node, string name);
         public void AddSelectedNodeByIndex(int index);
+        public int GetNodePositionIndex(INode target, INode node);
     }
 }

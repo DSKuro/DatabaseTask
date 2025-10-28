@@ -9,11 +9,12 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Inter
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels
 {
     public class CreateFolderCommandsViewModel : BaseOperationsCommandsViewModel, ICreateFolderCommandsViewModel
     {

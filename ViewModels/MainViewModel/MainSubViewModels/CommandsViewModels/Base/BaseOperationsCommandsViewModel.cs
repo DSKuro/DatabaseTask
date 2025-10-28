@@ -7,12 +7,12 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
 {
-    public class BaseOperationsCommandsViewModel : BaseFolderCommandsViewModel, IBaseOperationsCommandsViewModel
+    public class BaseOperationsCommandsViewModel : BaseFileManagerCommandsViewModel, IBaseOperationsCommandsViewModel
     {
         public BaseOperationsCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
@@ -51,6 +51,12 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public async Task CopyItemOperation(INode node, INode target, string name)
         {
+            bool isFolder = false;
+            if (node is NodeViewModel newNode)
+            {
+                isFolder = newNode.IsFolder;
+            }
+
             await ProcessCommand(new Models.DTO.CommandInfo
                (
                    CommandType.CopyItem, node,
@@ -59,7 +65,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                ),
                new Models.DTO.LoggerDTO
                (
-                   LogCategory.CopyFileCategory,
+                   isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
                    name ?? node.Name,
                    target.Name
                )
@@ -68,6 +74,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public async Task MoveItemOperation(INode node, INode target, string name)
         {
+            bool isFolder = false;
+            if (node is NodeViewModel newNode) {
+                isFolder = newNode.IsFolder;
+            }
+
             await ProcessCommand(new Models.DTO.CommandInfo
                (
                    CommandType.MoveFile, node,
@@ -76,7 +87,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                ),
                new Models.DTO.LoggerDTO
                (
-                   LogCategory.MoveFileCategory,
+                   (isFolder) ? LogCategory.MoveFileCategory
+                   : LogCategory.MoveFileCategory,
                    name ?? node.Name,
                    target.Name
                )

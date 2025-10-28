@@ -5,7 +5,8 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Threading.Tasks;
 

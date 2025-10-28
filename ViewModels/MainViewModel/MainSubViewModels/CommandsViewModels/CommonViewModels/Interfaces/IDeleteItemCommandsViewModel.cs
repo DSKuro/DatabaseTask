@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces
 {
     public interface IDeleteItemCommandsViewModel
     {

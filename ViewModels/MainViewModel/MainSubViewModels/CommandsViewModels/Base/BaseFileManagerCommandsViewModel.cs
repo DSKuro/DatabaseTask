@@ -7,9 +7,9 @@ using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
 {
-    public class BaseFolderCommandsViewModel : ViewModelMessageBox
+    public class BaseFileManagerCommandsViewModel : ViewModelMessageBox
     {
         private readonly ICommandsFactory _itemCommandsFactory;
         private readonly IFileCommandsFactory _fileCommandsFactory;
@@ -21,7 +21,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             get => _itemCommandsFactory;
         }
         
-        public BaseFolderCommandsViewModel(
+        public BaseFileManagerCommandsViewModel(
             IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,

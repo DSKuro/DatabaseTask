@@ -62,7 +62,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands
 
                 case CommandType.MoveFile:
                     MoveOperationDecorator decorator = _serviceProvider.GetRequiredService<MoveOperationDecorator>();
-                    object[] parameters = info.Data!.Concat(new object[] { decorator }).ToArray();
+                    object[] parameters = info.Data!.Concat(new object[] { decorator }).ToArray()!;
                     builder
                      .Add<CopyItemCommand>(parameters);
                     break;

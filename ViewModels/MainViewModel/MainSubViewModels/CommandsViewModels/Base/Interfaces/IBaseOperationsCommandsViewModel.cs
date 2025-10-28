@@ -2,7 +2,7 @@
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces
+namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces
 {
     public interface IBaseOperationsCommandsViewModel
     {

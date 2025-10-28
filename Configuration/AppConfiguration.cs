@@ -33,8 +33,6 @@ using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop;
 using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
 using DatabaseTask.Services.TreeViewItemLogic.Interactions;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.Base;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
@@ -49,6 +47,12 @@ using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.D
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.Services.Operations.Utils;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 
 namespace DatabaseTask.Configuration
 {
@@ -142,6 +146,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IDeleteItemCommandsViewModel, DeleteItemCommandsViewModel>();
             _serviceCollection.AddScoped<IMoveFileCommandsViewModel, MoveFileCommandsViewModel>();
             _serviceCollection.AddScoped<ICopyFolderCommandsViewModel, CopyFolderCommandViewModel>();
+            _serviceCollection.AddScoped<IMergeCommandsViewModel, MergeCommandsViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();

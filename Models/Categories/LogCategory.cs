@@ -47,6 +47,13 @@ namespace DatabaseTask.Models.Categories
                 return new LogCategory(new ParametrizedString("MOVE FILE \"{?}\" TO \"{?}\""));
             }
         }
+        public static LogCategory MoveCatalogCategory
+        {
+            get
+            {
+                return new LogCategory(new ParametrizedString("MOVE DIRECTORY \"{?}\" TO \"{?}\""));
+            }
+        }
         public static LogCategory CopyFileCategory
         {
             get

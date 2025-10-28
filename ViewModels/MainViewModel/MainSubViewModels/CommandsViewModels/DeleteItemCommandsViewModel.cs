@@ -3,7 +3,6 @@ using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
@@ -17,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class DeleteItemCommandsViewModel : BaseFolderCommandsViewModel, IDeleteItemCommandsViewModel
+    public class DeleteItemCommandsViewModel : BaseOperationsCommandsViewModel, IDeleteItemCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
@@ -90,16 +89,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             foreach (INode node in _treeView.SelectedNodes.ToList())
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                    (
-                        CommandType.DeleteItem, node
-                    ),
-                    new Models.DTO.LoggerDTO
-                    (
-                        category,
-                        node.Name
-                    )
-                );
+                await DeleteItemOperation(node, category);
             }
         }
     }

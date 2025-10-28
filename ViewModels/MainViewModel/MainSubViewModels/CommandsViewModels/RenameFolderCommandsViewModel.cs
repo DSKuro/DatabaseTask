@@ -4,7 +4,6 @@ using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
@@ -22,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class RenameFolderCommandsViewModel : BaseFolderCommandsViewModel, IRenameFolderCommandsViewModel
+    public class RenameFolderCommandsViewModel : BaseOperationsCommandsViewModel, IRenameFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly ITreeView _treeView;
@@ -75,17 +74,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (!_treeView.IsParentHasNodeWithName(_treeView.SelectedNodes[0], name))
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.RenameFolder, name
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.RenameFolderCategory,
-                            (_treeView.SelectedNodes[0] as NodeViewModel)!.Name,
-                            name
-                        )
-                );
+                await RenameFolderOperation((_treeView.SelectedNodes[0] as NodeViewModel)!.Name, name);
                 return;
             }
 
@@ -131,7 +120,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
             if (existingChild == null)
             {
-                await MoveFile(sourceChild, targetParent);
+                await MoveItemOperation(sourceChild, targetParent, sourceChild.Name);
             }
             else
             {
@@ -181,7 +170,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 string newName = _generator.GenerateUniqueName(targetParent, sourceChild.Name);
                 sourceChild.Name = newName;
-                await MoveFile(sourceChild, targetParent);
+                await MoveItemOperation(sourceChild, targetParent, sourceChild.Name);
             }
         }
 
@@ -197,32 +186,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (node.Children.Count == 0)
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                    (
-                        CommandType.DeleteItem, node
-                    ),
-                    new Models.DTO.LoggerDTO
-                    (
-                        LogCategory.DeleteFolderCategory,
-                        node.Name
-                    )
-                );
+                await DeleteItemOperation(node, LogCategory.DeleteFolderCategory);
             }
-        }
-
-        private async Task MoveFile(INode sourceChild, INode targetParent)
-        {
-            await ProcessCommand(new Models.DTO.CommandInfo
-                (
-                    CommandType.MoveFile, sourceChild, targetParent
-                ),
-                new Models.DTO.LoggerDTO
-                (
-                    LogCategory.MoveFileCategory,
-                    sourceChild.Name,
-                    targetParent.Name
-                )
-            );
         }
     }
 }

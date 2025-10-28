@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using DatabaseTask.Models.Categories;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
@@ -17,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class CreateFolderCommandsViewModel : BaseFolderCommandsViewModel, ICreateFolderCommandsViewModel
+    public class CreateFolderCommandsViewModel : BaseOperationsCommandsViewModel, ICreateFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly ITreeView _treeView;
@@ -67,16 +65,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (!_treeView.IsNodeExist(_treeView.SelectedNodes[0], name))
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                    (
-                        CommandType.CreateFolder, name
-                    ),
-                    new Models.DTO.LoggerDTO
-                    (
-                        LogCategory.CreateFolderCategory,
-                        name.ToString()!
-                    )
-                );
+                await CreateFolderOperation(name);
                 return;
             }
 

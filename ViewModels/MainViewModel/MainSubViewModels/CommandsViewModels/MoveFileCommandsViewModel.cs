@@ -3,7 +3,6 @@ using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
@@ -15,12 +14,11 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using MsBox.Avalonia.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class MoveFileCommandsViewModel : BaseFolderCommandsViewModel, IMoveFileCommandsViewModel
+    public class MoveFileCommandsViewModel : BaseOperationsCommandsViewModel, IMoveFileCommandsViewModel
     {
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeView _treeView;
@@ -149,42 +147,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 x.Name == file.Name);
             if (node != null)
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                    (
-                        CommandType.DeleteItem, node
-                    ),
-                    new Models.DTO.LoggerDTO
-                    (
-                        LogCategory.DeleteFileCategory,
-                        node.Name
-                    )
-                );
+                await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
                 await ProcessMoveCommand(file, target, file.Name);
             }
         }
 
         private async Task ProcessMoveCommand(INode file, INode target, string newName)
         {
-            CommandType commandType = CommandType.CopyItem;
-            LogCategory logCategory = LogCategory.CopyFileCategory;
             if (_isMove)
             {
-                commandType = CommandType.MoveFile;
-                logCategory = LogCategory.MoveFileCategory;
+                await MoveItemOperation(file, target, newName);
+                return;
             }
-            await ProcessCommand(new Models.DTO.CommandInfo
-               (
-                   commandType, file,
-                   target,
-                   newName
-               ),
-               new Models.DTO.LoggerDTO
-               (
-                   logCategory,
-                   newName ?? file.Name,
-                   target.Name
-               )
-            );
+            await CopyItemOperation(file, target, newName);
         }
     }
 }

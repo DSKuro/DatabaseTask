@@ -3,7 +3,6 @@ using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
@@ -16,12 +15,11 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using MsBox.Avalonia.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class CopyFolderCommandViewModel : BaseFolderCommandsViewModel, ICopyFolderCommandsViewModel
+    public class CopyFolderCommandViewModel : BaseOperationsCommandsViewModel, ICopyFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly INameGenerator _generator;
@@ -85,24 +83,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (!_treeView.IsNodeExist(target, file.Name))
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                        (
-                            CommandType.CopyItem, file, target
-                        ),
-                        new Models.DTO.LoggerDTO
-                        (
-                            LogCategory.CopyFolderCategory,
-                            file.Name,
-                            target.Name
-                        )
-                );
+                await CopyItemOperation(file, target, file.Name);
                 return;
             }
 
             if (target == file.Parent)
             {
                 string newName = _generator.GenerateUniqueCopyName(target, file.Name);
-                await MoveFile(file, target, newName);
+                await CopyItemOperation(file, target, newName);
                 return;
             }
 
@@ -121,24 +109,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        //private async Task ProcessDeepRenameImplementation(INode child, INode targetNode)
-        //{
-        //    INode sourceNode = child;
-        //    List<INode> children = sourceNode.Children.ToList();
-
-        //    foreach (INode sourceChild in children)
-        //    {
-        //        await ProcessNodeRecursive(sourceChild, targetNode);
-        //    }
-        //}
-
         private async Task ProcessNodeRecursive(INode sourceChild, INode targetParent)
         {
             INode? existingChild = targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name);
 
             if (existingChild == null)
             {
-                await MoveFile(sourceChild, targetParent, sourceChild.Name);
+                await CopyItemOperation(sourceChild, targetParent, sourceChild.Name);
             }
             else
             {
@@ -185,7 +162,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             if (result != null && result == ButtonResult.Yes)
             {
                 await DeleteFolder(targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name)!);
-                await MoveFile(sourceChild, targetParent, sourceChild.Name);
+                await CopyItemOperation(sourceChild, targetParent, sourceChild.Name);
             }
         }
 
@@ -201,32 +178,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (node.Children.Count == 0)
             {
-                await ProcessCommand(new Models.DTO.CommandInfo
-                    (
-                        CommandType.DeleteItem, node
-                    ),
-                    new Models.DTO.LoggerDTO
-                    (
-                        LogCategory.DeleteFileCategory,
-                        node.Name
-                    )
-                );
+                await DeleteItemOperation(node, LogCategory.DeleteFolderCategory);
             }
-        }
-
-        private async Task MoveFile(INode sourceChild, INode targetParent, string newName)
-        {
-            await ProcessCommand(new Models.DTO.CommandInfo
-                (
-                    CommandType.CopyItem, sourceChild, targetParent, newName
-                ),
-                new Models.DTO.LoggerDTO
-                (
-                    LogCategory.CopyFileCategory,
-                    sourceChild.Name,
-                    targetParent.Name
-                )
-            );
         }
     }
 }

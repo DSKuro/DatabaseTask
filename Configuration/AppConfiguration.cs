@@ -138,8 +138,8 @@ namespace DatabaseTask.Configuration
         {
             _serviceCollection.AddScoped<IOpenDataViewModel, OpenDataViewModel>();
             _serviceCollection.AddScoped<ICreateFolderCommandsViewModel, CreateFolderCommandsViewModel>();
-            _serviceCollection.AddScoped<IRenameFolderCommandsViewModel, RenameFolderCommandViewModel>();
-            _serviceCollection.AddScoped<IDeleteItemCommandsViewModel, DeleteItemCommandViewModel>();
+            _serviceCollection.AddScoped<IRenameFolderCommandsViewModel, RenameFolderCommandsViewModel>();
+            _serviceCollection.AddScoped<IDeleteItemCommandsViewModel, DeleteItemCommandsViewModel>();
             _serviceCollection.AddScoped<IMoveFileCommandsViewModel, MoveFileCommandsViewModel>();
             _serviceCollection.AddScoped<ICopyFolderCommandsViewModel, CopyFolderCommandViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();

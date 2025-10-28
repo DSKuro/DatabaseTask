@@ -17,13 +17,13 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class DeleteItemCommandViewModel : BaseFolderCommandsViewModel, IDeleteItemCommandsViewModel
+    public class DeleteItemCommandsViewModel : BaseFolderCommandsViewModel, IDeleteItemCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeView _treeView;
 
-        public DeleteItemCommandViewModel(IMessageBoxService messageBoxService,
+        public DeleteItemCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory,

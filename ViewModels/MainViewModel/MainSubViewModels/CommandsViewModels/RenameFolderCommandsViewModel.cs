@@ -22,13 +22,13 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 {
-    public class RenameFolderCommandViewModel : BaseFolderCommandsViewModel, IRenameFolderCommandsViewModel
+    public class RenameFolderCommandsViewModel : BaseFolderCommandsViewModel, IRenameFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly ITreeView _treeView;
         private readonly INameGenerator _generator;
 
-        public RenameFolderCommandViewModel(IMessageBoxService messageBoxService,
+        public RenameFolderCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory,

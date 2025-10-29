@@ -87,7 +87,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                ),
                new Models.DTO.LoggerDTO
                (
-                   (isFolder) ? LogCategory.MoveFileCategory
+                   (isFolder) ? LogCategory.MoveCatalogCategory
                    : LogCategory.MoveFileCategory,
                    name ?? node.Name,
                    target.Name

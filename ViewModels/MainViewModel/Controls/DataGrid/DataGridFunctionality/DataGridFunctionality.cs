@@ -3,6 +3,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctional
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
+using System.Linq;
 
 namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality
 {
@@ -38,6 +39,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFuncti
                 return true;
             }
             return false;
+        }
+
+        public FileProperties? GetPropertiesForNode(INode node)
+        {
+            return _dataGrid.SavedFilesProperties.FirstOrDefault(x => x.Node == node);
         }
     }
 }

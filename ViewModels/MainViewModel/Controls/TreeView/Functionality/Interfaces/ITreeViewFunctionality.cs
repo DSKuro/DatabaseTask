@@ -11,5 +11,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.
         public int GetNodePositionIndex(INode target, INode node);
         public INode? GetFirstSelectedNode();
         public void UpdateSelectedNodes(INode node);
+        public INode? GetChildrenByName(INode node, string name);
     }
 }

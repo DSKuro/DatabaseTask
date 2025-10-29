@@ -11,7 +11,7 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
@@ -22,11 +22,10 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels
 {
-    // лог неверный (move file -> MOVE DIRECTORY)
     public class RenameFolderCommandsViewModel : BaseOperationsCommandsViewModel, IRenameFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
-        private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IMergeCommandsViewModel _mergeCommandsViewModel;
 
         public RenameFolderCommandsViewModel(IMessageBoxService messageBoxService,
@@ -35,13 +34,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
-            ITreeView treeView,
+            ITreeViewFunctionality treeViewFunctionality,
             IMergeCommandsViewModel mergeCommandsViewModel)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
-            _treeView = treeView;
+            _treeViewFunctionality = treeViewFunctionality;
             _mergeCommandsViewModel = mergeCommandsViewModel;
         }
 
@@ -74,41 +73,45 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessRename(string name)
         {
-            //if (!_treeView.IsParentHasNodeWithName(_treeView.SelectedNodes[0], name))
-            //{
-            //    await RenameFolderOperation((_treeView.SelectedNodes[0] as NodeViewModel)!.Name, name);
-            //    return;
-            //}
+            INode? selectedNode = _treeViewFunctionality.GetFirstSelectedNode();
+            if (selectedNode != null)
+            {
+                if (!_treeViewFunctionality.IsParentHasNodeWithName(selectedNode, name))
+                {
+                    await RenameFolderOperation((selectedNode as NodeViewModel)!.Name, name);
+                    return;
+                }
 
-            await ProcessDeepRename(name);
+                await ProcessDeepRename(name, selectedNode);
+            }
         }
 
-        private async Task ProcessDeepRename(string name)
+        private async Task ProcessDeepRename(string name, INode selectedNode)
         {
             ButtonResult? result =
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
                 (ParametrizedMessageBoxCategory.RenameCatalogMergeMessageBox.Title,
                 ParametrizedMessageBoxCategory.RenameCatalogMergeMessageBox.Content
                 .GetStringWithParams(name,
-                _treeView.SelectedNodes[0].Parent!.Name),
+                selectedNode.Parent!.Name),
                 ButtonEnum.YesNo));
             if (result != null && result == ButtonResult.Yes)
             {
-                INode? parent = _treeView.SelectedNodes[0].Parent;
+                INode? parent = selectedNode.Parent;
                 if (parent != null)
                 {
-                    INode? node = parent.Children.FirstOrDefault(x => x.Name == name);
+                    INode? node = _treeViewFunctionality.GetChildrenByName(parent, name);
                     if (node != null)
                     {
-                        await ProcessDeepRenameImplementation(node);
+                        await ProcessDeepRenameImplementation(node, selectedNode);
                     }
                 }
             }
         }
 
-        private async Task ProcessDeepRenameImplementation(INode targetNode)
+        private async Task ProcessDeepRenameImplementation(INode targetNode, INode selectedNode)
         {
-            INode sourceNode = _treeView.SelectedNodes[0];
+            INode sourceNode = selectedNode;
             List<INode> children = sourceNode.Children.ToList();
 
             foreach (INode sourceChild in children)

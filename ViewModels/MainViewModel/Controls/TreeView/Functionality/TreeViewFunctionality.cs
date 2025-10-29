@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls.Models.TreeDataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+﻿using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
@@ -123,6 +122,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality
             }
             _treeView.SelectedNodes.Clear();
             _treeView.SelectedNodes.Add(node);
+        }
+
+        public INode? GetChildrenByName(INode node, string name)
+        {
+            return node.Children.FirstOrDefault(x => x.Name == name);
         }
     }
 }

@@ -8,6 +8,7 @@ using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using MsBox.Avalonia.Enums;
@@ -19,20 +20,23 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class MergeCommandsViewModel : BaseOperationsCommandsViewModel, IMergeCommandsViewModel
     {
         private INameGenerator _generator;
+        private ITreeViewFunctionality _treeViewFunctionality;
 
         public MergeCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory, IFullPath fullPath,
-            INameGenerator generator)
+            INameGenerator generator,
+            ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory, commandsHistory, fullPath)
         {
             _generator = generator;
+            _treeViewFunctionality = treeViewFunctionality;
         }
 
         public async Task ProcessNodeRecursive(INode sourceChild, INode targetParent)
         {
-            INode? existingChild = targetParent.Children.FirstOrDefault(x => x.Name == sourceChild.Name);
+            INode? existingChild = _treeViewFunctionality.GetChildrenByName(targetParent, sourceChild.Name);
 
             if (existingChild == null)
             {

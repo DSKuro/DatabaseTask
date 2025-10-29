@@ -1,27 +1,27 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using System.Linq;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
     public class RenameFolderOperation : IRenameFolderOperation
     {
-        private readonly ITreeView _treeView;
-        private readonly IDataGrid _dataGrid;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
+        private readonly IDataGridFunctionality _dataGridFunctionality;
 
-        public RenameFolderOperation(ITreeView treeView,
-            IDataGrid dataGrid)
+        public RenameFolderOperation(
+            ITreeViewFunctionality treeViewFunctionality,
+            IDataGridFunctionality dataGridFunctionality)
         {
-            _treeView = treeView;
-            _dataGrid = dataGrid;
+            _treeViewFunctionality = treeViewFunctionality;
+            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public void RenameFolder(string newName)
         {
-            if (_treeView.SelectedNodes[0] is NodeViewModel node)
+            if (_treeViewFunctionality.GetFirstSelectedNode() is NodeViewModel node)
             {
                 RenameFolderImpl(newName, node);
             }
@@ -30,7 +30,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private void RenameFolderImpl(string newName, NodeViewModel node)
         {
             node.Name = newName;
-            FileProperties? item = _dataGrid.SavedFilesProperties.FirstOrDefault(x => x.Node == node);
+            FileProperties? item = _dataGridFunctionality.GetPropertiesForNode(node);
             if (item != null)
             {
                 item.Name = newName;

@@ -9,5 +9,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFuncti
 
         public string SizeToString(ulong? size);
         public bool TryInsertProperties(int parentIndex, INode parent, FileProperties properties);
+        public FileProperties? GetPropertiesForNode(INode node);
     }
 }

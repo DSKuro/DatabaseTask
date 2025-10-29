@@ -8,6 +8,8 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
@@ -19,7 +21,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class CreateFolderCommandsViewModel : BaseOperationsCommandsViewModel, ICreateFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
-        private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public CreateFolderCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
@@ -27,12 +29,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
-            ITreeView treeView)
+            ITreeView treeView,
+            ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
-            _treeView = treeView;
+            _treeViewFunctionality = treeViewFunctionality;
         }
 
         public async Task CreateFolder()
@@ -64,11 +67,15 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessCreateFolder(string name)
         {
-            if (!_treeView.IsNodeExist(_treeView.SelectedNodes[0], name))
+            INode? selectedNode = _treeViewFunctionality.GetFirstSelectedNode();
+            if (selectedNode != null)
             {
-                await CreateFolderOperation(name);
-                return;
-            }
+                if (!_treeViewFunctionality.IsNodeExist(selectedNode, name))
+                {
+                    await CreateFolderOperation(name);
+                    return;
+                }
+            } 
 
             await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                 MessageBoxConstants.Error.Value,

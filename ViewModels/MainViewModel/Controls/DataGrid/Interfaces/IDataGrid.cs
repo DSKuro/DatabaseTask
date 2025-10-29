@@ -8,8 +8,5 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces
     {
         public List<FileProperties> SavedFilesProperties { get; set; }
         public SmartCollection<FileProperties> FilesProperties { get; }
-
-        public string TimeToString(DateTimeOffset? dateTimeOffset);
-        public string SizeToString(ulong? size);
     }
 }

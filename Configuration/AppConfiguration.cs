@@ -53,6 +53,10 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality;
 
 namespace DatabaseTask.Configuration
 {
@@ -95,6 +99,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<INode, NodeViewModel>();
             _serviceCollection.AddScoped<ITreeView, TreeViewService>();
             _serviceCollection.AddScoped<IDataGrid, DataGridService>();
+            _serviceCollection.AddScoped<IDataGridFunctionality, DataGridFunctionality>();
             _serviceCollection.AddScoped<IFileManager, FileManager>();
             _serviceCollection.AddScoped<IFileManagerFolderOperationsPermissions, FileManagerFolderOperationsPermissions>();
             _serviceCollection.AddScoped<IFileManagerFileOperationsPermissions, FileManagerFileOperationsPermissions>();
@@ -110,6 +115,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();
             _serviceCollection.AddScoped<ITreeViewItemManager, TreeViewItemManager>();
             _serviceCollection.AddScoped<ITreeViewInitializer, TreeViewInitializer>();
+            _serviceCollection.AddScoped<ITreeViewFunctionality, TreeViewFunctionality>();
         }
 
         private void AddLogger()

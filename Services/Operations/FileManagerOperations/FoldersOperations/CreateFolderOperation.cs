@@ -1,43 +1,69 @@
 ﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
-using ExCSS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
     public class CreateFolderOperation : ICreateFolderOperation
     {
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly ITreeView _treeView;
-        private readonly IDataGrid _dataGrid;
+        private readonly IDataGridFunctionality _dataGridFunctionality;
 
-        public CreateFolderOperation(ITreeView treeView,
-            IDataGrid dataGrid)
+        public CreateFolderOperation(ITreeViewFunctionality treeViewFunctionality,
+            ITreeView treeView,
+            IDataGridFunctionality dataGridFunctionality)
         {
+            _treeViewFunctionality = treeViewFunctionality;
             _treeView = treeView;
-            _dataGrid = dataGrid;
+            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public async Task CreateFolder(string folderName)
         {
-            NodeViewModel node = CreateNode(folderName);
-            int nodeIndex = _treeView.GetNodePositionIndex(_treeView.SelectedNodes[0], node);
-            if (nodeIndex == -1)
+            INode? parent = _treeViewFunctionality.GetFirstSelectedNode();
+            if (parent != null)
             {
-                return;
+                await CreateFolderImplementation(folderName, parent);
             }
-            _treeView.SelectedNodes[0].Children.Insert(nodeIndex, node);
-            CreateFolderProperties(node, nodeIndex);
-            UpdateSelectedNodes(node);
+        }
+
+        private async Task CreateFolderImplementation(string folderName, INode parent)
+        {
+            NodeViewModel node = CreateNode(folderName);
+            int index = 0;
+            bool isInsert = _treeViewFunctionality.TryInsertNode(parent, node, out index);
+            if (isInsert)
+            {
+                await UpdateProperties(index, parent, node) ;
+            }
+        }
+
+        private async Task UpdateProperties(int index, INode parent, INode node)
+        {
+            _dataGridFunctionality.TryInsertProperties(index, parent, CreateFileProperties(node));
+            _treeViewFunctionality.UpdateSelectedNodes(node);
             await Task.Delay(100);
             _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));
+        }
+
+        private FileProperties CreateFileProperties(INode node)
+        {
+            return new FileProperties
+                (
+                    node.Name,
+                    "",
+                    _dataGridFunctionality.TimeToString(DateTime.Now),
+                    IconCategory.Folder.Value, node
+                );
         }
 
         private NodeViewModel CreateNode(string folderName)
@@ -49,42 +75,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 IconPath = IconCategory.Folder.Value,
                 Parent = _treeView.SelectedNodes[0]
             };
-        }
-
-        private int GetNewNodeIndex(string folderName)
-        {
-            List<string> folders = _treeView.SelectedNodes[0].Children
-                .Select(x => x as NodeViewModel)
-                .Where(x => x != null && x.IsFolder)
-                .Select(x => x!.Name)
-                .ToList();
-            folders.Add(folderName);
-            folders.Sort();
-            return folders.IndexOf(folderName);
-        }
-
-        private void UpdateSelectedNodes(NodeViewModel node)
-        {
-            _treeView.SelectedNodes[0].IsExpanded = true;
-            _treeView.SelectedNodes.Clear();
-            _treeView.SelectedNodes.Add(node);
-        }
-
-        private void CreateFolderProperties(NodeViewModel node, int nodeIndex)
-        {
-            int index = _dataGrid.SavedFilesProperties.FindIndex(x => x.Node == _treeView.SelectedNodes[0]);
-            if (index > 0)
-            {
-                _dataGrid.SavedFilesProperties.Insert(index + nodeIndex, 
-                    new FileProperties
-                    (   
-                        node.Name,
-                        "",
-                        _dataGrid.TimeToString(DateTime.Now),
-                        IconCategory.Folder.Value, node
-                    )
-                );
-            }
         }
     }
 }

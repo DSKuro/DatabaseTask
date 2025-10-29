@@ -85,11 +85,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessCopy(INode file, INode target)
         {
-            if (!_treeView.IsNodeExist(target, file.Name))
-            {
-                await CopyItemOperation(file, target, file.Name);
-                return;
-            }
+            //if (!_treeView.IsNodeExist(target, file.Name))
+            //{
+            //    await CopyItemOperation(file, target, file.Name);
+            //    return;
+            //}
 
             if (target == file.Parent)
             {

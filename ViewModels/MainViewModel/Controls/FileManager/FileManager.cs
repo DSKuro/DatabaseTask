@@ -3,10 +3,12 @@ using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,17 +21,24 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
     public partial class FileManager : ViewModelBase, IFileManager
     {
         private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IDataGrid _dataGrid;
+        private readonly IDataGridFunctionality _dataGridFunctionality;
 
         public IDataGrid DataGrid { get => _dataGrid; }
         public ITreeView TreeView { get => _treeView; }
+        public ITreeViewFunctionality TreeViewFunctionality { get => _treeViewFunctionality; }
 
         public FileManager(ITreeView treeView,
-            IDataGrid dataGrid)
+            ITreeViewFunctionality treeViewFunctionality,
+            IDataGrid dataGrid,
+            IDataGridFunctionality dataGridFunctionality)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += OnSelectionChanged;
+            _treeViewFunctionality = treeViewFunctionality;
             _dataGrid = dataGrid;
+            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
@@ -84,11 +93,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
             StorageItemProperties properties,
             INode node)
         {
-            string modifiedString = _dataGrid.TimeToString(properties.DateModified);
+            string modifiedString = _dataGridFunctionality.TimeToString(properties.DateModified);
             
             _dataGrid.SavedFilesProperties.Add(new FileProperties(
                 item.Name,
-                item is IStorageFolder ? "" : _dataGrid.SizeToString(properties.Size),
+                item is IStorageFolder ? "" : _dataGridFunctionality.SizeToString(properties.Size),
                 modifiedString,
                 item is IStorageFolder
                     ? IconCategory.Folder.Value

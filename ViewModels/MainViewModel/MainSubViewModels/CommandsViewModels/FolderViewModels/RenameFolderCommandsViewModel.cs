@@ -74,11 +74,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessRename(string name)
         {
-            if (!_treeView.IsParentHasNodeWithName(_treeView.SelectedNodes[0], name))
-            {
-                await RenameFolderOperation((_treeView.SelectedNodes[0] as NodeViewModel)!.Name, name);
-                return;
-            }
+            //if (!_treeView.IsParentHasNodeWithName(_treeView.SelectedNodes[0], name))
+            //{
+            //    await RenameFolderOperation((_treeView.SelectedNodes[0] as NodeViewModel)!.Name, name);
+            //    return;
+            //}
 
             await ProcessDeepRename(name);
         }

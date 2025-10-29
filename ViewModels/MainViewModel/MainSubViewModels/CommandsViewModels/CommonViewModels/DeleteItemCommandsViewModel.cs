@@ -8,11 +8,10 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Inter
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels
@@ -21,7 +20,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
-        private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public DeleteItemCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
@@ -30,13 +29,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
             IFileManagerFileOperationsPermissions filePermissions,
-            ITreeView treeView)
+            ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
             _filePermissions = filePermissions;
-            _treeView = treeView;
+            _treeViewFunctionality = treeViewFunctionality;
         }
 
         public async Task DeleteFiles()
@@ -44,8 +43,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             try
             {
                 _filePermissions.CanDeleteFile();
-                await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content,
+                await ProcessDelete(MessageBoxCategory.DeleteFileMessageBox.Title,
+                    MessageBoxCategory.DeleteFileMessageBox.Content,
                     LogCategory.DeleteFileCategory);
             }
             catch (FileManagerOperationsException ex)
@@ -61,8 +60,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             try
             {
                 _folderPermissions.CanDeleteFolder();
-                await ProcessDelete(MessageBoxCategory.DeleteFileMessageBox.Title,
-                    MessageBoxCategory.DeleteFileMessageBox.Content,
+                await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
+                    MessageBoxCategory.DeleteFolderMessageBox.Content,
                     LogCategory.DeleteFolderCategory);
             }
             catch (FileManagerOperationsException ex)
@@ -88,7 +87,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessDeleteCommand(LogCategory category)
         {
-            foreach (INode node in _treeView.SelectedNodes.ToList())
+            foreach (INode node in _treeViewFunctionality.GetAllSelectedNodes())
             {
                 await DeleteItemOperation(node, category);
             }

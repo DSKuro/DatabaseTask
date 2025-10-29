@@ -45,5 +45,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFuncti
         {
             return _dataGrid.SavedFilesProperties.FirstOrDefault(x => x.Node == node);
         }
+
+        public void RemoveProperties(INode node)
+        {
+            FileProperties? properties = _dataGrid.SavedFilesProperties.Find(x => x.Node == node);
+            if (properties != null)
+            {
+                _dataGrid.SavedFilesProperties.Remove(properties);
+            }
+        }
     }
 }

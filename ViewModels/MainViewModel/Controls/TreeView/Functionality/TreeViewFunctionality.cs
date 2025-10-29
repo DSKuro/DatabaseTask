@@ -113,6 +113,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality
             return _treeView.SelectedNodes[0] ?? null;
         }
 
+        public List<INode> GetAllSelectedNodes()
+        {
+            return _treeView.SelectedNodes.ToList();
+        }
+
         public void UpdateSelectedNodes(INode node)
         {
             INode? selectedNode = GetFirstSelectedNode();
@@ -127,6 +132,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality
         public INode? GetChildrenByName(INode node, string name)
         {
             return node.Children.FirstOrDefault(x => x.Name == name);
+        }
+
+        public void RemoveNode(INode node)
+        {
+            if (node.Parent != null)
+            {
+                node.Parent.Children.Remove(node);
+            }
+        }
+
+        public void RemoveSelectedNodes(INode node)
+        {
+            _treeView.SelectedNodes.Remove(node);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Linq;
 

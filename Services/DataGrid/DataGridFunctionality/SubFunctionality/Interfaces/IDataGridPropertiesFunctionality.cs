@@ -1,6 +1,7 @@
-﻿using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+﻿using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 
-namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces
+namespace DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces
 {
     public interface IDataGridPropertiesFunctionality
     {

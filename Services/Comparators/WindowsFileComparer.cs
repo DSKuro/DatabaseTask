@@ -1,6 +1,5 @@
 ﻿using DatabaseTask.Services.Comparer.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -16,6 +15,8 @@ namespace DatabaseTask.Services.Comparer
             public string Extension;
             public bool IsCopy;
             public int CopyNumber;
+            public bool HasCopyText;
+            public bool HasNumber;
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
@@ -47,14 +48,11 @@ namespace DatabaseTask.Services.Comparer
             FileInfoEx xInfo = ExtractFileInfo(x);
             FileInfoEx yInfo = ExtractFileInfo(y);
 
-            if (IsCopies(xInfo, yInfo))
-            {
-                int result = CompareCopyRules(xInfo, yInfo);
-                if (result != 0)
-                    return result;
-            }
+            int baseCompare = CompareWithStringEx(xInfo.BaseName, yInfo.BaseName);
+            if (baseCompare != 0)
+                return baseCompare;
 
-            return CompareWithStringEx(x, y);
+            return CompareCopyRules(xInfo, yInfo);
         }
 
         private FileInfoEx ExtractFileInfo(string path)
@@ -63,8 +61,7 @@ namespace DatabaseTask.Services.Comparer
             string name = Path.GetFileNameWithoutExtension(path);
             string ext = Path.GetExtension(path);
 
-            (bool hasNumber, int copyNum) = ExtractNumberInfo(name);
-            (bool hasCopy, string baseName) = ExtractCopyInfo(name, hasNumber);
+            var (hasNumber, copyNum, hasCopy, baseName) = ExtractFileMetadata(name);
 
             return new FileInfoEx
             {
@@ -72,47 +69,49 @@ namespace DatabaseTask.Services.Comparer
                 FullName = fullName,
                 Extension = ext,
                 IsCopy = hasCopy || hasNumber,
-                CopyNumber = copyNum
+                CopyNumber = copyNum,
+                HasCopyText = hasCopy,
+                HasNumber = hasNumber
             };
         }
 
-        private (bool hasNumber, int copyNum) ExtractNumberInfo(string name)
+        private (bool hasNumber, int copyNum, bool hasCopy, string baseName) ExtractFileMetadata(string name)
         {
-            Match? matchNum = NumberRegex.Match(name);
-            bool hasNumber = matchNum.Success;
-            int copyNum = hasNumber ? int.Parse(matchNum.Groups[1].Value) : 0;
-            return (hasNumber, copyNum);
-        }
+            var numberMatch = NumberRegex.Match(name);
+            bool hasNumber = numberMatch.Success;
+            int copyNum = hasNumber ? int.Parse(numberMatch.Groups[1].Value) : 0;
 
-        private (bool hasCopy, string baseName) ExtractCopyInfo(string name, bool hasNumber)
-        {
-            string baseName = name;
             bool hasCopy = CopyRegex.IsMatch(name);
+
+            string baseName = name;
 
             if (hasCopy)
                 baseName = CopyRegex.Replace(baseName, "").Trim();
+
             if (hasNumber)
                 baseName = NumberRegex.Replace(baseName, "").Trim();
 
-            return (hasCopy, baseName);
-        }
+            if (hasCopy && !hasNumber)
+            {
+                copyNum = 1;
+            }
 
-        private bool IsCopies(FileInfoEx x, FileInfoEx y)
-        {
-            return x.IsCopy || y.IsCopy;
+            return (hasNumber, copyNum, hasCopy, baseName.Trim());
         }
 
         private int CompareCopyRules(FileInfoEx x, FileInfoEx y)
         {
+            if (!x.IsCopy && !y.IsCopy)
+                return 0;
+
             if (!x.IsCopy && y.IsCopy) return -1;
             if (x.IsCopy && !y.IsCopy) return 1;
 
-            int baseCmp = CompareWithStringEx(x.BaseName, y.BaseName);
-            if (baseCmp != CSTR_EQUAL)
-                return baseCmp == CSTR_LESS_THAN ? -1 : 1;
-
             if (x.CopyNumber != y.CopyNumber)
                 return x.CopyNumber.CompareTo(y.CopyNumber);
+
+            if (x.HasCopyText != y.HasCopyText)
+                return x.HasCopyText ? 1 : -1;
 
             return CompareWithStringEx(x.FullName, y.FullName);
         }

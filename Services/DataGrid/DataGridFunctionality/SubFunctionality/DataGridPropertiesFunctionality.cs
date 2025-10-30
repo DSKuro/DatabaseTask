@@ -1,10 +1,11 @@
 ﻿using DatabaseTask.Services.Comparer.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Linq;
 
-namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality
+namespace DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality
 {
     public class DataGridPropertiesFunctionality : IDataGridPropertiesFunctionality
     {

@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DatabaseTask.Services.Comparators;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.Collections;
 
 namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid
 {

@@ -1,8 +1,8 @@
 ﻿using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
@@ -49,7 +49,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private async Task UpdateProperties(int index, INode parent, INode node)
         {
-            _dataGridFunctionality.TryInsertProperties(index, parent, CreateFileProperties(node));
+            _dataGridFunctionality.AddProperties(CreateFileProperties(node));
             _treeViewFunctionality.UpdateSelectedNodes(node);
             await Task.Delay(100);
             _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));

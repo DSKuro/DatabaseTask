@@ -1,7 +1,7 @@
-﻿using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
+﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
 using System;
 
-namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality
+namespace DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality
 {
     public class DataGridFormatterService : IDataGridFormatterService
     {

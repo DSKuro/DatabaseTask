@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Comparators;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
@@ -29,6 +30,7 @@ namespace DatabaseTask.Views
             _serviceProvider = serviceProvider;
             _treeViewInitializer.Initialize(TreeViewControl, this);
             InitializeMessages();
+            dataGrid.Columns[2].CustomSortComparer = new FileSizeComparer();
         }
 
         private void InitializeMessages()

@@ -40,8 +40,6 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality;
 using DatabaseTask.Services.Comparer;
 using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic;
@@ -62,6 +60,12 @@ using DatabaseTask.Services.TreeViewLogic.Functionality;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
+using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality;
+using DatabaseTask.Services.TreeViewLogic.TreeViewManager;
+using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 
 namespace DatabaseTask.Configuration
 {
@@ -86,6 +90,7 @@ namespace DatabaseTask.Configuration
             AddFileManager();
             AddComparators();
             AddVisualTreeView();
+            AddDataGridFunctions();
             AddLogger();
             AddCommands();
             AddFilesCommands();
@@ -105,7 +110,6 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<INode, NodeViewModel>();
             _serviceCollection.AddScoped<ITreeView, TreeViewService>();
             _serviceCollection.AddScoped<IDataGrid, DataGridService>();
-            _serviceCollection.AddScoped<IDataGridFunctionality, DataGridFunctionality>();
             _serviceCollection.AddScoped<IFileManager, FileManager>();
             _serviceCollection.AddScoped<IFileManagerFolderOperationsPermissions, FileManagerFolderOperationsPermissions>();
             _serviceCollection.AddScoped<IFileManagerFileOperationsPermissions, FileManagerFileOperationsPermissions>();
@@ -131,6 +135,16 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewNodeService, TreeViewNodeService>();
             _serviceCollection.AddScoped<ITreeViewSelectionService, TreeViewSelectionService>();
             _serviceCollection.AddScoped<ITreeViewSortService, TreeViewSortService>();
+            _serviceCollection.AddScoped<ITreeViewManager, TreeViewManager>();
+            _serviceCollection.AddScoped<ITreeViewEventService, TreeViewEventService>();
+        }
+
+        private void AddDataGridFunctions()
+        {
+            _serviceCollection.AddScoped<IDataGridFunctionality, DataGridFunctionality>();
+            _serviceCollection.AddScoped<IDataGridFormatterService, DataGridFormatterService>();
+            _serviceCollection.AddScoped<IDataGridPropertiesFunctionality, DataGridPropertiesFunctionality>();
+            _serviceCollection.AddScoped<IDataGridUpdatePropertiesService, DataGridUpdatePropertiesService>();
         }
 
         private void AddLogger()

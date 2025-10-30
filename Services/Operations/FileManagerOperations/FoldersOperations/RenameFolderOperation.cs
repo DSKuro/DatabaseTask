@@ -1,7 +1,7 @@
-﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
@@ -41,18 +41,21 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (item != null)
             {
                 item.Name = newName;
-                await UpdatePlacement(node);
+                await UpdatePlacement(node, item);
             }
         }
 
-        private async Task UpdatePlacement(INode node)
+        private async Task UpdatePlacement(INode node, FileProperties properties)
         {
             _treeViewFunctionality.RemoveNode(node);
             if (node.Parent != null)
             {
-                bool isInsert = _treeViewFunctionality.TryInsertNode(node.Parent, node, out _);
+                int index = 0;
+                bool isInsert = _treeViewFunctionality.TryInsertNode(node.Parent, node, out index);
                 if (isInsert)
                 {
+                    _dataGridFunctionality.RemoveProperties(node);
+                    _dataGridFunctionality.AddProperties(properties);
                     _treeViewFunctionality.UpdateSelectedNodes(node);
                     await Task.Delay(50);
                     _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));

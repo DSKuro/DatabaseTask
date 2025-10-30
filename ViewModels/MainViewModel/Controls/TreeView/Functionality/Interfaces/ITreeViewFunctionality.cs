@@ -13,6 +13,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.
         public INode? GetChildrenByName(INode node, string name);
         public bool TryInsertNode(INode parent, INode node, out int index);
         public void AddSelectedNodeByIndex(int index);
+        public INode? CreateNode(INode template, INode parent);
         public void UpdateSelectedNodes(INode node);
         public void RemoveNode(INode node);
         public void RemoveSelectedNodes(INode node);

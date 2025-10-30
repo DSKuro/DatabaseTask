@@ -11,5 +11,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFuncti
         public bool TryInsertProperties(int parentIndex, INode parent, FileProperties properties);
         public FileProperties? GetPropertiesForNode(INode node);
         public void RemoveProperties(INode node);
+        public void CopyProperties(INode oldNode, INode newNode, INode target);
     }
 }

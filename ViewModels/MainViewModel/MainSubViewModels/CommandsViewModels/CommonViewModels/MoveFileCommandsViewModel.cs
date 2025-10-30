@@ -9,7 +9,7 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
@@ -22,7 +22,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class MoveFileCommandsViewModel : BaseOperationsCommandsViewModel, IMoveFileCommandsViewModel
     {
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
-        private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly INameGenerator _generator;
 
         private bool _isMove;
@@ -33,13 +33,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFileOperationsPermissions filePermissions,
-            ITreeView treeView,
+            ITreeViewFunctionality treeViewFunctionality,
             INameGenerator generator)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _filePermissions = filePermissions;
-            _treeView = treeView;
+            _treeViewFunctionality = treeViewFunctionality;
             _generator = generator;
             _isMove = false;
         }
@@ -91,20 +91,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessMove()
         {
-            List<INode> files = _treeView.SelectedNodes.SkipLast(1).ToList();
+            List<INode> files = _treeViewFunctionality.GetAllSelectedNodes().SkipLast(1).ToList();
             foreach (INode file in files)
             {
-                await ProcessMoveForSingleFile(file, _treeView.SelectedNodes.Last());
+                await ProcessMoveForSingleFile(file, _treeViewFunctionality.GetAllSelectedNodes().Last());
             }
         }
 
         private async Task ProcessMoveForSingleFile(INode file, INode target)
         {
-            //if (!_treeView.IsNodeExist(target, file.Name))
-            //{
-            //    await ProcessMoveCommand(file, target, file.Name);
-            //    return;
-            //}
+            if (!_treeViewFunctionality.IsNodeExist(target, file.Name))
+            {
+                await ProcessMoveCommand(file, target, file.Name);
+                return;
+            }
 
             if (target == file.Parent)
             {
@@ -144,8 +144,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessReplaceImplementation(INode file, INode target)
         {
-            INode? node = target.Children.FirstOrDefault(x =>
-                x.Name == file.Name);
+            INode? node = _treeViewFunctionality.GetChildrenByName(target, file.Name);
             if (node != null)
             {
                 await DeleteItemOperation(node, LogCategory.DeleteFileCategory);

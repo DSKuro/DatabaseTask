@@ -9,7 +9,7 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
@@ -24,7 +24,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly INameGenerator _generator;
-        private readonly ITreeView _treeView;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IMergeCommandsViewModel _mergeCommandsViewModel;
 
         public CopyFolderCommandViewModel(IMessageBoxService messageBoxService,
@@ -34,14 +34,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
             INameGenerator generator,
-            ITreeView treeView,
+            ITreeViewFunctionality treeViewFunctionality,
             IMergeCommandsViewModel mergeCommandsViewModel)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
             _generator = generator;
-            _treeView = treeView;
+            _treeViewFunctionality = treeViewFunctionality;
             _mergeCommandsViewModel = mergeCommandsViewModel;
         }
 
@@ -76,20 +76,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task ProcessMove()
         {
-            List<INode> files = _treeView.SelectedNodes.SkipLast(1).ToList();
+            List<INode> files = _treeViewFunctionality.GetAllSelectedNodes().SkipLast(1).ToList();
             foreach (INode file in files)
             {
-                await ProcessCopy(file, _treeView.SelectedNodes.Last());
+                await ProcessCopy(file, _treeViewFunctionality.GetAllSelectedNodes().Last());
             }
         }
 
         private async Task ProcessCopy(INode file, INode target)
         {
-            //if (!_treeView.IsNodeExist(target, file.Name))
-            //{
-            //    await CopyItemOperation(file, target, file.Name);
-            //    return;
-            //}
+            if (!_treeViewFunctionality.IsNodeExist(target, file.Name))
+            {
+                await CopyItemOperation(file, target, file.Name);
+                return;
+            }
 
             if (target == file.Parent)
             {

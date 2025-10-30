@@ -8,9 +8,11 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,13 +91,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         }
 
         private void AddFileProperties(
-            IStorageItem item,
-            StorageItemProperties properties,
-            INode node)
+    IStorageItem item,
+    StorageItemProperties properties,
+    INode node)
         {
             string modifiedString = _dataGridFunctionality.TimeToString(properties.DateModified);
-            
-            _dataGrid.SavedFilesProperties.Add(new FileProperties(
+
+            var newProperties = new FileProperties(
                 item.Name,
                 item is IStorageFolder ? "" : _dataGridFunctionality.SizeToString(properties.Size),
                 modifiedString,
@@ -103,8 +105,33 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                     ? IconCategory.Folder.Value
                     : IconCategory.File.Value,
                 node
-            ));
+            );
+
+            NodeViewModel newNode = node as NodeViewModel;
+            // Вставка в SavedFilesProperties с сортировкой
+            var comparer = new AdvancedExplorerComparer();
+
+            var sameTypeProps = _dataGrid.SavedFilesProperties
+                .Where(x => (x.Node as NodeViewModel).IsFolder == newNode.IsFolder)
+                .ToList();
+
+            int insertIndex = sameTypeProps.FindIndex(x => comparer.Compare(newProperties.Name, x.Node.Name) < 0);
+            int finalIndex;
+
+            if (insertIndex == -1)
+            {
+                var last = sameTypeProps.LastOrDefault();
+                finalIndex = last != null ? _dataGrid.SavedFilesProperties.IndexOf(last) + 1 : 0;
+            }
+            else
+            {
+                var targetProp = sameTypeProps[insertIndex];
+                finalIndex = _dataGrid.SavedFilesProperties.IndexOf(targetProp);
+            }
+
+            _dataGrid.SavedFilesProperties.Insert(finalIndex, newProperties);
         }
+
 
         private async Task CreateChildren(IStorageItem item, INode node)
         {
@@ -118,7 +145,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                         if (!HasFlag(childItem, FileAttributes.Hidden))
                         {
                             NodeViewModel childNode = await CreateNodeRecursive(childItem, node);
-                            node.Children.Add(childNode);
+                            // Вставляем childNode в node.Children в правильное место
+                            var comparer = new AdvancedExplorerComparer();
+                            int insertIndex = node.Children
+                                .OfType<NodeViewModel>()
+                                .ToList()
+                                .FindIndex(x => x.IsFolder == childNode.IsFolder && comparer.Compare(childNode.Name, x.Name) < 0);
+
+                            if (insertIndex == -1)
+                                node.Children.Add(childNode); // в конец
+                            else
+                                node.Children.Insert(insertIndex, childNode);
                         }
                     }
                 }
@@ -188,9 +225,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                 .Where(x => x.Node.Parent == _treeView.SelectedNodes[0])
                 .Where(x => x.Node is NodeViewModel);
             IEnumerable<FileProperties> folders = selectedNodeChilds
-                .Where(x => ((NodeViewModel)x.Node).IsFolder).OrderBy(x => x.Name);
+                .Where(x => ((NodeViewModel)x.Node).IsFolder);
             IEnumerable<FileProperties> files = selectedNodeChilds
-                .Where(x => !((NodeViewModel)x.Node).IsFolder).OrderBy(x => x.Name);
+                .Where(x => !((NodeViewModel)x.Node).IsFolder);
             return (folders, files);
         }
     }

@@ -1,6 +1,6 @@
 ﻿using Avalonia.Platform.Storage;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;

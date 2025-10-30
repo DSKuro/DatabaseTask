@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

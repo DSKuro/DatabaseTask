@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
@@ -8,11 +9,8 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,9 +89,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
         }
 
         private void AddFileProperties(
-    IStorageItem item,
-    StorageItemProperties properties,
-    INode node)
+                IStorageItem item,
+                StorageItemProperties properties,
+                INode node)
         {
             string modifiedString = _dataGridFunctionality.TimeToString(properties.DateModified);
 
@@ -107,29 +105,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                 node
             );
 
-            NodeViewModel newNode = node as NodeViewModel;
-            // Вставка в SavedFilesProperties с сортировкой
-            var comparer = new AdvancedExplorerComparer();
+           // _dataGridFunctionality.TryInsertProperties()
 
-            var sameTypeProps = _dataGrid.SavedFilesProperties
-                .Where(x => (x.Node as NodeViewModel).IsFolder == newNode.IsFolder)
-                .ToList();
-
-            int insertIndex = sameTypeProps.FindIndex(x => comparer.Compare(newProperties.Name, x.Node.Name) < 0);
-            int finalIndex;
-
-            if (insertIndex == -1)
-            {
-                var last = sameTypeProps.LastOrDefault();
-                finalIndex = last != null ? _dataGrid.SavedFilesProperties.IndexOf(last) + 1 : 0;
-            }
-            else
-            {
-                var targetProp = sameTypeProps[insertIndex];
-                finalIndex = _dataGrid.SavedFilesProperties.IndexOf(targetProp);
-            }
-
-            _dataGrid.SavedFilesProperties.Insert(finalIndex, newProperties);
+           // _dataGrid.SavedFilesProperties.Insert(finalIndex, newProperties);
         }
 
 
@@ -145,17 +123,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                         if (!HasFlag(childItem, FileAttributes.Hidden))
                         {
                             NodeViewModel childNode = await CreateNodeRecursive(childItem, node);
-                            // Вставляем childNode в node.Children в правильное место
-                            var comparer = new AdvancedExplorerComparer();
-                            int insertIndex = node.Children
-                                .OfType<NodeViewModel>()
-                                .ToList()
-                                .FindIndex(x => x.IsFolder == childNode.IsFolder && comparer.Compare(childNode.Name, x.Name) < 0);
-
-                            if (insertIndex == -1)
-                                node.Children.Add(childNode); // в конец
-                            else
-                                node.Children.Insert(insertIndex, childNode);
+                            _treeViewFunctionality.TryInsertNode(node, childNode, out _);
                         }
                     }
                 }
@@ -211,6 +179,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
             }
         }
 
+        // вынести
         private void UpdatePropertiesOnSelection()
         {
             (IEnumerable<FileProperties> folders,
@@ -219,6 +188,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
             _dataGrid.FilesProperties.AddRange(files);
         }
 
+
+        // вынести
         private (IEnumerable<FileProperties>, IEnumerable<FileProperties>) GetChildFoldersAndFilesProperties()
         {
             IEnumerable<FileProperties> selectedNodeChilds = _dataGrid.SavedFilesProperties

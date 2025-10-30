@@ -5,13 +5,6 @@ using DatabaseTask.Services.Commands.ItemCommands;
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
-using DatabaseTask.Services.TreeViewItemLogic;
-using DatabaseTask.Services.TreeViewItemLogic.InteractionData;
-using DatabaseTask.Services.TreeViewItemLogic.InteractionData.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.ControlsHelpers.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.UI;
-using DatabaseTask.Services.TreeViewItemLogic.UI.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Logger;
 using DatabaseTask.ViewModels.Logger.Interfaces;
@@ -27,12 +20,6 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using DatabaseTask.Services.TreeViewItemLogic.Operations;
-using DatabaseTask.Services.TreeViewItemLogic.Operations.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.TreeDragDrop;
-using DatabaseTask.Services.TreeViewItemLogic.Interactions.Interfaces;
-using DatabaseTask.Services.TreeViewItemLogic.Interactions;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.Base;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
@@ -53,10 +40,28 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Functionality;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality;
+using DatabaseTask.Services.Comparer;
+using DatabaseTask.Services.Comparer.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.ControlsHelpers;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.InteractionData;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interactions;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.TreeDragDrop;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.UI;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.ControlsHelpers.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.InteractionData.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interactions.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.TreeDragDrop.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.UI.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality;
+using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 
 namespace DatabaseTask.Configuration
 {
@@ -79,6 +84,7 @@ namespace DatabaseTask.Configuration
         {
             AddStorage();
             AddFileManager();
+            AddComparators();
             AddVisualTreeView();
             AddLogger();
             AddCommands();
@@ -105,6 +111,12 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IFileManagerFileOperationsPermissions, FileManagerFileOperationsPermissions>();
         }
 
+        private void AddComparators()
+        {
+            _serviceCollection.AddScoped<IWindowsFileComparer, WindowsFileComparer>();
+            _serviceCollection.AddScoped<INodeComparer, NodeComparer>();
+        }
+
         private void AddVisualTreeView()
         {
             _serviceCollection.AddScoped<ITreeViewData, TreeViewItemInteractionData>();
@@ -116,6 +128,9 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewItemManager, TreeViewItemManager>();
             _serviceCollection.AddScoped<ITreeViewInitializer, TreeViewInitializer>();
             _serviceCollection.AddScoped<ITreeViewFunctionality, TreeViewFunctionality>();
+            _serviceCollection.AddScoped<ITreeViewNodeService, TreeViewNodeService>();
+            _serviceCollection.AddScoped<ITreeViewSelectionService, TreeViewSelectionService>();
+            _serviceCollection.AddScoped<ITreeViewSortService, TreeViewSortService>();
         }
 
         private void AddLogger()

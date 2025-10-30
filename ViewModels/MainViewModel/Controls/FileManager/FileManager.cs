@@ -105,9 +105,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
                 node
             );
 
-           // _dataGridFunctionality.TryInsertProperties()
-
-           // _dataGrid.SavedFilesProperties.Insert(finalIndex, newProperties);
+            _dataGridFunctionality.AddProperties(newProperties);
         }
 
 

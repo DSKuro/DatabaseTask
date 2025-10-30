@@ -1,16 +1,8 @@
-﻿using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using System;
+﻿using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.SubFunctionality.Interfaces;
 
 namespace DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.DataGridFunctionality.Interfaces
 {
-    public interface IDataGridFunctionality
+    public interface IDataGridFunctionality : IDataGridFormatterService, IDataGridPropertiesFunctionality
     {
-        public string TimeToString(DateTimeOffset? dateTimeOffset);
-
-        public string SizeToString(ulong? size);
-        public bool TryInsertProperties(int parentIndex, INode parent, FileProperties properties);
-        public FileProperties? GetPropertiesForNode(INode node);
-        public void RemoveProperties(INode node);
-        public void CopyProperties(INode oldNode, INode newNode, INode target);
     }
 }

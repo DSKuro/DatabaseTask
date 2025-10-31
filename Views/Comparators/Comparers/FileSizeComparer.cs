@@ -1,7 +1,7 @@
 ﻿using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using System.Collections;
 
-namespace DatabaseTask.Views.Comparators.Interfaces
+namespace DatabaseTask.Views.Comparators.Comparers
 {
     public class FileSizeComparer : IComparer
     {
@@ -16,12 +16,11 @@ namespace DatabaseTask.Views.Comparators.Interfaces
             return 0;
         }
 
-        private static long ParseSize(string size)
+        private long ParseSize(string size)
         {
-            if (string.IsNullOrEmpty(size)) return 0;
+            if (string.IsNullOrEmpty(size)) return -1;
 
-            // Обрабатываем форматы: "123 KB", "1.5 MB", etc.
-            var parts = size.Split(' ');
+            string[] parts = size.Split(' ');
             if (parts.Length < 2) return 0;
 
             if (double.TryParse(parts[0], out var number))

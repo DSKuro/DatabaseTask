@@ -8,6 +8,7 @@ using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.Views;
+using DatabaseTask.Views.Comparators.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DatabaseTask
@@ -34,7 +35,9 @@ namespace DatabaseTask
                 BindingPlugins.DataValidators.RemoveAt(0);
                 desktop.MainWindow = new MainWindow(services.GetRequiredService<ITreeViewInitializer>(),
                     services.GetRequiredService<ITreeView>(),
-                    services.GetRequiredService<IMessageBoxService>(), services)
+                    services.GetRequiredService<IMessageBoxService>(),
+                    services.GetRequiredService<IFileComparerFactory>(),
+                    services)
                 {
               
                     DataContext = viewModel,
@@ -45,6 +48,7 @@ namespace DatabaseTask
                 singleViewPlatform.MainView = new MainWindow(services.GetRequiredService<ITreeViewInitializer>(),
                     services.GetRequiredService<ITreeView>(),
                     services.GetRequiredService<IMessageBoxService>(),
+                    services.GetRequiredService<IFileComparerFactory>(),
                     services)
                 {
                     DataContext = viewModel

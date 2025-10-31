@@ -63,7 +63,7 @@
 					  ItemsSource="{Binding FileManager.DataGrid.FilesProperties}" 
 					  Height="250">
 				<DataGrid.Columns>
-					<DataGridTemplateColumn Header="Имя">
+					<DataGridTemplateColumn Header="Имя" CanUserSort="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate DataType="vm:Controls.DataGrid.FileProperties">
 								<StackPanel Orientation="Horizontal" Spacing="5">

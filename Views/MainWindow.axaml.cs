@@ -1,12 +1,13 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.Categories;
-using DatabaseTask.Services.Comparators;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.Views.Comparators.Enum;
+using DatabaseTask.Views.Comparators.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -21,6 +22,7 @@ namespace DatabaseTask.Views
         public MainWindow(ITreeViewInitializer treeViewInitializer,
             ITreeView treeView,
             IMessageBoxService messageBoxService,
+            IFileComparerFactory factory,
             IServiceProvider serviceProvider)
         {
             InitializeComponent();
@@ -30,7 +32,7 @@ namespace DatabaseTask.Views
             _serviceProvider = serviceProvider;
             _treeViewInitializer.Initialize(TreeViewControl, this);
             InitializeMessages();
-            dataGrid.Columns[2].CustomSortComparer = new FileSizeComparer();
+            InitializeSortingComparers(factory);
         }
 
         private void InitializeMessages()
@@ -86,6 +88,13 @@ namespace DatabaseTask.Views
             window.DataContext = _serviceProvider.GetRequiredService<FolderOperationWindowViewModel>();
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             return window;
+        }
+
+        private void InitializeSortingComparers(IFileComparerFactory factory)
+        {
+            dataGrid.Columns[0].CustomSortComparer = factory.CreateFileComparer(FileComparerType.FileNameComparer);
+            dataGrid.Columns[1].CustomSortComparer = factory.CreateFileComparer(FileComparerType.FileSizeComparer);
+            dataGrid.Columns[2].CustomSortComparer = factory.CreateFileComparer(FileComparerType.FileTimeComparer);
         }
     }
 }

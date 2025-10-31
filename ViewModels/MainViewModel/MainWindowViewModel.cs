@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
-using DatabaseTask.Services.Comparators;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
@@ -9,7 +8,6 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
-using System.Collections;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel

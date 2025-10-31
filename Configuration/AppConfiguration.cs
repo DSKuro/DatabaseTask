@@ -66,6 +66,8 @@ using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Inte
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
+using DatabaseTask.Views.Comparators.Interfaces;
+using DatabaseTask.Views.Comparators;
 
 namespace DatabaseTask.Configuration
 {
@@ -119,6 +121,7 @@ namespace DatabaseTask.Configuration
         {
             _serviceCollection.AddScoped<IWindowsFileComparer, WindowsFileComparer>();
             _serviceCollection.AddScoped<INodeComparer, NodeComparer>();
+            _serviceCollection.AddScoped<IFileComparerFactory, FileComparerFactory>();
         }
 
         private void AddVisualTreeView()

@@ -1,7 +1,9 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
@@ -57,23 +59,23 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             }
         }
 
-        public void CanCopyCatalog()
+        public void CanCopyCatalog(List<INode> nodes)
         {
-            if (_treeView.SelectedNodes.Count == 0)
+            if (nodes.Count == 0)
             {
                 throw new FileManagerOperationsException("Каталог не выбран");
             }
-            else if (_treeView.SelectedNodes.Count == 1)
+            else if (nodes.Count == 1)
             {
                 throw new FileManagerOperationsException("Не выбран целевой каталог");
             }
-            else if (_treeView.SelectedNodes.First() == _treeView.Nodes.First())
+            else if (nodes.First() == _treeView.Nodes.First())
             {
                 throw new FileManagerOperationsException("Нельзя копировать корневой каталог");
             }
             else
             {
-                foreach (NodeViewModel node in _treeView.SelectedNodes)
+                foreach (NodeViewModel node in nodes)
                 {
 
                     if (!node.IsFolder)

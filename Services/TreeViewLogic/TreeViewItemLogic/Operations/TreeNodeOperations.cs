@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.ControlsHelpers.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.InteractionData.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Interfaces;
@@ -12,7 +13,6 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
 {
@@ -23,6 +23,8 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
         private readonly IDataGrid _dataGrid;
         private readonly ITreeViewControlsHelper _helper;
         private readonly INodeEvents _nodeEvents;
+        private readonly IFileManagerFileOperationsPermissions _filePermission;
+        private readonly IFileManagerFolderOperationsPermissions _folderPermission;
 
         private List<NodeViewModel> _sortedFolders;
         private List<NodeViewModel> _sortedFiles;
@@ -32,7 +34,9 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             ITreeView treeView,
             IDataGrid dataGrid,
             ITreeViewControlsHelper helper,
-            INodeEvents nodeEvents)
+            INodeEvents nodeEvents,
+            IFileManagerFileOperationsPermissions filePermission,
+            IFileManagerFolderOperationsPermissions folderPermission)
         {
             _treeViewData = treeViewData;
             _treeView = treeView;
@@ -41,31 +45,58 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             _sortedFiles = new List<NodeViewModel>();
             _sortedFolders = new List<NodeViewModel>();
             _nodeEvents = nodeEvents;
+            _filePermission = filePermission;
+            _folderPermission = folderPermission;
         }
 
         public bool CanDrop(INode target)
         {
-            foreach (INode item in _treeView.SelectedNodes)
+            List<INode> selectedNodes = _treeView.SelectedNodes.ToList();
+  
+            if (selectedNodes.Count <= 0)
             {
-                if (item == target)
-                {
-                    return false;
-                }
-
-                NodeViewModel? node = target as NodeViewModel;
-
-                if (node == null)
-                {
-                    return false;
-                }
-
-                if (!(IsTargetAboveSource(item, target) && node.IsFolder && item.Parent != target))
-                {
-                    return false;
-                }
+                return false;
             }
 
-            return true;
+            if (target is not NodeViewModel targetNode || !targetNode.IsFolder)
+            {
+                return false;
+            }
+
+            List<NodeViewModel> nodeViewModels = selectedNodes.OfType<NodeViewModel>().ToList();
+
+            if (nodeViewModels.Count != selectedNodes.Count)
+            {
+                return false;
+            }
+
+            List<INode> files = nodeViewModels.Where(item => !item.IsFolder).Cast<INode>().ToList();
+            List<INode> folders = nodeViewModels.Where(item => item.IsFolder).Cast<INode>().ToList();
+
+            try
+            {
+                if (files.Count > 0)
+                {
+                    files.Add(target);
+                    _filePermission.CanCopyFile(files);
+                }
+
+                if (folders.Count > 0)
+                {
+                    folders.Add(target);
+                    _folderPermission.CanCopyCatalog(folders);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return selectedNodes.All(item =>
+                item != target &&
+                IsTargetAboveSource(item, target) &&
+                item.Parent != target
+            );
         }
 
         private bool IsTargetAboveSource(INode source, INode target)

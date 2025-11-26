@@ -49,7 +49,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
-                await CopyFolderImplementation();
+                await CopyFolderImplementation(_treeViewFunctionality.GetAllSelectedNodes());
             }
             catch (FileManagerOperationsException ex)
             {
@@ -59,9 +59,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task CopyFolderImplementation()
+        private async Task CopyFolderImplementation(List<INode> nodes)
         {
-            _folderPermissions.CanCopyCatalog();
+            _folderPermissions.CanCopyCatalog(nodes);
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
               new MessageBoxOptions(
               MessageBoxCategory.CopyFolderMessageBox.Title,
@@ -70,16 +70,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
               ));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessMove();
+                await ProcessMove(nodes);
             }
         }
 
-        private async Task ProcessMove()
+        private async Task ProcessMove(List<INode> nodes)
         {
-            List<INode> files = _treeViewFunctionality.GetAllSelectedNodes().SkipLast(1).ToList();
+            List<INode> files = nodes.SkipLast(1).ToList();
             foreach (INode file in files)
             {
-                await ProcessCopy(file, _treeViewFunctionality.GetAllSelectedNodes().Last());
+                await ProcessCopy(file, nodes.Last());
             }
         }
 

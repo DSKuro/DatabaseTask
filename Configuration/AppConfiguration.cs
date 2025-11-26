@@ -68,6 +68,8 @@ using DatabaseTask.Services.TreeViewLogic.TreeViewManager;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 using DatabaseTask.Views.Comparators.Interfaces;
 using DatabaseTask.Views.Comparators;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOperations.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOperations;
 
 namespace DatabaseTask.Configuration
 {
@@ -131,6 +133,8 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewControlsHelper, TreeViewControlsHelper>();
             _serviceCollection.AddScoped<ITreeNodeOperations, TreeNodeOperations>();
             _serviceCollection.AddScoped<INodeEvents, NodeEvents>();
+            _serviceCollection.AddScoped<IDropValidationService, DropValidationService>();
+            _serviceCollection.AddScoped<IScrollService, ScrollService>();
             _serviceCollection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             _serviceCollection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             _serviceCollection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();

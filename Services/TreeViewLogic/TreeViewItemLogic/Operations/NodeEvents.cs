@@ -8,6 +8,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
 {
     public class NodeEvents : INodeEvents
     {
-        public Func<List<INode>, Task> OnDrop { get; set; } = _ => Task.CompletedTask;
+        public Func<List<INode>, bool, bool, Task> OnDrop { get; set; } = (_, _, _) => Task.CompletedTask;
     }
 }

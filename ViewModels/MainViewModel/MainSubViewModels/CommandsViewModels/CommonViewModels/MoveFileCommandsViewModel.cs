@@ -10,6 +10,7 @@ using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
@@ -23,6 +24,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public class MoveFileCommandsViewModel : BaseOperationsCommandsViewModel, IMoveFileCommandsViewModel
     {
+        private readonly IFileManagerCommonOperationsPermission _permissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly ITreeView _treeView;
@@ -36,6 +38,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFileCommandsFactory fileCommandsFactory,
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
+            IFileManagerCommonOperationsPermission permissions,
             IFileManagerFileOperationsPermissions filePermissions,
             ITreeViewFunctionality treeViewFunctionality,
             ITreeView treeView,
@@ -44,21 +47,21 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
+            _permissions = permissions;
             _filePermissions = filePermissions;
             _treeViewFunctionality = treeViewFunctionality;
             _treeView = treeView;
             _generator = generator;
             _nodeEvents = nodeEvents;
             _isMove = false;
-            _nodeEvents.OnDrop += MoveFileImplementation;
+            _nodeEvents.OnDrop += ExecuteOperation;
         }
 
         public async Task CopyFile()
         {
             try
             {
-                _isMove = false;
-                await MoveFileImplementation(_treeView.SelectedNodes.ToList());
+                await ExecuteOperation(_treeView.SelectedNodes.ToList(), false, false);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -72,8 +75,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
-                _isMove = true;
-                await MoveFileImplementation(_treeView.SelectedNodes.ToList());
+                await ExecuteOperation(_treeView.SelectedNodes.ToList(), true, false);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -83,9 +85,25 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task MoveFileImplementation(List<INode> nodes)
+        private async Task ExecuteOperation(List<INode> nodes, bool isMove, bool allowFolders)
         {
-            _filePermissions.CanCopyFile(nodes);
+            try
+            {
+                _isMove = isMove;
+                await MoveFileImplementation(nodes, allowFolders);
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
+        }
+
+        private async Task MoveFileImplementation(List<INode> nodes, bool allowFolders = true)
+        {
+            ValidatePermissions(nodes, allowFolders);
+
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
                 new MessageBoxOptions(
                 MessageBoxCategory.MoveFileMessageBox.Title,
@@ -98,77 +116,100 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
+        private void ValidatePermissions(List<INode> nodes, bool allowFolders)
+        {
+            if (allowFolders)
+            {
+                _permissions.MoveItems(nodes);
+            }
+            else
+            {
+                _filePermissions.CanCopyFile(nodes);
+            }
+
+        }
+
         private async Task ProcessMove(List<INode> nodes)
         {
-            List<INode> files = nodes.SkipLast(1).ToList();
-            foreach (INode file in files)
+            List<INode> items = nodes.SkipLast(1).ToList();
+            INode target = nodes.Last();
+
+            foreach (INode item in items)
             {
-                await ProcessMoveForSingleFile(file, nodes.Last());
+                await ProcessMoveForSingleItem(item, target);
             }
         }
 
-        private async Task ProcessMoveForSingleFile(INode file, INode target)
+        private async Task ProcessMoveForSingleItem(INode item, INode target)
         {
-            if (!_treeViewFunctionality.IsNodeExist(target, file.Name))
+            if (!_treeViewFunctionality.IsNodeExist(target, item.Name))
             {
-                await ProcessMoveCommand(file, target, file.Name);
+                await ProcessMoveCommand(item, target, item.Name);
                 return;
             }
 
-            if (target == file.Parent)
+            if (target == item.Parent)
             {
                 if (_isMove)
                 {
                     await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                     ParametrizedMessageBoxCategory.MoveFileToParentMessageBox.Title,
                     ParametrizedMessageBoxCategory.MoveFileToParentMessageBox.Content
-                    .GetStringWithParams(file.Name, target.Name), ButtonEnum.Ok));
+                    .GetStringWithParams(item.Name, target.Name), ButtonEnum.Ok));
                 }
                 else
                 {
-                    string newName = _generator.GenerateUniqueCopyName(target, file.Name);           
-                    await ProcessMoveCommand(file, target, newName);
+                    string newName = _generator.GenerateUniqueCopyName(target, item.Name);
+                    await ProcessMoveCommand(item, target, newName);
                 }
                 return;
             }
 
-            await ProcessReplace(file, target);
+            await ProcessReplace(item, target);
         }
 
-
-        private async Task ProcessReplace(INode file, INode target)
+        private async Task ProcessReplace(INode item, INode target)
         {
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
             new MessageBoxOptions(
             ParametrizedMessageBoxCategory.MoveFileReplaceMessageBox.Title,
             ParametrizedMessageBoxCategory.MoveFileReplaceMessageBox.Content
-            .GetStringWithParams(file.Name, target.Name),
+            .GetStringWithParams(item.Name, target.Name),
             ButtonEnum.YesNo
             ));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessReplaceImplementation(file, target);
+                await ProcessReplaceImplementation(item, target);
             }
         }
 
-        private async Task ProcessReplaceImplementation(INode file, INode target)
+        private async Task ProcessReplaceImplementation(INode item, INode target)
         {
-            INode? node = _treeViewFunctionality.GetChildrenByName(target, file.Name);
-            if (node != null)
+            INode? existingNode = _treeViewFunctionality.GetChildrenByName(target, item.Name);
+            if (existingNode != null)
             {
-                await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
-                await ProcessMoveCommand(file, target, file.Name);
+                var logCategory = IsFolder(existingNode)
+                    ? LogCategory.DeleteFolderCategory
+                    : LogCategory.DeleteFileCategory;
+
+                await DeleteItemOperation(existingNode, logCategory);
+                await ProcessMoveCommand(item, target, item.Name);
             }
         }
 
-        private async Task ProcessMoveCommand(INode file, INode target, string newName)
+        private async Task ProcessMoveCommand(INode item, INode target, string newName)
         {
             if (_isMove)
             {
-                await MoveItemOperation(file, target, newName);
+                await MoveItemOperation(item, target, newName);
                 return;
             }
-            await CopyItemOperation(file, target, newName);
+            await CopyItemOperation(item, target, newName);
+        }
+
+        private bool IsFolder(INode node)
+        {
+            return node is NodeViewModel nodeViewModel && nodeViewModel.IsFolder;
         }
     }
 }

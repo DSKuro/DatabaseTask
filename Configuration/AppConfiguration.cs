@@ -115,6 +115,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IFileManager, FileManager>();
             _serviceCollection.AddScoped<IFileManagerFolderOperationsPermissions, FileManagerFolderOperationsPermissions>();
             _serviceCollection.AddScoped<IFileManagerFileOperationsPermissions, FileManagerFileOperationsPermissions>();
+            _serviceCollection.AddScoped<IFileManagerCommonOperationsPermission, FileManagerCommonOperationsPermissions>();
         }
 
         private void AddComparators()

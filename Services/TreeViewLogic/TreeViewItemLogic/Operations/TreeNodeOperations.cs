@@ -12,7 +12,10 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
 {
@@ -20,14 +23,14 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
     {
         private readonly ITreeViewData _treeViewData;
         private readonly ITreeView _treeView;
-        private readonly IDataGrid _dataGrid;
         private readonly ITreeViewControlsHelper _helper;
         private readonly INodeEvents _nodeEvents;
         private readonly IFileManagerFileOperationsPermissions _filePermission;
         private readonly IFileManagerFolderOperationsPermissions _folderPermission;
 
-        private List<NodeViewModel> _sortedFolders;
-        private List<NodeViewModel> _sortedFiles;
+        private DateTime _lastScrollTime = DateTime.MinValue;
+        private readonly TimeSpan _scrollInterval = TimeSpan.FromMilliseconds(50);
+        private CancellationTokenSource? _currentScrollCancellation;
 
         public TreeNodeOperations(
             ITreeViewData treeViewData,
@@ -40,10 +43,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
         {
             _treeViewData = treeViewData;
             _treeView = treeView;
-            _dataGrid = dataGrid;
             _helper = helper;
-            _sortedFiles = new List<NodeViewModel>();
-            _sortedFolders = new List<NodeViewModel>();
             _nodeEvents = nodeEvents;
             _filePermission = filePermission;
             _folderPermission = folderPermission;
@@ -122,6 +122,16 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             {
                 Scroll(isInTopZone);
             }
+            else
+            {
+                StopScrolling();
+            }
+        }
+
+        private void StopScrolling()
+        {
+            _currentScrollCancellation?.Cancel();
+            _currentScrollCancellation = null;
         }
 
         private (bool, bool) IsOverrideTopOrDownZone()
@@ -140,18 +150,74 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             return (isInBottomZone, isInTopZone);
         }
 
-        private void Scroll(bool isInTopZone)
+        private async void Scroll(bool isInTopZone)
         {
+            _currentScrollCancellation?.Cancel();
+            _currentScrollCancellation = new CancellationTokenSource();
+            CancellationToken token = _currentScrollCancellation.Token;
+
+            if (DateTime.Now - _lastScrollTime < _scrollInterval)
+            {
+                return;
+            }
+
             Visual? itemView = _treeViewData.DraggedItemView;
             if (itemView == null)
             {
                 return;
             }
 
-            double newOffset = _treeViewData.ScrollViewer.Offset.Y +
-                itemView.Bounds.Height * (isInTopZone ? -1 : 1);
-            newOffset = Math.Clamp(newOffset, 0, _treeViewData.ScrollViewer.ScrollBarMaximum.Y);
-            _treeViewData.ScrollViewer.Offset = new Vector(_treeViewData.ScrollViewer.Offset.X, newOffset);
+            _lastScrollTime = DateTime.Now;
+
+            double itemHeight = itemView.Bounds.Height;
+            double currentOffset = _treeViewData.ScrollViewer.Offset.Y;
+
+            double scrollStep = itemHeight * 0.7;
+            double targetOffset = currentOffset + scrollStep * (isInTopZone ? -1 : 1);
+            targetOffset = Math.Clamp(targetOffset, 0, _treeViewData.ScrollViewer.ScrollBarMaximum.Y);
+
+            if (Math.Abs(targetOffset - currentOffset) < 1.0)
+            {
+                return;
+            }
+
+            try
+            {
+                double startOffset = currentOffset;
+                double duration = 250;
+                DateTime startTime = DateTime.Now;
+
+                while ((DateTime.Now - startTime).TotalMilliseconds < duration)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    double progress = (DateTime.Now - startTime).TotalMilliseconds / duration;
+                    progress = Math.Min(1.0, progress);
+
+                    double easedProgress = EaseOutCubic(progress);
+
+                    double currentScrollOffset = startOffset + (targetOffset - startOffset) * easedProgress;
+                    _treeViewData.ScrollViewer.Offset = new Vector(_treeViewData.ScrollViewer.Offset.X, currentScrollOffset);
+
+                    await Task.Delay(16, token);
+                }
+
+                if (!token.IsCancellationRequested)
+                {
+                    _treeViewData.ScrollViewer.Offset = new Vector(_treeViewData.ScrollViewer.Offset.X, targetOffset);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        }
+
+        private double EaseOutCubic(double progress)
+        {
+            return 1 - Math.Pow(1 - progress, 3);
         }
 
         public void BringIntoView(INode item)
@@ -163,61 +229,11 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             }
         }
 
-        public async void DragItem(INode item, DragEventArgs args)
+        public void DragItem(INode item, DragEventArgs args)
         {
             List<INode> nodes = _treeView.SelectedNodes.ToList();
             nodes.Add(item);
-            //PlaceNode(nodes, item);
-            //GetSortedCategories(item);
-            //FillNodes(item, nodes);
-            //await Task.Delay(100);
-            //BringIntoView(nodes[0]);
-            _nodeEvents.OnDrop?.Invoke(nodes);
-        }
-
-        private void PlaceNode(List<INode> nodes, INode targetNode)
-        {
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                INode? parent = nodes[i].Parent;
-                if (parent != null)
-                {
-                    parent.Children.Remove(nodes[i]);
-                }
-                else
-                {
-                    _treeView.Nodes.Remove(nodes[i]);
-                }
-                targetNode.Children.Add(nodes[i]);
-                FileProperties? elem = _dataGrid.SavedFilesProperties
-                    .Find(x => x.Node == nodes[i]);
-                if (elem != null)
-                {
-                    elem.Node.Parent = targetNode;
-                    parent = targetNode;
-                    if (parent != null)
-                    {
-                        parent.IsExpanded = true;
-                    }
-                }
-
-            }
-        }
-
-        private void GetSortedCategories(INode targetNode)
-        {
-            IEnumerable<NodeViewModel> sorted = targetNode.Children.Select(x => (NodeViewModel)x);
-            _sortedFolders = sorted.Where(x => x.IsFolder).OrderBy(x => x.Name).ToList();
-            _sortedFiles = sorted.Where(x => !x.IsFolder).OrderBy(x => x.Name).ToList();
-        }
-
-        private void FillNodes(INode targetNode,
-            List<INode> nodes)
-        {
-            targetNode.Children.Clear();
-            targetNode.Children.AddRange(_sortedFolders);
-            targetNode.Children.AddRange(_sortedFiles);
-            _treeView.SelectedNodes.AddRange(nodes);
+            _nodeEvents.OnDrop?.Invoke(nodes, true, true);
         }
     }
 }

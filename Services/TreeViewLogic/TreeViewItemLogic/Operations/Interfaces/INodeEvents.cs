@@ -7,6 +7,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Inter
 {
     public interface INodeEvents
     {
-        public Func<List<INode>, Task> OnDrop { get; set; }
+        public Func<List<INode>, bool, bool, Task> OnDrop { get; set; }
     }
 }

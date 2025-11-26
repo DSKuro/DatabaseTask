@@ -9,7 +9,9 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.Operations.Utils.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
@@ -23,7 +25,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
+        private readonly ITreeView _treeView;
         private readonly INameGenerator _generator;
+        private readonly INodeEvents _nodeEvents;
 
         private bool _isMove;
 
@@ -34,14 +38,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFullPath fullPath,
             IFileManagerFileOperationsPermissions filePermissions,
             ITreeViewFunctionality treeViewFunctionality,
-            INameGenerator generator)
+            ITreeView treeView,
+            INameGenerator generator,
+            INodeEvents nodeEvents)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _filePermissions = filePermissions;
             _treeViewFunctionality = treeViewFunctionality;
+            _treeView = treeView;
             _generator = generator;
+            _nodeEvents = nodeEvents;
             _isMove = false;
+            _nodeEvents.OnDrop += MoveFileImplementation;
         }
 
         public async Task CopyFile()
@@ -49,7 +58,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             try
             {
                 _isMove = false;
-                await MoveFileImplementation();
+                await MoveFileImplementation(_treeView.SelectedNodes.ToList());
             }
             catch (FileManagerOperationsException ex)
             {
@@ -64,7 +73,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             try
             {
                 _isMove = true;
-                await MoveFileImplementation();
+                await MoveFileImplementation(_treeView.SelectedNodes.ToList());
             }
             catch (FileManagerOperationsException ex)
             {
@@ -74,9 +83,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task MoveFileImplementation()
+        private async Task MoveFileImplementation(List<INode> nodes)
         {
-            _filePermissions.CanCopyFile();
+            _filePermissions.CanCopyFile(nodes);
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
                 new MessageBoxOptions(
                 MessageBoxCategory.MoveFileMessageBox.Title,
@@ -85,16 +94,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 ));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessMove();
+                await ProcessMove(nodes);
             }
         }
 
-        private async Task ProcessMove()
+        private async Task ProcessMove(List<INode> nodes)
         {
-            List<INode> files = _treeViewFunctionality.GetAllSelectedNodes().SkipLast(1).ToList();
+            List<INode> files = nodes.SkipLast(1).ToList();
             foreach (INode file in files)
             {
-                await ProcessMoveForSingleFile(file, _treeViewFunctionality.GetAllSelectedNodes().Last());
+                await ProcessMoveForSingleFile(file, nodes.Last());
             }
         }
 

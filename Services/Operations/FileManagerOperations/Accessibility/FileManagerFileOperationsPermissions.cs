@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,19 +36,19 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             }
         }
 
-        public void CanCopyFile()
+        public void CanCopyFile(List<INode> nodes)
         {
-            if (_treeView.SelectedNodes.Count == 0)
+            if (nodes.Count == 0)
             {
                 throw new FileManagerOperationsException("Каталог и файл не выбраны");
             }
-            else if (_treeView.SelectedNodes.Count == 1)
+            else if (nodes.Count == 1)
             {
                 throw new FileManagerOperationsException("Не выбран целевой каталог");
             }
             else
             {
-                List<NodeViewModel> selectedNodes = _treeView.SelectedNodes.OfType<NodeViewModel>().ToList();
+                List<NodeViewModel> selectedNodes = nodes.OfType<NodeViewModel>().ToList();
                 IEnumerable<NodeViewModel> nodesExceptLast = selectedNodes.Take(selectedNodes.Count - 1);
 
                 if (nodesExceptLast.Any(x => x.IsFolder))

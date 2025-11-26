@@ -129,6 +129,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewData, TreeViewItemInteractionData>();
             _serviceCollection.AddScoped<ITreeViewControlsHelper, TreeViewControlsHelper>();
             _serviceCollection.AddScoped<ITreeNodeOperations, TreeNodeOperations>();
+            _serviceCollection.AddScoped<INodeEvents, NodeEvents>();
             _serviceCollection.AddScoped<ITreeViewVisualOperations, TreeViewVisualOperations>();
             _serviceCollection.AddScoped<ITreeViewItemInteractions, TreeViewItemInteractions>();
             _serviceCollection.AddScoped<ITreeViewItemDragDrop, TreeViewItemDragDrop>();

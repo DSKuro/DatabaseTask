@@ -22,6 +22,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
         private readonly ITreeViewControlsHelper _helper;
+        private readonly INodeEvents _nodeEvents;
 
         private List<NodeViewModel> _sortedFolders;
         private List<NodeViewModel> _sortedFiles;
@@ -30,14 +31,16 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
             ITreeViewData treeViewData,
             ITreeView treeView,
             IDataGrid dataGrid,
-            ITreeViewControlsHelper helper)
+            ITreeViewControlsHelper helper,
+            INodeEvents nodeEvents)
         {
             _treeViewData = treeViewData;
             _treeView = treeView;
             _dataGrid = dataGrid;
             _helper = helper;
             _sortedFiles = new List<NodeViewModel>();
-            _sortedFolders = new List<NodeViewModel>(); 
+            _sortedFolders = new List<NodeViewModel>();
+            _nodeEvents = nodeEvents;
         }
 
         public bool CanDrop(INode target)
@@ -132,11 +135,13 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations
         public async void DragItem(INode item, DragEventArgs args)
         {
             List<INode> nodes = _treeView.SelectedNodes.ToList();
-            PlaceNode(nodes, item);
-            GetSortedCategories(item);
-            FillNodes(item, nodes);
-            await Task.Delay(100);
-            BringIntoView(nodes[0]);
+            nodes.Add(item);
+            //PlaceNode(nodes, item);
+            //GetSortedCategories(item);
+            //FillNodes(item, nodes);
+            //await Task.Delay(100);
+            //BringIntoView(nodes[0]);
+            _nodeEvents.OnDrop?.Invoke(nodes);
         }
 
         private void PlaceNode(List<INode> nodes, INode targetNode)

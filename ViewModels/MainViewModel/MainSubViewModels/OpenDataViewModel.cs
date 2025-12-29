@@ -7,6 +7,7 @@ using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
+using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
@@ -22,16 +23,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         private readonly IStorageService _storageService;
         private readonly IFileManager _fileManager;
         private readonly IFullPath _fullPath;
+        private readonly ILogger _logger;
 
         public OpenDataViewModel(IMessageBoxService messageBoxService,
             IStorageService storageService,
             IFileManager fileManager,
-            IFullPath fullPath)
+            IFullPath fullPath,
+            ILogger logger)
             : base(messageBoxService)
         {
             _storageService = storageService;
             _fileManager = fileManager;
             _fullPath = fullPath;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<IStorageFile>?> ChooseDbFile()
@@ -68,6 +72,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             IEnumerable<IStorageFolder>? folders = await ChooseMainFolder();
             if (folders == null || folders.Count() == 0)
             {
+                _logger.LogOperations.Clear();
                 return;
             }
 

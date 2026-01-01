@@ -191,6 +191,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IMoveFileCommandsViewModel, MoveFileCommandsViewModel>();
             _serviceCollection.AddScoped<ICopyFolderCommandsViewModel, CopyFolderCommandViewModel>();
             _serviceCollection.AddScoped<IMergeCommandsViewModel, MergeCommandsViewModel>();
+            _serviceCollection.AddScoped<ICopyAllCommandsViewModel, CopyAllCommandsViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();

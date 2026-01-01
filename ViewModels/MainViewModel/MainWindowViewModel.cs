@@ -25,6 +25,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly IDeleteItemCommandsViewModel _deleteItemCommandsViewModel;
         private readonly IMoveFileCommandsViewModel _moveFileCommandsViewModel;
         private readonly ICopyFolderCommandsViewModel _copyFolderCommandsViewModel;
+        private readonly ICopyAllCommandsViewModel _copyAllCommandsViewModel;
 
         private readonly ICommandsHistory _commandsHistory;
 
@@ -41,7 +42,8 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ICommandsHistory commandsHistory,
             IDeleteItemCommandsViewModel deleteItemCommandsViewModel,
             IMoveFileCommandsViewModel moveFileCommandsViewModel,
-            ICopyFolderCommandsViewModel copyFolderCommandsViewModel) : base(messageBoxService)
+            ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
+            ICopyAllCommandsViewModel copyAllCommandsViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
@@ -52,6 +54,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _deleteItemCommandsViewModel = deleteItemCommandsViewModel;
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
+            _copyAllCommandsViewModel = copyAllCommandsViewModel;
         }
 
         [RelayCommand]
@@ -68,6 +71,12 @@ namespace DatabaseTask.ViewModels.MainViewModel
             {
                 WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
             }
+        }
+
+        [RelayCommand]
+        public async Task ContextMenuCopyCommand()
+        {
+            await _copyAllCommandsViewModel.CopyAllItems();
         }
 
         [RelayCommand]

@@ -85,7 +85,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task ExecuteOperation(List<INode> nodes, bool isMove, bool allowFolders)
+        public async Task ExecuteOperation(List<INode> nodes, bool isMove, bool allowFolders)
         {
             try
             {

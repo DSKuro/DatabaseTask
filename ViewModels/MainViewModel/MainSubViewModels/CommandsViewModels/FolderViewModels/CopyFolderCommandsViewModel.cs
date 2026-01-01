@@ -59,7 +59,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task CopyFolderImplementation(List<INode> nodes)
+        public async Task CopyFolderImplementation(List<INode> nodes)
         {
             _folderPermissions.CanCopyCatalog(nodes);
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",

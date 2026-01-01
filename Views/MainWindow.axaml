@@ -47,7 +47,8 @@
 							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
 							<Setter Property="ContextMenu">
 							<ContextMenu>
-								 <MenuItem Header="Копировать"/>
+								 <MenuItem Header="Копировать"
+										   Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuCopyCommand}"/>
 								 <MenuItem Header="Удалить" 
 									       Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuDeleteCommand}"/>
 							</ContextMenu>

@@ -44,7 +44,12 @@
 				<TreeView.Styles>
 						<Style Selector="TreeViewItem" x:DataType="vm:Controls.Nodes.NodeViewModel">
 							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-							<Setter Property="ContextMenu" Value="{DynamicResource TreeViewItemContextMenu}"/>
+							<Setter Property="ContextMenu">
+							<ContextMenu>
+								 <MenuItem Header="Копировать"/>
+								 <MenuItem Header="Удалить"/>
+							</ContextMenu>
+						   </Setter>
 						</Style>
 				</TreeView.Styles>
 				<TreeView.ItemTemplate>

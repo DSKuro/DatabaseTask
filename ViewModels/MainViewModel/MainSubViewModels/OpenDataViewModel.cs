@@ -116,10 +116,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(false));
             IEnumerable<IStorageFolder> folders = await _storageService.OpenFoldersAsync("MainDialogueWindow",
                     new FolderPickerOptions(false));
-            if (folders.Count() != 0)
-            {
-                WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
-            }
             return folders;
         }
     }

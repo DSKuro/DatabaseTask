@@ -7,8 +7,4 @@
 	<x:Double x:Key="SvgWidth">20</x:Double>
 	<x:Double x:Key="SvgHeight">20</x:Double>
 	<FontWeight x:Key="ControlContentThemeFontWeight">SemiBold</FontWeight>
-
-	<ContextMenu x:Key="TreeViewItemContextMenu">
-		<MenuItem Header="Copy"/>
-	</ContextMenu>
 </ResourceDictionary>

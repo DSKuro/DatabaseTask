@@ -4,6 +4,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public interface IDeleteItemCommandsViewModel
     {
+        public Task DeleteItems();
         public Task DeleteFolders();
         public Task DeleteFiles();
     }

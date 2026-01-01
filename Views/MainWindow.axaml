@@ -37,6 +37,7 @@
 		
 		<Grid Grid.Row="1" ColumnDefinitions="0.75*, 1.25*">
 			<TreeView Grid.Column="0"
+					  x:DataType="vm:MainWindowViewModel"
 					  Name="TreeViewControl" 
 					  SelectedItems="{Binding FileManager.TreeView.SelectedNodes, Mode=TwoWay}"
 					  SelectionMode="Multiple"
@@ -47,7 +48,8 @@
 							<Setter Property="ContextMenu">
 							<ContextMenu>
 								 <MenuItem Header="Копировать"/>
-								 <MenuItem Header="Удалить"/>
+								 <MenuItem Header="Удалить" 
+									       Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuDeleteCommand}"/>
 							</ContextMenu>
 						   </Setter>
 						</Style>

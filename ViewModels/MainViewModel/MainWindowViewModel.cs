@@ -71,6 +71,12 @@ namespace DatabaseTask.ViewModels.MainViewModel
         }
 
         [RelayCommand]
+        public async Task ContextMenuDeleteCommand()
+        {
+            await _deleteItemCommandsViewModel.DeleteItems();
+        }
+
+        [RelayCommand]
         public async Task CreateFolder()
         {
             await _folderCommandsViewModel.CreateFolder();

@@ -6,7 +6,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.I
     public interface IFileManagerFolderOperationsPermissions
     {
         public void CanDoOperationOnFolder();
-        public void CanDeleteFolder();
+        public void CanDeleteFolder(List<INode> nodes);
         public void CanCopyCatalog(List<INode> nodes);
     }
 }

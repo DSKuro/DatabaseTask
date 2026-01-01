@@ -36,19 +36,19 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             }
         }
 
-        public void CanDeleteFolder()
+        public void CanDeleteFolder(List<INode> nodes)
         {
-            if (_treeView.SelectedNodes.Count == 0)
+            if (nodes.Count == 0)
             {
                 throw new FileManagerOperationsException("Каталог не выбран");
             }
-            else if (_treeView.SelectedNodes.Contains(_treeView.Nodes.First())) 
+            else if (nodes.Contains(_treeView.Nodes.First())) 
             {
                 throw new FileManagerOperationsException("Нельзя удалить корневой каталог");
             }
             else
             {
-                foreach (NodeViewModel node in _treeView.SelectedNodes)
+                foreach (NodeViewModel node in nodes)
                 {
 
                     if (!node.IsFolder)

@@ -2,7 +2,6 @@
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,22 +9,15 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 { 
     public class FileManagerFileOperationsPermissions : IFileManagerFileOperationsPermissions
     {
-        private readonly ITreeView _treeView;
-
-        public FileManagerFileOperationsPermissions(ITreeView treeView)
+        public void CanDeleteFile(List<INode> nodes)
         {
-            _treeView = treeView;
-        }
-
-        public void CanDeleteFile()
-        {
-            if (_treeView.SelectedNodes.Count == 0)
+            if (nodes.Count == 0)
             {
                 throw new FileManagerOperationsException("Файл не выбран");
             }
             else
             {
-                foreach (NodeViewModel node in _treeView.SelectedNodes)
+                foreach (NodeViewModel node in nodes)
                 {
 
                     if (node.IsFolder)

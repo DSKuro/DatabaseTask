@@ -11,6 +11,14 @@
             Content = content;
         }
 
+        public static MessageBoxCategory DeleteAllMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Удаление элементов", "Вы точно хотите удалить выбранные элементы?");
+            }
+        }
+
         public static MessageBoxCategory DeleteFolderMessageBox
         {
             get

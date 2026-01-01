@@ -8,10 +8,13 @@ using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Inter
 using DatabaseTask.Services.Operations.FileManagerOperations.Exceptions;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels
@@ -38,14 +41,55 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _treeViewFunctionality = treeViewFunctionality;
         }
 
+        public async Task DeleteItems()
+        {
+            try
+            {
+                List<NodeViewModel> nodes = _treeViewFunctionality.GetAllSelectedNodes()
+                    .OfType<NodeViewModel>()
+                    .ToList();
+
+                List<INode> filesToDelete = nodes
+                    .Where(x => !x.IsFolder)
+                    .Cast<INode>()
+                    .ToList();
+
+                List<INode> foldersToDelete = nodes
+                    .Where(x => x.IsFolder)
+                    .Cast<INode>()
+                    .ToList();
+
+                if (filesToDelete.Any())
+                {
+                    _filePermissions.CanDeleteFile(filesToDelete);
+                }
+
+                if (foldersToDelete.Any())
+                {
+                    _folderPermissions.CanDeleteFolder(foldersToDelete);
+                }
+
+                await ProcessDelete(
+                    MessageBoxCategory.DeleteAllMessageBox.Title,
+                    MessageBoxCategory.DeleteAllMessageBox.Content
+                );
+            }
+            catch (FileManagerOperationsException ex)
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions
+                                   (MessageBoxConstants.Error.Value, ex.Message,
+                                   ButtonEnum.Ok), null);
+            }
+        }
+
+
         public async Task DeleteFiles()
         {
             try
             {
-                _filePermissions.CanDeleteFile();
+                _filePermissions.CanDeleteFile(_treeViewFunctionality.GetAllSelectedNodes());
                 await ProcessDelete(MessageBoxCategory.DeleteFileMessageBox.Title,
-                    MessageBoxCategory.DeleteFileMessageBox.Content,
-                    LogCategory.DeleteFileCategory);
+                    MessageBoxCategory.DeleteFileMessageBox.Content);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -59,10 +103,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
-                _folderPermissions.CanDeleteFolder();
+                _folderPermissions.CanDeleteFolder(_treeViewFunctionality.GetAllSelectedNodes());
                 await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
-                    MessageBoxCategory.DeleteFolderMessageBox.Content,
-                    LogCategory.DeleteFolderCategory);
+                    MessageBoxCategory.DeleteFolderMessageBox.Content);
             }
             catch (FileManagerOperationsException ex)
             {
@@ -72,7 +115,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        private async Task ProcessDelete(string title, string content, LogCategory category)
+        private async Task ProcessDelete(string title, string content)
         {
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
                     new MessageBoxOptions(
@@ -81,15 +124,21 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     ButtonEnum.YesNo));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessDeleteCommand(category);
+                await ProcessDeleteCommand();
             }
         }
 
-        private async Task ProcessDeleteCommand(LogCategory category)
+        private async Task ProcessDeleteCommand()
         {
             foreach (INode node in _treeViewFunctionality.GetAllSelectedNodes())
             {
-                await DeleteItemOperation(node, category);
+                NodeViewModel? nodeViewModel = node as NodeViewModel;
+                if (nodeViewModel != null)
+                { 
+                    LogCategory category = nodeViewModel.IsFolder == true ? 
+                        LogCategory.DeleteFolderCategory : LogCategory.DeleteFileCategory;
+                    await DeleteItemOperation(node, category);
+                }
             }
         }
     }

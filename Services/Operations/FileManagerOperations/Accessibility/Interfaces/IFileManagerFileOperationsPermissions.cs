@@ -5,7 +5,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.I
 {
     public interface IFileManagerFileOperationsPermissions
     {
-        public void CanDeleteFile();
+        public void CanDeleteFile(List<INode> nodes);
         public void CanCopyFile(List<INode> nodes);
     }
 }

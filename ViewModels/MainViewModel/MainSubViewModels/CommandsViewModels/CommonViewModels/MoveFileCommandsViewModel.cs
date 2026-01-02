@@ -120,7 +120,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             if (allowFolders)
             {
-                _permissions.MoveItems(nodes);
+                _permissions.CanMoveItems(nodes);
             }
             else
             {

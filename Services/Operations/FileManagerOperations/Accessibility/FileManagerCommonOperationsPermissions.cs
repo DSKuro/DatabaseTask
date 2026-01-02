@@ -9,11 +9,19 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 {
     public class FileManagerCommonOperationsPermissions : IFileManagerCommonOperationsPermission
     {
-        public void MoveItems(List<INode> nodes)
+        public void CanDeleteItems(List<INode> nodes)
+        {
+            if (!nodes.Any())
+            {
+                throw new FileManagerOperationsException("Элемент не выбран");
+            }
+        }
+
+        public void CanMoveItems(List<INode> nodes)
         {
             if (nodes.Count == 0)
             {
-                throw new FileManagerOperationsException("Каталог и файл не выбраны");
+                throw new FileManagerOperationsException("Каталог и файлы не выбраны");
             }
             else if (nodes.Count == 1)
             {

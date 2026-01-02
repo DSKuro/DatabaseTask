@@ -38,11 +38,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 
         public void CanDeleteFolder(List<INode> nodes)
         {
-            if (nodes.Count == 0)
-            {
-                throw new FileManagerOperationsException("Каталог не выбран");
-            }
-            else if (nodes.Contains(_treeView.Nodes.First())) 
+            if (nodes.Contains(_treeView.Nodes.First())) 
             {
                 throw new FileManagerOperationsException("Нельзя удалить корневой каталог");
             }
@@ -77,7 +73,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             {
                 foreach (NodeViewModel node in nodes)
                 {
-
                     if (!node.IsFolder)
                     {
                         throw new FileManagerOperationsException("Выбран файл, не каталог");

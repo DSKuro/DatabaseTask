@@ -23,6 +23,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
         private readonly IFileManagerFileOperationsPermissions _filePermissions;
+        private readonly IFileManagerCommonOperationsPermission _commonOperationsPermission;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public DeleteItemCommandsViewModel(IMessageBoxService messageBoxService,
@@ -32,12 +33,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
             IFileManagerFileOperationsPermissions filePermissions,
+            IFileManagerCommonOperationsPermission commonOperationsPermission,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
             _filePermissions = filePermissions;
+            _commonOperationsPermission = commonOperationsPermission;
             _treeViewFunctionality = treeViewFunctionality;
         }
 
@@ -58,6 +61,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     .Where(x => x.IsFolder)
                     .Cast<INode>()
                     .ToList();
+
+                _commonOperationsPermission.CanDeleteItems(_treeViewFunctionality.GetAllSelectedNodes());
 
                 if (filesToDelete.Any())
                 {
@@ -87,6 +92,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
+                _commonOperationsPermission.CanDeleteItems(_treeViewFunctionality.GetAllSelectedNodes());
                 _filePermissions.CanDeleteFile(_treeViewFunctionality.GetAllSelectedNodes());
                 await ProcessDelete(MessageBoxCategory.DeleteFileMessageBox.Title,
                     MessageBoxCategory.DeleteFileMessageBox.Content);
@@ -103,6 +109,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
+                _commonOperationsPermission.CanDeleteItems(_treeViewFunctionality.GetAllSelectedNodes());
                 _folderPermissions.CanDeleteFolder(_treeViewFunctionality.GetAllSelectedNodes());
                 await ProcessDelete(MessageBoxCategory.DeleteFolderMessageBox.Title,
                     MessageBoxCategory.DeleteFolderMessageBox.Content);

@@ -11,19 +11,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
     {
         public void CanDeleteFile(List<INode> nodes)
         {
-            if (nodes.Count == 0)
+            foreach (NodeViewModel node in nodes)
             {
-                throw new FileManagerOperationsException("Файл не выбран");
-            }
-            else
-            {
-                foreach (NodeViewModel node in nodes)
+                if (node.IsFolder)
                 {
-
-                    if (node.IsFolder)
-                    {
-                        throw new FileManagerOperationsException("Выбран каталог, не файл");
-                    }
+                    throw new FileManagerOperationsException("Выбран каталог, не файл");
                 }
             }
         }

@@ -49,7 +49,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOp
 
             try
             {
-                _permission.MoveItems(selectedNodes);
+                _permission.CanMoveItems(selectedNodes);
             }
             catch
             {

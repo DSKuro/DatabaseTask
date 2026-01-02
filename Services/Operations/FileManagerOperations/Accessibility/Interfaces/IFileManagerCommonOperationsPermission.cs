@@ -5,6 +5,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.I
 {
     public interface IFileManagerCommonOperationsPermission
     {
-        public void MoveItems(List<INode> nodes);
+        public void CanDeleteItems(List<INode> nodes);
+        public void CanMoveItems(List<INode> nodes);
     }
 }

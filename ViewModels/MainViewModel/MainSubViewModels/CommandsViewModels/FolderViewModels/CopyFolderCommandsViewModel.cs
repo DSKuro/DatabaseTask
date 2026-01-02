@@ -23,6 +23,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public class CopyFolderCommandViewModel : BaseOperationsCommandsViewModel, ICopyFolderCommandsViewModel
     {
         private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
+        private readonly IFileManagerCommonOperationsPermission _commonPermissions;
         private readonly INameGenerator _generator;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IMergeCommandsViewModel _mergeCommandsViewModel;
@@ -33,6 +34,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
+            IFileManagerCommonOperationsPermission commonPermissions,
             INameGenerator generator,
             ITreeViewFunctionality treeViewFunctionality,
             IMergeCommandsViewModel mergeCommandsViewModel)
@@ -40,6 +42,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
+            _commonPermissions = commonPermissions;
             _generator = generator;
             _treeViewFunctionality = treeViewFunctionality;
             _mergeCommandsViewModel = mergeCommandsViewModel;
@@ -49,6 +52,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             try
             {
+                _commonPermissions.CanMoveItems(_treeViewFunctionality.GetAllSelectedNodes());
                 await CopyFolderImplementation(_treeViewFunctionality.GetAllSelectedNodes());
             }
             catch (FileManagerOperationsException ex)

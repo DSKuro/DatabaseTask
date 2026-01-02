@@ -22,28 +22,12 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 
         public void CanCopyFile(List<INode> nodes)
         {
-            if (nodes.Count == 0)
-            {
-                throw new FileManagerOperationsException("Каталог и файл не выбраны");
-            }
-            else if (nodes.Count == 1)
-            {
-                throw new FileManagerOperationsException("Не выбран целевой каталог");
-            }
-            else
-            {
-                List<NodeViewModel> selectedNodes = nodes.OfType<NodeViewModel>().ToList();
-                IEnumerable<NodeViewModel> nodesExceptLast = selectedNodes.Take(selectedNodes.Count - 1);
+            List<NodeViewModel> selectedNodes = nodes.OfType<NodeViewModel>().ToList();
+            IEnumerable<NodeViewModel> nodesExceptLast = selectedNodes.Take(selectedNodes.Count - 1);
 
-                if (nodesExceptLast.Any(x => x.IsFolder))
-                {
-                    throw new FileManagerOperationsException("Выбран каталог, не файл");
-                }
-                
-                if (!selectedNodes.Last().IsFolder)
-                {
-                    throw new FileManagerOperationsException("Вместо целевого каталога выбран файл");
-                }
+            if (nodesExceptLast.Any(x => x.IsFolder))
+            {
+                throw new FileManagerOperationsException("Выбран каталог, не файл");
             }
         }
     }

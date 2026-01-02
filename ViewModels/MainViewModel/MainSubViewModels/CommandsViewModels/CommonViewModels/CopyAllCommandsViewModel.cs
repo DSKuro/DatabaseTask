@@ -1,5 +1,4 @@
-﻿using DatabaseTask.Models.Categories;
-using DatabaseTask.Models.MessageBox;
+﻿using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
@@ -11,11 +10,9 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
-using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,8 +23,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         private readonly IMoveFileCommandsViewModel _moveFileCommandsViewModel;
         private readonly ICopyFolderCommandsViewModel _copyFolderCommandsViewModel;
-        private readonly IFileManagerFolderOperationsPermissions _folderPermissions;
-        private readonly IFileManagerFileOperationsPermissions _filePermissions;
+        private readonly IFileManagerCommonOperationsPermission _commonPermissions;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public CopyAllCommandsViewModel(
@@ -38,16 +34,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFullPath fullPath,
             IMoveFileCommandsViewModel moveFileCommandsViewModel,
             ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
-            IFileManagerFolderOperationsPermissions folderPermissions,
-            IFileManagerFileOperationsPermissions filePermissions,
+            IFileManagerCommonOperationsPermission commonPermissions,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
                   fileCommandsFactory, commandsHistory, fullPath)
         {
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
-            _folderPermissions = folderPermissions;
-            _filePermissions = filePermissions;
+            _commonPermissions = commonPermissions;
             _treeViewFunctionality = treeViewFunctionality;
         }
 
@@ -70,22 +64,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     .Cast<INode>()
                     .ToList();
 
-                if (!nodes.Last().IsFolder)
+                _commonPermissions.CanMoveItems(_treeViewFunctionality.GetAllSelectedNodes());
+
+                if (filesToDelete.Count > 1)
                 {
-                    throw new FileManagerOperationsException("Вместо целевого каталога выбран файл");
+                    await _moveFileCommandsViewModel.ExecuteOperation(filesToDelete, false, true);
                 }
 
-                if (foldersToDelete.Count < 2 && filesToDelete.Count < 2)
-                {
-                    throw new FileManagerOperationsException("Выбран один элемент");
-                }
-
-                if (filesToDelete.Any())
-                {
-                    await _moveFileCommandsViewModel.ExecuteOperation(filesToDelete, false, false);
-                }
-
-                if (foldersToDelete.Any())
+                if (foldersToDelete.Count > 1)
                 {
                     await _copyFolderCommandsViewModel.CopyFolderImplementation(foldersToDelete);
                 }

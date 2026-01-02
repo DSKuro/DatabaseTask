@@ -57,15 +57,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
 
         public void CanCopyCatalog(List<INode> nodes)
         {
-            if (nodes.Count == 0)
-            {
-                throw new FileManagerOperationsException("Каталог не выбран");
-            }
-            else if (nodes.Count == 1)
-            {
-                throw new FileManagerOperationsException("Не выбран целевой каталог");
-            }
-            else if (nodes.First() == _treeView.Nodes.First())
+            if (nodes.First() == _treeView.Nodes.First())
             {
                 throw new FileManagerOperationsException("Нельзя копировать корневой каталог");
             }

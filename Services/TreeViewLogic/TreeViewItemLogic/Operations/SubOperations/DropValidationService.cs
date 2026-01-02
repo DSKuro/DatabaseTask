@@ -1,6 +1,5 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOperations.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
@@ -25,16 +24,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOp
         {
             List<INode> selectedNodes = _treeView.SelectedNodes.ToList();
 
-            if (selectedNodes.Count > 0)
-            {
-                return false;
-            }
-
-            if (target is NodeViewModel targetNode && targetNode.IsFolder)
-            {
-                return false;
-            }
-
             if (!HasPermissions(selectedNodes, target))
             {
                 return false;
@@ -45,11 +34,12 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOp
 
         private bool HasPermissions(List<INode> selectedNodes, INode target)
         {
-            selectedNodes.Add(target);
+            List<INode> copyNodes = selectedNodes.ToList();
+            copyNodes.Add(target);
 
             try
             {
-                _permission.CanMoveItems(selectedNodes);
+                _permission.CanMoveItems(copyNodes);
             }
             catch
             {

@@ -56,5 +56,22 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 return false;
             }
         }
+
+        public bool DeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

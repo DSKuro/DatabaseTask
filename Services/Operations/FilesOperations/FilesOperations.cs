@@ -1,4 +1,5 @@
 ﻿using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using System;
 using System.IO;
 
 namespace DatabaseTask.Services.Operations.FilesOperations
@@ -32,6 +33,23 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 }
                 Directory.Move(oldPath, newPath);
                 return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteFolder(string path)
+        {
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                    return true;
+                }
+                return false;
             }
             catch
             {

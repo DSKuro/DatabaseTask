@@ -45,7 +45,8 @@ namespace DatabaseTask.Services.Commands.ItemCommands
                         .Add<RenameFolderItemCommand>(info.Data[1]!);
                     break;
 
-                case CommandType.DeleteItem:
+                case CommandType.DeleteFolder:
+                case CommandType.DeleteFile:
                     if (info.Data == null)
                     {
                         throw new ArgumentException("Данные команды не заданы");

@@ -3,9 +3,7 @@ using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
-using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
@@ -15,7 +13,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private readonly ICommandsFactory _itemCommandsFactory;
         private readonly IFileCommandsFactory _fileCommandsFactory;
         private readonly ICommandsHistory _commandsHistory;
-        private readonly IFullPath _fullPath;
 
         public ICommandsFactory ItemCommandsFactory
         {
@@ -26,19 +23,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
-            ICommandsHistory commandsHistory,
-            IFullPath fullPath)
+            ICommandsHistory commandsHistory)
             : base(messageBoxService)
         { 
             _itemCommandsFactory = itemCommandsFactory;
             _fileCommandsFactory = fileCommandsFactory;
             _commandsHistory = commandsHistory;
-            _fullPath = fullPath;
         }
         
-        protected async Task ProcessCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
+        protected async Task ProcessCommand(CommandInfo itemInfo, CommandInfo commandInfo, LoggerDTO loggerDto)
         {
-            await ExecuteCommand(commandInfo, loggerDto);
+            await ExecuteCommand(itemInfo, loggerDto);
             AddCommandToHistory(commandInfo);
         }
 
@@ -51,22 +46,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private void AddCommandToHistory(CommandInfo commandInfo)
         {
-            List<string> fullPaths = new List<string>();
-
-            if (commandInfo.Data != null)
-            {
-                foreach (var data in commandInfo.Data)  
-                {
-                    string? stringData = data as string;
-                    if (stringData != null)
-                    {
-                        fullPaths.Add(_fullPath.GetFullpath(stringData));
-                    }
-                }
-            }
-
-            ICommand command = _fileCommandsFactory.CreateCommand(
-                new CommandInfo(commandInfo.CommandType, fullPaths.ToArray()));
+            ICommand command = _fileCommandsFactory.CreateCommand(commandInfo);
             _commandsHistory.AddCommand(command);
         }
     }

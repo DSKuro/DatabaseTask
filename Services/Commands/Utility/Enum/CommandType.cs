@@ -4,7 +4,8 @@
     {
         CreateFolder,
         RenameFolder,
-        DeleteItem,
+        DeleteFolder,
+        DeleteFile,
         CopyItem,
         MoveFile
     }

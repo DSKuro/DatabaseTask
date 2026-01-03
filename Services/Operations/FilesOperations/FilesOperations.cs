@@ -126,5 +126,23 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 return false;
             }
         }
+
+        public bool MoveFile(string oldPath, string newPath)
+        {
+            try
+            {
+                if (!File.Exists(oldPath))
+                {
+                    return false;
+                }
+
+                File.Move(oldPath, newPath, true);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

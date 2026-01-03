@@ -122,14 +122,22 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 isFolder = newNode.IsFolder;
             }
 
-            CommandInfo info = new CommandInfo
+            CommandInfo itemInfo = new CommandInfo
             (
                 CommandType.MoveFile, node,
                 target,
                 name
             );
 
-            await ProcessCommand(info, info,
+            CommandInfo commandInfo = new CommandInfo
+            (
+                CommandType.MoveFile,
+                node.Name, Path.Combine(target.Name, node.Name)
+            );
+
+            GetPathForCommand(commandInfo);
+
+            await ProcessCommand(itemInfo, commandInfo,
                new LoggerDTO
                (
                    (isFolder) ? LogCategory.MoveCatalogCategory

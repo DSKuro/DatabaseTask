@@ -8,5 +8,6 @@
         public bool DeleteFile(string path);
         public bool CopyFolder(string oldPath, string newPath);
         public bool CopyFile(string oldPath, string newPath);
+        public bool MoveFile(string oldPath, string newPath);
     }
 }

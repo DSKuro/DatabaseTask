@@ -2,6 +2,7 @@
 {
     public interface IFilesOperations
     {
-        public void CreateFolder(string path);
+        public bool CreateFolder(string path);
+        public bool RenameFolder(string path, string newName);
     }
 }

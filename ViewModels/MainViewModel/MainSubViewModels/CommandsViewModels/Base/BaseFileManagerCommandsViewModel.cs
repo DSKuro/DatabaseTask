@@ -5,6 +5,7 @@ using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
@@ -38,7 +39,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         protected async Task ProcessCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
         {
             await ExecuteCommand(commandInfo, loggerDto);
-            //AddCommandToHistory(commandInfo);
+            AddCommandToHistory(commandInfo);
         }
 
         private async Task ExecuteCommand(CommandInfo commandInfo, LoggerDTO loggerDto)
@@ -50,13 +51,22 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private void AddCommandToHistory(CommandInfo commandInfo)
         {
-            string? data = null;
+            List<string> fullPaths = new List<string>();
+
             if (commandInfo.Data != null)
             {
-                data = _fullPath.GetFullpath(commandInfo.Data.ToString()!);
+                foreach (var data in commandInfo.Data)  
+                {
+                    string? stringData = data as string;
+                    if (stringData != null)
+                    {
+                        fullPaths.Add(_fullPath.GetFullpath(stringData));
+                    }
+                }
             }
+
             ICommand command = _fileCommandsFactory.CreateCommand(
-                new CommandInfo(commandInfo.CommandType, data));
+                new CommandInfo(commandInfo.CommandType, fullPaths.ToArray()));
             _commandsHistory.AddCommand(command);
         }
     }

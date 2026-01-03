@@ -2,12 +2,20 @@
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Linq;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 {
     public class TreeViewNodeService : ITreeViewNodeService
     {
+        private readonly ITreeView _treeView;
+
+        public TreeViewNodeService(ITreeView treeView)
+        {
+            _treeView = treeView;
+        }
+
         public bool IsNodeExist(INode parent, string name)
         {
             if (parent == null)
@@ -32,6 +40,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         public INode? GetChildrenByName(INode node, string name)
         {
             return node.Children.FirstOrDefault(x => x.Name == name);
+        }
+
+        public INode? GetCoreNode()
+        {
+            return _treeView.Nodes.FirstOrDefault();
         }
 
         public INode? CreateNode(INode template, INode parent)

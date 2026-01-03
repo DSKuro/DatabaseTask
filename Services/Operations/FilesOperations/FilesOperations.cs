@@ -5,11 +5,37 @@ namespace DatabaseTask.Services.Operations.FilesOperations
 {
     public class FilesOperations : IFilesOperations
     {
-        public void CreateFolder(string path)
+        public bool CreateFolder(string path)
         {
-            if (!Directory.Exists(path))
+            try
             {
-                Directory.CreateDirectory(path);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool RenameFolder(string oldPath, string newPath)
+        {
+            try
+            {
+                if (!Directory.Exists(oldPath))
+                {
+                    return false;
+                }
+                Directory.Move(oldPath, newPath);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

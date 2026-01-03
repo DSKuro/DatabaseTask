@@ -1,7 +1,9 @@
 ﻿using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Commands;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Utility.Enum;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -18,19 +20,17 @@ namespace DatabaseTask.Services.Commands.FilesCommands
 
         public ICommand CreateCommand(CommandInfo info)
         {
-            switch (info.CommandType)
+            if (info.Data == null)
             {
-                case CommandType.CreateFolder:
-                    if (info.Data == null)
-                    {
-                        throw new ArgumentException("Данные пустые");
-                    }
+                throw new ArgumentException("Данные пустые");
+            }
 
-                    return
-                        ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, info.Data);
-
-                //    case CommandType.RenameFolder:
-                //        return ActivatorUtilities.CreateInstance<RenameFolderItemCommand>(_serviceProvider, info.Data);
+            return info.CommandType switch
+            {
+                CommandType.CreateFolder => ActivatorUtilities.CreateInstance<CreateFolderCommand>(_serviceProvider, info.Data!),
+                CommandType.RenameFolder => ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, info.Data!),
+                _ => throw new ArgumentException("Неверный тип команды")
+            };
 
                 //    case CommandType.DeleteItem:
                 //        return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
@@ -40,9 +40,6 @@ namespace DatabaseTask.Services.Commands.FilesCommands
 
                 //    case CommandType.MoveFile:
                 //        return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider, _serviceProvider.GetRequiredService<MoveOperationDecorator>());
-                default:
-                    throw new ArgumentException("Данные пустые");
-            }
         }
     }
 }

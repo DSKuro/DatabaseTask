@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,14 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 
         public INode? GetFirstSelectedNode()
         {
-            return _treeView.SelectedNodes[0] ?? null;
+            try
+            {
+                return _treeView.SelectedNodes[0] ?? null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<INode> GetAllSelectedNodes()

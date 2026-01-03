@@ -3,6 +3,7 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Operations.FilesOperations
 {
@@ -19,21 +20,30 @@ namespace DatabaseTask.Services.Operations.FilesOperations
 
         public string GetFullpath(string pathToItem)
         {
-            string fullPath = PathToCoreFolder ?? "";
-            NodeViewModel? node = _treeViewFunctionality.GetFirstSelectedNode() as NodeViewModel;
             INode? coreNode = _treeViewFunctionality.GetCoreNode();
+            INode? selectedNode = _treeViewFunctionality.GetFirstSelectedNode();
+            List<string> pathParts = new List<string>();
 
-            if (coreNode == null || node == null)
+            if (coreNode == null || selectedNode == null)
             {
-                return fullPath;
+                return PathToCoreFolder ?? string.Empty;
             }
 
-            while (node != coreNode)
+            pathParts.Add(pathToItem);
+
+            NodeViewModel? parentNode = selectedNode.Parent as NodeViewModel;
+
+            while (parentNode != null && parentNode != coreNode)
             {
-                fullPath += "/" + node!.Name;
-                node = node.Parent as NodeViewModel;
+                pathParts.Add(parentNode.Name);
+                parentNode = parentNode.Parent as NodeViewModel;
             }
-            return fullPath;
+
+            pathParts.Reverse();
+
+            string relativePath = string.Join("/", pathParts);
+
+            return $"{PathToCoreFolder}/{relativePath}";
         }
     }
 }

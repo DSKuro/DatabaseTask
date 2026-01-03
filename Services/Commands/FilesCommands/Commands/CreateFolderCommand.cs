@@ -2,7 +2,7 @@
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using System.Threading.Tasks;
 
-namespace DatabaseTask.Services.Commands.FilesCommands
+namespace DatabaseTask.Services.Commands.FilesCommands.Commands
 {
     public class CreateFolderCommand : ICommand
     {

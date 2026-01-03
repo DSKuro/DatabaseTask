@@ -42,7 +42,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands
                     }
 
                     builder
-                        .Add<RenameFolderItemCommand>(info.Data!);
+                        .Add<RenameFolderItemCommand>(info.Data[1]!);
                     break;
 
                 case CommandType.DeleteItem:

@@ -99,7 +99,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             await ProcessCommand(new Models.DTO.CommandInfo
                 (
-                    CommandType.RenameFolder, newName
+                    CommandType.RenameFolder, oldName, newName
                 ),
                 new Models.DTO.LoggerDTO
                 (

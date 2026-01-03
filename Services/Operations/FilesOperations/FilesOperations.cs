@@ -92,7 +92,6 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 foreach (FileInfo file in dir.GetFiles())
                 {
                     string targetFilePath = Path.Combine(newPath, file.Name);
-                    // заменить на копирование файла
                     file.CopyTo(targetFilePath);
                 }
 
@@ -102,6 +101,24 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                     CopyFolder(subDir.FullName, newDestinationDir);
                 }
 
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool CopyFile(string oldPath, string newPath)
+        {
+            try
+            {
+                if (!File.Exists(oldPath))
+                {
+                    return false;
+                }
+
+                File.Copy(oldPath, newPath, true);
                 return true;
             }
             catch

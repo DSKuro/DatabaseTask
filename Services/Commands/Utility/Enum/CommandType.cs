@@ -6,7 +6,8 @@
         RenameFolder,
         DeleteFolder,
         DeleteFile,
-        CopyItem,
+        CopyFolder,
+        CopyFile,
         MoveFile
     }
 }

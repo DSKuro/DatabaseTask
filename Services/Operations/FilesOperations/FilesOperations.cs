@@ -73,5 +73,41 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 return false;
             }
         }
+
+        public bool CopyFolder(string oldPath, string newPath)
+        {
+            try
+            {
+                DirectoryInfo? dir = new DirectoryInfo(oldPath);
+
+                if (!dir.Exists)
+                {
+                    return false;
+                }
+
+                DirectoryInfo[] dirs = dir.GetDirectories();
+
+                Directory.CreateDirectory(newPath);
+
+                foreach (FileInfo file in dir.GetFiles())
+                {
+                    string targetFilePath = Path.Combine(newPath, file.Name);
+                    // заменить на копирование файла
+                    file.CopyTo(targetFilePath);
+                }
+
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(newPath, subDir.Name);
+                    CopyFolder(subDir.FullName, newDestinationDir);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

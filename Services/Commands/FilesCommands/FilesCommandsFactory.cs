@@ -30,11 +30,9 @@ namespace DatabaseTask.Services.Commands.FilesCommands
                 CommandType.RenameFolder => ActivatorUtilities.CreateInstance<RenameFolderCommand>(_serviceProvider, info.Data!),
                 CommandType.DeleteFolder => ActivatorUtilities.CreateInstance<DeleteFolderCommand>(_serviceProvider, info.Data!),
                 CommandType.DeleteFile => ActivatorUtilities.CreateInstance<DeleteFileCommand>(_serviceProvider, info.Data!),
+                CommandType.CopyFolder => ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider, info.Data!),
                 _ => throw new ArgumentException("Неверный тип команды")
             };
-
-                //    case CommandType.DeleteItem:
-                //        return ActivatorUtilities.CreateInstance<DeleteItemCommand>(_serviceProvider);
 
                 //    case CommandType.CopyItem:
                 //        return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider);

@@ -10,6 +10,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
@@ -86,14 +87,24 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 isFolder = newNode.IsFolder;
             }
 
-            CommandInfo info = new CommandInfo
+            CommandType type = isFolder == true ?
+                  CommandType.CopyFolder : CommandType.CopyFile;
+
+            CommandInfo itemInfo = new CommandInfo
             (
-                CommandType.CopyItem, node,
+                type, node,
                 target,
                 name
             );
 
-            await ProcessCommand(info, info,
+            CommandInfo commandInfo = new CommandInfo
+            (
+                type, node.Name, Path.Combine(target.Name, node.Name)
+            );
+
+            GetPathForCommand(commandInfo);
+
+            await ProcessCommand(itemInfo, commandInfo,
                new LoggerDTO
                (
                    isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,

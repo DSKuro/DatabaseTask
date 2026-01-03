@@ -56,7 +56,8 @@ namespace DatabaseTask.Services.Commands.ItemCommands
                         .Add<DeleteItemCommand>(info.Data!);
                     break;
 
-                case CommandType.CopyItem:
+                case CommandType.CopyFolder:
+                case CommandType.CopyFile:
                     builder
                       .Add<CopyItemCommand>(info.Data!);
                     break;

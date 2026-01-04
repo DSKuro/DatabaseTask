@@ -60,7 +60,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private async Task RenameFolderImplementation()
         {
-            _folderPermissions.CanDoOperationOnFolder();
+            _folderPermissions.CanRenameFolder();
             object? data = await WeakReferenceMessenger.Default.Send<MainWindowRenameFolderMessage>();
             string? name = data?.ToString();
             if (name == null)
@@ -78,7 +78,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 if (!_treeViewFunctionality.IsParentHasNodeWithName(selectedNode, name))
                 {
-                    await RenameFolderOperation((selectedNode as NodeViewModel)!.Name, name);
+                    await RenameFolderOperation(selectedNode, name);
                     return;
                 }
 

@@ -17,6 +17,16 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.Accessibility
             _treeView = treeView;
         }
 
+        public void CanRenameFolder()
+        {
+            if (_treeView.SelectedNodes.First() == _treeView.Nodes.First())
+            {
+                throw new FileManagerOperationsException("Нельзя переименовывать корневой каталог");
+            }
+
+            CanDoOperationOnFolder();
+        }
+
         public void CanDoOperationOnFolder() 
         {
             if (_treeView.SelectedNodes.Count == 0)

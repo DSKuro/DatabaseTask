@@ -72,7 +72,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 if (!_treeViewFunctionality.IsNodeExist(selectedNode, name))
                 {
-                    await CreateFolderOperation(name);
+                    await CreateFolderOperation(selectedNode, name);
                     return;
                 }
             } 

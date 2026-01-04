@@ -2,7 +2,6 @@
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Operations.FilesOperations
@@ -18,32 +17,43 @@ namespace DatabaseTask.Services.Operations.FilesOperations
             _treeViewFunctionality = treeViewFunctionality;
         }
 
-        public string GetFullpath(string pathToItem)
+        public string GetPathForNewItem(INode node, string newItemName = "")
+        {
+            string basePath = GetNodePath(node);
+            if (!string.IsNullOrEmpty(newItemName))
+            {
+                return $"{basePath}/{newItemName}";
+            }
+            return basePath;
+        }
+
+        public string GetPathForExistedItem()
+        {
+            return GetNodePath(_treeViewFunctionality.GetFirstSelectedNode());
+        }
+
+        private string GetNodePath(INode? node)
         {
             INode? coreNode = _treeViewFunctionality.GetCoreNode();
-            INode? selectedNode = _treeViewFunctionality.GetFirstSelectedNode();
             List<string> pathParts = new List<string>();
 
-            if (coreNode == null || selectedNode == null)
+            if (coreNode == null || node == null)
             {
                 return PathToCoreFolder ?? string.Empty;
             }
 
-            pathParts.Add(pathToItem);
-
-            NodeViewModel? parentNode = selectedNode.Parent as NodeViewModel;
-
-            while (parentNode != null && parentNode != coreNode)
+            while (node != coreNode)
             {
-                pathParts.Add(parentNode.Name);
-                parentNode = parentNode.Parent as NodeViewModel;
+                pathParts.Add(node!.Name);
+                node = node.Parent as NodeViewModel;
             }
 
             pathParts.Reverse();
-
             string relativePath = string.Join("/", pathParts);
 
-            return $"{PathToCoreFolder}/{relativePath}";
+            return string.IsNullOrEmpty(relativePath)
+                ? PathToCoreFolder ?? string.Empty
+                : $"{PathToCoreFolder}/{relativePath}";
         }
     }
 }

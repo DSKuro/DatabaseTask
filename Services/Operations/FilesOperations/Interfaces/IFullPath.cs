@@ -1,9 +1,13 @@
-﻿namespace DatabaseTask.Services.Operations.FilesOperations.Interfaces
+﻿using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+
+namespace DatabaseTask.Services.Operations.FilesOperations.Interfaces
 {
     public interface IFullPath
     {
         public string? PathToCoreFolder { get; set; }
 
-        public string GetFullpath(string pathToItem);
+        public string GetPathForNewItem(INode node, string newItemName);
+        //public string GetPathForExistedItemWithNewItem(string newItemName);
+        public string GetPathForExistedItem();
     }
 }

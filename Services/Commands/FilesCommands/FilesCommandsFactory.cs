@@ -35,12 +35,6 @@ namespace DatabaseTask.Services.Commands.FilesCommands
                 CommandType.MoveFile => ActivatorUtilities.CreateInstance<MoveFileCommand>(_serviceProvider, info.Data!),
                 _ => throw new ArgumentException("Неверный тип команды")
             };
-
-                //    case CommandType.CopyItem:
-                //        return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider);
-
-                //    case CommandType.MoveFile:
-                //        return ActivatorUtilities.CreateInstance<CopyItemCommand>(_serviceProvider, _serviceProvider.GetRequiredService<MoveOperationDecorator>());
         }
     }
 }

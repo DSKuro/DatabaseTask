@@ -13,6 +13,7 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -78,7 +79,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             foreach (IStorageFolder folder in folders)
             {
-                _fullPath.PathToCoreFolder = folder.Path.AbsolutePath;   
+                _fullPath.PathToCoreFolder = folder.Path.AbsolutePath;
             }
             await _fileManager.GetCollectionFromFolders(folders);
             _fileManager.TreeViewFunctionality.AddSelectedNodeByIndex(0);

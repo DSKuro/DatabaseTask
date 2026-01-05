@@ -1,5 +1,4 @@
 ﻿using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
-using System;
 using System.IO;
 
 namespace DatabaseTask.Services.Operations.FilesOperations

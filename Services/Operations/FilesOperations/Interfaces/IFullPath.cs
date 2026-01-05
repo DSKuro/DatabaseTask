@@ -7,7 +7,5 @@ namespace DatabaseTask.Services.Operations.FilesOperations.Interfaces
         public string? PathToCoreFolder { get; set; }
 
         public string GetPathForNewItem(INode node, string newItemName);
-        //public string GetPathForExistedItemWithNewItem(string newItemName);
-        public string GetPathForExistedItem();
     }
 }

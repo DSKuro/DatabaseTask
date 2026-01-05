@@ -3,6 +3,7 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DatabaseTask.Services.Operations.FilesOperations
 {
@@ -22,16 +23,10 @@ namespace DatabaseTask.Services.Operations.FilesOperations
             string basePath = GetNodePath(node);
             if (!string.IsNullOrEmpty(newItemName))
             {
-                return $"{basePath}/{newItemName}";
+                return Path.Combine(basePath, newItemName);
             }
             return basePath;
         }
-
-        public string GetPathForExistedItem()
-        {
-            return GetNodePath(_treeViewFunctionality.GetFirstSelectedNode());
-        }
-
         private string GetNodePath(INode? node)
         {
             INode? coreNode = _treeViewFunctionality.GetCoreNode();
@@ -49,11 +44,19 @@ namespace DatabaseTask.Services.Operations.FilesOperations
             }
 
             pathParts.Reverse();
-            string relativePath = string.Join("/", pathParts);
+            string relativePath = Path.Combine(pathParts.ToArray());
 
-            return string.IsNullOrEmpty(relativePath)
-                ? PathToCoreFolder ?? string.Empty
-                : $"{PathToCoreFolder}/{relativePath}";
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                return PathToCoreFolder ?? string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(PathToCoreFolder))
+            {
+                return Path.Combine(PathToCoreFolder, relativePath);
+            }
+
+            return relativePath;
         }
     }
 }

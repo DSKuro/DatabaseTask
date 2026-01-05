@@ -1,28 +1,22 @@
-﻿using Avalonia.Platform;
-using DatabaseTask.Models.Categories;
+﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
-using DatabaseTask.Services.Operations.FilesOperations.Enums;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
-using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
 {
     public class BaseOperationsCommandsViewModel : BaseFileManagerCommandsViewModel, IBaseOperationsCommandsViewModel
     {
         private readonly IFullPath _fullPathService;
-        //private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public BaseOperationsCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
@@ -31,7 +25,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory, commandsHistory)
         {
             _fullPathService = fullPath;
-            //_treeViewFunctionality = treeViewFunctionality;
         }
 
         public async Task CreateFolderOperation(INode node, string name)
@@ -41,8 +34,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 CommandType.CreateFolder, name
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, name) },
-                new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, name) });
 
             CommandInfo info = new CommandInfo
             (
@@ -70,8 +62,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     type, node
                 );
 
-                string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, "") },
-                    new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+                string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, "") });
 
                 CommandInfo commandInfo = new CommandInfo
                 (
@@ -106,8 +97,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 name
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) },
-                    new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) });
 
             CommandInfo commandInfo = new CommandInfo
             (
@@ -139,8 +129,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 name
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) },
-              new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) });
 
             CommandInfo commandInfo = new CommandInfo
             (
@@ -166,8 +155,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
               CommandType.RenameFolder, node.Name, newName
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (node.Parent!, newName) },
-                new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (node.Parent!, newName) });
 
             CommandInfo info = new CommandInfo
             (
@@ -184,25 +172,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             );
         }
 
-        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths, List<PathEnum> paths)
+        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths)
         {
             List<string> fullPaths = new List<string>();
 
             foreach (var path in nodesPaths)
             {
-                fullPaths.Add(_fullPathService.GetPathForNewItem(path.node, path.newName));
-                //switch (paths[i])
-                //{
-                //    case PathEnum.SelectedNode:
-                //        fullPaths.Add(_fullPathService.GetPathForExistedItem());
-                //        break;
-                //    //case PathEnum.SelectedNodeWithNew:
-                //    //    fullPaths.Add(_fullPathService.GetPathForExistedItemWithNewItem(stringData));
-                //        //break;
-                //    case PathEnum.NewNode:
-                //        fullPaths.Add(_fullPathService.GetPathForNewItem(nodesPaths[i].));
-                //        break;
-                //}            
+                fullPaths.Add(_fullPathService.GetPathForNewItem(path.node, path.newName));          
             }
 
             return fullPaths.ToArray();

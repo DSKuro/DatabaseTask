@@ -19,8 +19,10 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public class MergeCommandsViewModel : BaseOperationsCommandsViewModel, IMergeCommandsViewModel
     {
-        private INameGenerator _generator;
-        private ITreeViewFunctionality _treeViewFunctionality;
+        private readonly INameGenerator _generator;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
+
+        private bool _isMove;
 
         public MergeCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
@@ -32,15 +34,24 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             _generator = generator;
             _treeViewFunctionality = treeViewFunctionality;
+            _isMove = false;
         }
 
-        public async Task ProcessNodeRecursive(INode sourceChild, INode targetParent)
+        public async Task ProcessNodeRecursive(INode sourceChild, INode targetParent, bool isMove)
         {
+            _isMove = isMove;
             INode? existingChild = _treeViewFunctionality.GetChildrenByName(targetParent, sourceChild.Name);
 
             if (existingChild == null)
             {
-                await MoveItemOperation(sourceChild, targetParent, sourceChild.Name);
+                if (_isMove)
+                {
+                    await MoveItemOperation(sourceChild, targetParent, sourceChild.Name);
+                }
+                else
+                {
+                    await CopyItemOperation(sourceChild, targetParent, sourceChild.Name);
+                }
             }
             else
             {
@@ -72,7 +83,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             {
                 foreach (INode nestedChild in sourceChild.Children.ToList())
                 {
-                    await ProcessNodeRecursive(nestedChild, existingChild);
+                    await ProcessNodeRecursive(nestedChild, existingChild, _isMove);
                 }
 
                 await DeleteFolder(sourceChild);
@@ -89,8 +100,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             if (result != null && result == ButtonResult.Yes)
             {
                 string newName = _generator.GenerateUniqueName(targetParent, sourceChild.Name);
-                sourceChild.Name = newName;
-                await MoveItemOperation(sourceChild, targetParent, sourceChild.Name);
+                if (_isMove)
+                {
+                    await MoveItemOperation(sourceChild, targetParent, newName);
+                }
+                else
+                {
+                    await CopyItemOperation(sourceChild, targetParent, newName);
+                }
             }
         }
 

@@ -102,7 +102,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return;
             }
 
-            await _mergeCommandsViewModel.ProcessNodeRecursive(file, target);
+            await _mergeCommandsViewModel.ProcessNodeRecursive(file, target, false);
         }
     }
 }

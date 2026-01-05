@@ -116,7 +116,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
             foreach (INode sourceChild in children)
             {
-                await _mergeCommandsViewModel.ProcessNodeRecursive(sourceChild, targetNode);
+                await _mergeCommandsViewModel.ProcessNodeRecursive(sourceChild, targetNode, true);
             }
 
             await DeleteFolder(sourceNode);

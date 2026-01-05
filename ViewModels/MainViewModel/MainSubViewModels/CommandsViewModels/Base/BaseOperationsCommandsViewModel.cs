@@ -90,74 +90,73 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public async Task CopyItemOperation(INode node, INode target, string name)
         {
-            //bool isFolder = false;
-            //if (node is NodeViewModel newNode)
-            //{
-            //    isFolder = newNode.IsFolder;
-            //}
+            bool isFolder = false;
+            if (node is NodeViewModel newNode)
+            {
+                isFolder = newNode.IsFolder;
+            }
 
-            //CommandType type = isFolder == true ?
-            //      CommandType.CopyFolder : CommandType.CopyFile;
+            CommandType type = isFolder == true ?
+                  CommandType.CopyFolder : CommandType.CopyFile;
 
-            //CommandInfo itemInfo = new CommandInfo
-            //(
-            //    type, node,
-            //    target,
-            //    name
-            //);
+            CommandInfo itemInfo = new CommandInfo
+            (
+                type, node,
+                target,
+                name
+            );
 
-            //string[] paths = GetPathForCommand(new Dictionary<INode, string>() { { node, "" } },
-            //        new List<PathEnum> { PathEnum.SelectedNodeWithNew });
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) },
+                    new List<PathEnum> { PathEnum.SelectedNodeWithNew });
 
-            //CommandInfo commandInfo = new CommandInfo
-            //(
-            //    type, node.Name, Path.Combine(target.Name, node.Name)
-            //);
+            CommandInfo commandInfo = new CommandInfo
+            (
+                type, paths
+            );
 
-            //GetPathForCommand(commandInfo, new List<PathEnum> { PathEnum.SelectedNode, PathEnum.NewNode });
-
-            //await ProcessCommand(itemInfo, commandInfo,
-            //   new LoggerDTO
-            //   (
-            //       isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
-            //       name ?? node.Name,
-            //       target.Name
-            //   )
-            //);
+            await ProcessCommand(itemInfo, commandInfo,
+               new LoggerDTO
+               (
+                   isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
+                   name ?? node.Name,
+                   target.Name
+               )
+            );
         }
 
         public async Task MoveItemOperation(INode node, INode target, string name)
         {
-            //bool isFolder = false;
-            //if (node is NodeViewModel newNode) 
-            //{
-            //    isFolder = newNode.IsFolder;
-            //}
+            bool isFolder = false;
+            if (node is NodeViewModel newNode)
+            {
+                isFolder = newNode.IsFolder;
+            }
 
-            //CommandInfo itemInfo = new CommandInfo
-            //(
-            //    CommandType.MoveFile, node,
-            //    target,
-            //    name
-            //);
+            CommandInfo itemInfo = new CommandInfo
+            (
+                CommandType.MoveFile, node,
+                target,
+                name
+            );
 
-            //CommandInfo commandInfo = new CommandInfo
-            //(
-            //    CommandType.MoveFile,
-            //    node.Name, Path.Combine(target.Name, node.Name)
-            //);
+            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) },
+              new List<PathEnum> { PathEnum.SelectedNodeWithNew });
 
-            //GetPathForCommand(commandInfo, new List<PathEnum> { PathEnum.SelectedNode, PathEnum.NewNode });
+            CommandInfo commandInfo = new CommandInfo
+            (
+                CommandType.MoveFile,
+                paths
+            );
 
-            //await ProcessCommand(itemInfo, commandInfo,
-            //   new LoggerDTO
-            //   (
-            //       (isFolder) ? LogCategory.MoveCatalogCategory
-            //       : LogCategory.MoveFileCategory,
-            //       name ?? node.Name,
-            //       target.Name
-            //   )
-            //);
+            await ProcessCommand(itemInfo, commandInfo,
+               new LoggerDTO
+               (
+                   (isFolder) ? LogCategory.MoveCatalogCategory
+                   : LogCategory.MoveFileCategory,
+                   name ?? node.Name,
+                   target.Name
+               )
+            );
         }
 
         public async Task RenameFolderOperation(INode node, string newName)

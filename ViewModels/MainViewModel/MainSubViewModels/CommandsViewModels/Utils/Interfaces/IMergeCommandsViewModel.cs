@@ -5,6 +5,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public interface IMergeCommandsViewModel
     {
-        public Task ProcessNodeRecursive(INode sourceChild, INode targetParent);
+        public Task ProcessNodeRecursive(INode sourceChild, INode targetParent, bool isMove);
     }
 }

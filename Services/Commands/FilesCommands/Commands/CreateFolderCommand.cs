@@ -4,20 +4,28 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.FilesCommands.Commands
 {
-    public class CreateFolderCommand : ICommand
+    public class CreateFolderCommand : IResultCommand
     {
         private readonly string _path;
         private readonly IFilesOperations _filesOperations;
 
+        private bool _isSuccess;
+
+        public bool IsSuccess => _isSuccess;
+
         public CreateFolderCommand(string path, IFilesOperations filesOperations)
         {
             _path = path;
-            _filesOperations = filesOperations;           
-        }   
+            _filesOperations = filesOperations;
+            _isSuccess = false;
+        }
 
         public Task Execute()
         {
-            _filesOperations.CreateFolder(_path);
+            if (_filesOperations.CreateFolder(_path))
+            {
+                _isSuccess = true;
+            }
             return Task.CompletedTask;
         }
 

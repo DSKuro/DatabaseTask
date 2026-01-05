@@ -5,6 +5,6 @@ namespace DatabaseTask.Services.Commands.FilesCommands.Interfaces
 {
     public interface IFileCommandsFactory
     {
-        public ICommand CreateCommand(CommandInfo info);
+        public IResultCommand CreateCommand(CommandInfo info);
     }
 }

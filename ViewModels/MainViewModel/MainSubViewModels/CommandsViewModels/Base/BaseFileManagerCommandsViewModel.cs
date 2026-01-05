@@ -46,7 +46,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         private void AddCommandToHistory(CommandInfo commandInfo)
         {
-            ICommand command = _fileCommandsFactory.CreateCommand(commandInfo);
+            IResultCommand command = _fileCommandsFactory.CreateCommand(commandInfo);
             _commandsHistory.AddCommand(command);
         }
     }

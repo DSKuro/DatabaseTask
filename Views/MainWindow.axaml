@@ -9,6 +9,7 @@
 		Width="500" Height="800"
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
 		xmlns:models="using:DatabaseTask.Models"
+		xmlns:log="using:DatabaseTask.ViewModels.Logger"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/window.ico"
@@ -157,6 +158,17 @@
 				<DataGrid.Columns>
 					<DataGridTextColumn Width="*" Header="Время" Binding="{Binding Time}"/>
 					<DataGridTextColumn Width="*" Header="Операция" Binding="{Binding Operation}"/>
+					<DataGridTemplateColumn Width="*" Header="Статус">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="log:LogData">
+								<Svg Path="{Binding ImagePath}"
+									 HorizontalAlignment="Center"
+									 VerticalAlignment="Center"
+									 Width="20"
+									 Height="20"/>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
 				</DataGrid.Columns>
 			</DataGrid>
 		</Grid>

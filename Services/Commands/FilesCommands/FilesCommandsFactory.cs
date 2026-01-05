@@ -17,7 +17,7 @@ namespace DatabaseTask.Services.Commands.FilesCommands
             _serviceProvider = serviceProvider;
         }
 
-        public ICommand CreateCommand(CommandInfo info)
+        public IResultCommand CreateCommand(CommandInfo info)
         {
             if (info.Data == null)
             {

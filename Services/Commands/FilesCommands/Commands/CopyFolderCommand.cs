@@ -4,22 +4,30 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.FilesCommands.Commands
 {
-    public class CopyFolderCommand : ICommand
+    public class CopyFolderCommand : IResultCommand
     {
         private readonly string _oldPath;
         private readonly string _newPath;
         private readonly IFilesOperations _filesOperations;
+
+        private bool _isSuccess;
+
+        public bool IsSuccess => _isSuccess;
 
         public CopyFolderCommand(string oldPath, string newPath, IFilesOperations filesOperations)
         {
             _oldPath = oldPath;
             _newPath = newPath;
             _filesOperations = filesOperations;
+            _isSuccess = false;
         }
 
         public Task Execute()
         {
-            _filesOperations.CopyFolder(_oldPath, _newPath);
+            if (_filesOperations.CopyFolder(_oldPath, _newPath))
+            {
+                _isSuccess = true;
+            }
             return Task.CompletedTask;
         }
 

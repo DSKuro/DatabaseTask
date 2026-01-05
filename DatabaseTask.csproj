@@ -65,9 +65,4 @@
       <DependentUpon>FolderOperationWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Assets\Status\" />
-  </ItemGroup>
 </Project>

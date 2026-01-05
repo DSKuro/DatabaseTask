@@ -6,14 +6,14 @@ namespace DatabaseTask.Services.Commands
 {
     public class CommandsHistory : ICommandsHistory
     {
-        private Queue<ICommand> _commands;
+        private Queue<IResultCommand> _commands;
 
         public CommandsHistory()
         {
-            _commands = new Queue<ICommand>();
+            _commands = new Queue<IResultCommand>();
         }
 
-        public void AddCommand(ICommand command)
+        public void AddCommand(IResultCommand command)
         {
             _commands.Enqueue(command);
         }
@@ -23,12 +23,16 @@ namespace DatabaseTask.Services.Commands
             _commands.Dequeue();
         }
 
-        public void ExecuteAllCommands()
+        public List<bool> ExecuteAllCommands()
         {
-            foreach (ICommand command in _commands)
+            List<bool> results = new List<bool>();
+            foreach (IResultCommand command in _commands)
             {
                 command.Execute();
+                results.Add(command.IsSuccess);
             }
+            ClearAll();
+            return results;
         }
 
         public void ClearAll()

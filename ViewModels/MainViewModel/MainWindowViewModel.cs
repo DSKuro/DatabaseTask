@@ -25,7 +25,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly ICopyFolderCommandsViewModel _copyFolderCommandsViewModel;
         private readonly ICopyAllCommandsViewModel _copyAllCommandsViewModel;
 
-        private readonly ICommandsHistory _commandsHistory;
+        private readonly IApplyChangesViewModel _applyChangesViewModel;
 
         public IFileManager FileManager { get => _fileManager; }
         public ILogger Logger { get => _logger; }
@@ -37,7 +37,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ICreateFolderCommandsViewModel folderCommandsViewModel,
             IRenameFolderCommandsViewModel renameFolderCommandsViewModel,
             IFileCommandsFactory fileCommandsFactory,
-            ICommandsHistory commandsHistory,
+            IApplyChangesViewModel applyChangesViewModel,
             IDeleteItemCommandsViewModel deleteItemCommandsViewModel,
             IMoveFileCommandsViewModel moveFileCommandsViewModel,
             ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
@@ -48,7 +48,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _openDataViewModel = openDataViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
             _renameCommandsViewModel = renameFolderCommandsViewModel;
-            _commandsHistory = commandsHistory;
+            _applyChangesViewModel = applyChangesViewModel;
             _deleteItemCommandsViewModel = deleteItemCommandsViewModel;
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
@@ -124,7 +124,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         [RelayCommand]
         public void ApplyChanges()
         {
-            _commandsHistory.ExecuteAllCommands();
+            _applyChangesViewModel.ApplyChanges();
         }
     }
 }

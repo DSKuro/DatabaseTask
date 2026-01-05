@@ -1,12 +1,13 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Commands.Interfaces
 {
     public interface ICommandsHistory
     {
-        public void AddCommand(ICommand command);
+        public void AddCommand(IResultCommand command);
         public void RemoveCommand();
-        public void ExecuteAllCommands();
+        public List<bool> ExecuteAllCommands();
         public void ClearAll();
     }
 }

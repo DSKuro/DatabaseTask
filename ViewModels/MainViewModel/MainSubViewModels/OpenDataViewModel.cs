@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Models.StorageOptions;
+using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.Messages;
@@ -13,7 +14,6 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,18 +25,21 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         private readonly IFileManager _fileManager;
         private readonly IFullPath _fullPath;
         private readonly ILogger _logger;
+        private readonly ICommandsHistory _commandsHistory;
 
         public OpenDataViewModel(IMessageBoxService messageBoxService,
             IStorageService storageService,
             IFileManager fileManager,
             IFullPath fullPath,
-            ILogger logger)
+            ILogger logger,
+            ICommandsHistory commandsHistory)
             : base(messageBoxService)
         {
             _storageService = storageService;
             _fileManager = fileManager;
             _fullPath = fullPath;
             _logger = logger;
+            _commandsHistory = commandsHistory;
         }
 
         public async Task<IEnumerable<IStorageFile>?> ChooseDbFile()
@@ -71,10 +74,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         public async Task OpenFolder()
         {
             IEnumerable<IStorageFolder>? folders = await ChooseMainFolder();
+
             if (folders == null || folders.Count() == 0)
             {
-                _logger.LogOperations.Clear();
+                if (_fileManager.TreeView.Nodes.Count != 0)
+                {
+                    WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
+                }
                 return;
+            }
+
+            if (folders.Count() != 0)
+            {
+                _logger.LogOperations.Clear();
             }
 
             foreach (IStorageFolder folder in folders)
@@ -83,6 +95,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             }
             await _fileManager.GetCollectionFromFolders(folders);
             _fileManager.TreeViewFunctionality.AddSelectedNodeByIndex(0);
+            WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
+            _commandsHistory.ClearAll();
         }
 
         private async Task<IEnumerable<IStorageFolder>?> ChooseMainFolder()

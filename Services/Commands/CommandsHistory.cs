@@ -30,5 +30,10 @@ namespace DatabaseTask.Services.Commands
                 command.Execute();
             }
         }
+
+        public void ClearAll()
+        {
+            _commands.Clear();
+        }
     }
 }

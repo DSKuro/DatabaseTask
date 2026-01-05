@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
-using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
@@ -67,10 +65,6 @@ namespace DatabaseTask.ViewModels.MainViewModel
         public async Task OpenFolder()
         {
             await _openDataViewModel.OpenFolder();
-            if (_fileManager.TreeView.Nodes.Count != 0)
-            {
-                WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
-            }
         }
 
         [RelayCommand]

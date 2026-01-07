@@ -1,0 +1,27 @@
+﻿using DatabaseTask.Models.AppData;
+using DatabaseTask.Services.Database.Repositories.Interfaces;
+using System.Linq;
+
+namespace DatabaseTask.Services.Database.Repositories
+{
+    public class TblDrawingContentsRepository : ITblDrawingContentsRepository
+    {
+        private readonly ConnectionStringData _stringData;
+
+        public TblDrawingContentsRepository(ConnectionStringData stringData)
+        {
+            _stringData = stringData;
+        }
+
+        public TblDrawingContent? GetFirstItem()
+        {
+            if (string.IsNullOrEmpty(_stringData.ConnectionString))
+            {
+                return null;
+            }
+
+            using var context = new DataContext(_stringData.ConnectionString);
+            return context.TblDrawingContents.FirstOrDefault();
+        }
+    }
+}

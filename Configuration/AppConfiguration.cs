@@ -70,6 +70,11 @@ using DatabaseTask.Views.Comparators.Interfaces;
 using DatabaseTask.Views.Comparators;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.SubOperations;
+using DatabaseTask.Services.Database.Utils.Interfaces;
+using DatabaseTask.Services.Database.Utils;
+using DatabaseTask.Models.AppData;
+using DatabaseTask.Services.Database.Repositories.Interfaces;
+using DatabaseTask.Services.Database.Repositories;
 
 namespace DatabaseTask.Configuration
 {
@@ -99,6 +104,7 @@ namespace DatabaseTask.Configuration
             AddCommands();
             AddFilesCommands();
             AddViewModelsAndWindows();
+            AddDatabaseFunctionality();
         }
 
         private void AddStorage()
@@ -196,6 +202,13 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
+        }
+
+        private void AddDatabaseFunctionality()
+        {
+            _serviceCollection.AddScoped<ConnectionStringData>();
+            _serviceCollection.AddScoped<IDatabaseUtils, DatabaseUtils>();
+            _serviceCollection.AddScoped<ITblDrawingContentsRepository, TblDrawingContentsRepository>();
         }
     }
 }

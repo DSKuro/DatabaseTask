@@ -1,8 +1,11 @@
 ﻿using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Messaging;
+using DatabaseTask.Models.AppData;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Models.StorageOptions;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Database.Repositories.Interfaces;
+using DatabaseTask.Services.Database.Utils.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
 using DatabaseTask.Services.Messages;
@@ -11,6 +14,7 @@ using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
+using Microsoft.Data.SqlClient;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
@@ -21,18 +25,26 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 {
     public class OpenDataViewModel : ViewModelMessageBox, IOpenDataViewModel
     {
+        private const int _sqlNumber = 1801;
+
         private readonly IStorageService _storageService;
         private readonly IFileManager _fileManager;
         private readonly IFullPath _fullPath;
         private readonly ILogger _logger;
         private readonly ICommandsHistory _commandsHistory;
+        private readonly IDatabaseUtils _databaseUtils;
+        private readonly ITblDrawingContentsRepository _drawingRepository;
+        private readonly ConnectionStringData _stringData;
 
         public OpenDataViewModel(IMessageBoxService messageBoxService,
             IStorageService storageService,
             IFileManager fileManager,
             IFullPath fullPath,
             ILogger logger,
-            ICommandsHistory commandsHistory)
+            ICommandsHistory commandsHistory,
+            IDatabaseUtils databaseUtils,
+            ITblDrawingContentsRepository drawingRepository,
+            ConnectionStringData stringData)
             : base(messageBoxService)
         {
             _storageService = storageService;
@@ -40,15 +52,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             _fullPath = fullPath;
             _logger = logger;
             _commandsHistory = commandsHistory;
+            _databaseUtils = databaseUtils;
+            _drawingRepository = drawingRepository;
+            _stringData = stringData;
         }
 
         public async Task<IEnumerable<IStorageFile>?> ChooseDbFile()
         {
             try
             {
-                return await _storageService.OpenFilesAsync("MainDialogueWindow",
-                    new FilePickerOptions(StorageConstants.BaseStorage.Value,
-                    StorageConstants.BaseStorage.Type));
+                await ChooseDbFileImplementation();
             }
             catch (ArgumentNullException)
             {
@@ -68,7 +81,47 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxConstants.Error.Value, "Запрещённая операция",
                     ButtonEnum.Ok));
             }
+            catch (SqlException ex)
+            {
+                _stringData.ConnectionString = string.Empty;
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                    MessageBoxConstants.Error.Value, "Невозможно установить соединение с базой данных",
+                    ButtonEnum.Ok));
+            }
             return null;
+        }
+
+        private async Task ChooseDbFileImplementation()
+        {
+            IEnumerable<IStorageFile> files = await _storageService.OpenFilesAsync("MainDialogueWindow",
+                   new FilePickerOptions(StorageConstants.BaseStorage.Value,
+                   StorageConstants.BaseStorage.Type));
+            IStorageFile? file = files.FirstOrDefault();
+            if (file != null)
+            {
+                string connectionString = _databaseUtils.BuildConnectionString(new Uri(file.Path.AbsolutePath).LocalPath);
+                _stringData.ConnectionString = connectionString;
+                OpenDatabase();
+            }
+        }
+
+        private void OpenDatabase()
+        {
+            try
+            {
+                _drawingRepository.GetFirstItem();
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == _sqlNumber)
+                {
+                    _databaseUtils.DetachDatabase();
+                    OpenDatabase();
+                    return;
+                }
+
+                throw;
+            }
         }
 
         public async Task OpenFolder()

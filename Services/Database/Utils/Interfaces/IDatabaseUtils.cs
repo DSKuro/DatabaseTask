@@ -4,5 +4,6 @@
     {
         public string BuildConnectionString(string connectionString);
         public void DetachDatabase();
+        public bool IsDatabaseExist();
     }
 }

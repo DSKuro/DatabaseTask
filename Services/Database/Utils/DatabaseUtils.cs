@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Database.Utils.Interfaces;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace DatabaseTask.Services.Database.Utils
 {
@@ -29,11 +30,31 @@ namespace DatabaseTask.Services.Database.Utils
 
         public void DetachDatabase()
         {
+            try
+            {
+                string connection = BuildMainConnectionString();
+                using var sqlConnection = new SqlConnection(connection);
+                sqlConnection.Open();
+                var command = new SqlCommand(_detachCommand, sqlConnection);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+        public bool IsDatabaseExist()
+        {
             string connection = BuildMainConnectionString();
             using var sqlConnection = new SqlConnection(connection);
             sqlConnection.Open();
-            var command = new SqlCommand(_detachCommand, sqlConnection);
-            command.ExecuteNonQuery();
+            string query = "SELECT CASE WHEN DB_ID(@dbName) IS NOT NULL THEN 1 ELSE 0 END";
+            var command = new SqlCommand(query, sqlConnection);
+            command.Parameters.AddWithValue("@dbName", _initialCatalog);
+            int result = (int)command.ExecuteScalar();
+            return result == 1;
         }
 
         private string BuildMainConnectionString()

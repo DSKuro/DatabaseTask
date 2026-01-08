@@ -81,7 +81,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                     MessageBoxConstants.Error.Value, "Запрещённая операция",
                     ButtonEnum.Ok));
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
                 _stringData.ConnectionString = string.Empty;
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
@@ -99,29 +99,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             IStorageFile? file = files.FirstOrDefault();
             if (file != null)
             {
-                string connectionString = _databaseUtils.BuildConnectionString(new Uri(file.Path.AbsolutePath).LocalPath);
+                string connectionString = _databaseUtils.BuildConnectionString(file.Path.LocalPath);
                 _stringData.ConnectionString = connectionString;
                 OpenDatabase();
             }
         }
 
         private void OpenDatabase()
-        {
-            try
+        {    
+            if (_databaseUtils.IsDatabaseExist())
             {
-                _drawingRepository.GetFirstItem();
+                _databaseUtils.DetachDatabase();
             }
-            catch (SqlException ex)
-            {
-                if (ex.Number == _sqlNumber)
-                {
-                    _databaseUtils.DetachDatabase();
-                    OpenDatabase();
-                    return;
-                }
-
-                throw;
-            }
+            _drawingRepository.GetFirstItem();
         }
 
         public async Task OpenFolder()
@@ -144,7 +134,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             foreach (IStorageFolder folder in folders)
             {
-                _fullPath.PathToCoreFolder = folder.Path.AbsolutePath;
+                _fullPath.PathToCoreFolder = folder.Path.LocalPath;
             }
             await _fileManager.GetCollectionFromFolders(folders);
             _fileManager.TreeViewFunctionality.AddSelectedNodeByIndex(0);

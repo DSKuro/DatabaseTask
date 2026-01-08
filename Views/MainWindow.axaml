@@ -175,8 +175,17 @@
 		<DataGrid Grid.Row="4"/>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="5">
-			<Button CornerRadius="15" Grid.Column="0">Дубликаты в чертежах</Button>
-			<Button Grid.Column="1">Неиспользуемые файлы</Button>
+			<Button 
+				CornerRadius="15" 
+				Grid.Column="0"
+				Command="{Binding FindDuplicates}">
+				Дубликаты в чертежах
+			</Button>
+			<Button 
+				Grid.Column="1"
+				Command="{Binding FindUnusedFiles}">
+				Неиспользуемые файлы
+			</Button>
 		</Grid>
 
 		<Grid ColumnDefinitions="*, *" HorizontalAlignment="Right" Grid.Row="6">

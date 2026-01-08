@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
-using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.Logger.Interfaces;
@@ -23,6 +22,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly IDeleteItemCommandsViewModel _deleteItemCommandsViewModel;
         private readonly IMoveFileCommandsViewModel _moveFileCommandsViewModel;
         private readonly ICopyFolderCommandsViewModel _copyFolderCommandsViewModel;
+        private readonly IDatabaseInteractionViewModel _databaseInteractionViewModel;
         private readonly ICopyAllCommandsViewModel _copyAllCommandsViewModel;
 
         private readonly IApplyChangesViewModel _applyChangesViewModel;
@@ -37,22 +37,24 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ICreateFolderCommandsViewModel folderCommandsViewModel,
             IRenameFolderCommandsViewModel renameFolderCommandsViewModel,
             IFileCommandsFactory fileCommandsFactory,
-            IApplyChangesViewModel applyChangesViewModel,
             IDeleteItemCommandsViewModel deleteItemCommandsViewModel,
             IMoveFileCommandsViewModel moveFileCommandsViewModel,
             ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
-            ICopyAllCommandsViewModel copyAllCommandsViewModel) : base(messageBoxService)
+            IDatabaseInteractionViewModel databaseInteractionViewModel,
+            ICopyAllCommandsViewModel copyAllCommandsViewModel,
+            IApplyChangesViewModel applyChangesViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
             _openDataViewModel = openDataViewModel;
             _folderCommandsViewModel = folderCommandsViewModel;
             _renameCommandsViewModel = renameFolderCommandsViewModel;
-            _applyChangesViewModel = applyChangesViewModel;
             _deleteItemCommandsViewModel = deleteItemCommandsViewModel;
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
+            _databaseInteractionViewModel = databaseInteractionViewModel;
             _copyAllCommandsViewModel = copyAllCommandsViewModel;
+            _applyChangesViewModel = applyChangesViewModel;
         }
 
         [RelayCommand]
@@ -113,6 +115,18 @@ namespace DatabaseTask.ViewModels.MainViewModel
         public async Task CopyFile()
         {
             await _moveFileCommandsViewModel.CopyFile();
+        }
+
+        [RelayCommand]
+        public async Task FindDuplicates()
+        {
+            await _databaseInteractionViewModel.FindDuplicates();
+        }
+
+        [RelayCommand]
+        public async Task FindUnusedFiles()
+        {
+            await _databaseInteractionViewModel.FindUnusedFiles();
         }
 
         [RelayCommand]

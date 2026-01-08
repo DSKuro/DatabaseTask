@@ -25,8 +25,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 {
     public class OpenDataViewModel : ViewModelMessageBox, IOpenDataViewModel
     {
-        private const int _sqlNumber = 1801;
-
         private readonly IStorageService _storageService;
         private readonly IFileManager _fileManager;
         private readonly IFullPath _fullPath;

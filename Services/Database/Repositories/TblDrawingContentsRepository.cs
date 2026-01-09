@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DatabaseTask.Services.Database.Repositories
@@ -22,6 +23,16 @@ namespace DatabaseTask.Services.Database.Repositories
 
             using var context = new DataContext(_stringData.ConnectionString);
             return context.TblDrawingContents.FirstOrDefault();
+        }
+
+        public List<string?>? GetExistedPaths()
+        {
+            using var context = new DataContext(_stringData.ConnectionString);
+            return context.TblDrawingContents
+                      .Where(dc => dc.ContentDevice != null &&
+                                   context.TblDevices.Any(d => d.DeviceId == dc.ContentDevice))
+                      .Select(t => t.ContentDocument)
+                      .ToList();
         }
     }
 }

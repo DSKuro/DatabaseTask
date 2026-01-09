@@ -75,6 +75,10 @@ using DatabaseTask.Services.Database.Utils;
 using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Repositories;
+using DatabaseTask.Services.AnalyseServices.Interfaces;
+using DatabaseTask.Services.AnalyseServices;
+using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
+using DatabaseTask.Services.AnalyseServices.Utils;
 
 namespace DatabaseTask.Configuration
 {
@@ -105,6 +109,7 @@ namespace DatabaseTask.Configuration
             AddFilesCommands();
             AddViewModelsAndWindows();
             AddDatabaseFunctionality();
+            AddAnalyseServices();
         }
 
         private void AddStorage()
@@ -210,6 +215,13 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ConnectionStringData>();
             _serviceCollection.AddScoped<IDatabaseUtils, DatabaseUtils>();
             _serviceCollection.AddScoped<ITblDrawingContentsRepository, TblDrawingContentsRepository>();
+        }
+
+        private void AddAnalyseServices()
+        {
+            _serviceCollection.AddScoped<IAnalyseUtils, AnalyseUtils>();
+            _serviceCollection.AddScoped<IFindDuplicatesService, FindDuplicatesService>();
+            _serviceCollection.AddScoped<IFindUnusedFilesServices, FindUnusedFilesServices>();
         }
     }
 }

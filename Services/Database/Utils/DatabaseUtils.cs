@@ -30,19 +30,11 @@ namespace DatabaseTask.Services.Database.Utils
 
         public void DetachDatabase()
         {
-            try
-            {
-                string connection = BuildMainConnectionString();
-                using var sqlConnection = new SqlConnection(connection);
-                sqlConnection.Open();
-                var command = new SqlCommand(_detachCommand, sqlConnection);
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-
-            }
-
+            string connection = BuildMainConnectionString();
+            using var sqlConnection = new SqlConnection(connection);
+            sqlConnection.Open();
+            var command = new SqlCommand(_detachCommand, sqlConnection);
+            command.ExecuteNonQuery();
         }
 
         public bool IsDatabaseExist()

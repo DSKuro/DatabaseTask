@@ -9,6 +9,7 @@ using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
+using DatabaseTask.Views.Analyse;
 using MsBox.Avalonia.Enums;
 using System;
 using System.Collections.Generic;
@@ -41,13 +42,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
         public async Task FindDuplicates()
         {
-            if (!await ValidateCatalogAndDatabaseAsync())
-            {
-                return;
-            }
+            //if (!await ValidateCatalogAndDatabaseAsync())
+            //{
+            //    return;
+            //}
 
             var duplicates = _findDuplicatesService.FindDuplicatesByNameAndSize();
-            
+
             //foreach (var group in duplicatesByHash)
             //{
             //    Console.WriteLine($"Хэш: {group.Hash}");
@@ -58,16 +59,18 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             //    }
             //    Console.WriteLine(new string('-', 30));
             //}
-            foreach (var group in duplicates)
-            {
-                Console.WriteLine($"Файл: {group.key}");
+            //foreach (var group in duplicates)
+            //{
+            //    Console.WriteLine($"Файл: {group.key}");
 
-                foreach (var file in group.files)
-                {
-                    Console.WriteLine($"  - Путь: {file.FullName}");
-                }
-                Console.WriteLine(new string('-', 30));
-            }
+            //    foreach (var file in group.files)
+            //    {
+            //        Console.WriteLine($"  - Путь: {file.FullName}");
+            //    }
+            //    Console.WriteLine(new string('-', 30));
+            //}
+
+            var result = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
         }
 
         public async Task FindUnusedFiles()

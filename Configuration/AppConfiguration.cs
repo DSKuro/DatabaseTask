@@ -210,6 +210,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
             _serviceCollection.AddTransient<UnusedFilesWindow>();
+            _serviceCollection.AddTransient<DuplicatesFilesWindow>();
         }
 
         private void AddDatabaseFunctionality()

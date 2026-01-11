@@ -67,8 +67,14 @@ namespace DatabaseTask.Views
             (window, message) =>
             {
                 UnusedFilesWindow unusedFilesWindow = _serviceProvider.GetRequiredService<UnusedFilesWindow>();
-                unusedFilesWindow.Title = WindowCategory.UnusedFilesCategory.Value;
                 message.Reply(unusedFilesWindow.ShowDialog<string>(window));
+            });
+
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowDuplicatesFilesMessage>(this,
+            (window, message) =>
+            {
+                DuplicatesFilesWindow duplicatesFilesWindow = _serviceProvider.GetRequiredService<DuplicatesFilesWindow>();
+                message.Reply(duplicatesFilesWindow.ShowDialog<string>(window));
             });
         }
 

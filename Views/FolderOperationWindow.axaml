@@ -9,6 +9,7 @@
 		Width="400" Height="90"
 		x:DataType="vm:FolderOperationWindowViewModel"
         x:Class="DatabaseTask.FolderOperationWindow"
+		Icon="/Assets/window.ico"
         Title="Создать каталог">
 
 	<Design.DataContext>

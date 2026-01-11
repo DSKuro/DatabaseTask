@@ -16,4 +16,5 @@ namespace DatabaseTask.Services.Messages
     public class MainWindowCreateFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowRenameFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowCopyFolderMessage : MainWindowDialogueMessage { }
+    public class MainWindowUnusedFilesMessage : MainWindowDialogueMessage { }
 }

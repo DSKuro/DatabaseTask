@@ -30,5 +30,13 @@
                 return new WindowCategory("Удалить каталог");
             }
         }
+
+        public static WindowCategory UnusedFilesCategory
+        {
+            get
+            {
+                return new WindowCategory("Анализ неиспользуемых файлов");
+            }
+        }
     }
 }

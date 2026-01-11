@@ -79,6 +79,7 @@ using DatabaseTask.Services.AnalyseServices.Interfaces;
 using DatabaseTask.Services.AnalyseServices;
 using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.AnalyseServices.Utils;
+using DatabaseTask.Views.Analyse;
 
 namespace DatabaseTask.Configuration
 {
@@ -208,6 +209,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
+            _serviceCollection.AddTransient<UnusedFilesWindow>();
         }
 
         private void AddDatabaseFunctionality()

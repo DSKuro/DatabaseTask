@@ -1,0 +1,76 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:DatabaseTask.ViewModels"
+		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
+		dialogues:DialogueManager.Register="UnusedFilesDialogues"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="DatabaseTask.Views.Analyse.UnusedFilesWindow"
+        Width="500"
+        Height="400"
+        Icon="/Assets/window.ico"
+        Title="Анализ неиспользуемых файлов">
+    
+    <Grid RowDefinitions="*, Auto, Auto">
+        <DataGrid Grid.Row="0"
+				  Margin="0, 10, 0, 0"
+                  CanUserResizeColumns="True">
+			<DataGrid.Columns>
+                <DataGridTemplateColumn Header="Удалить" 
+                                        CanUserSort="True"
+                                        Width="*">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox IsChecked="False"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+				<DataGridTextColumn Header="Путь"
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Spacing="10" 
+					Margin="10, 10, 0, 0" 
+					HorizontalAlignment="Left" 
+					Orientation="Horizontal" 
+					Grid.Row="1">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="HorizontalContentAlignment" Value="Center"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button 
+				MinWidth="70" 
+				>
+				Выдёлить всё
+			</Button>
+			<Button 
+				MinWidth="70"
+				>
+				Снять выделение</Button>
+		</StackPanel>
+        <StackPanel Spacing="10" 
+					Margin="0, 0, 10, 10" 
+					MaxHeight="200"
+					HorizontalAlignment="Right" 
+					Orientation="Horizontal" 
+					Grid.Row="2">
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="HorizontalContentAlignment" Value="Center"/>
+				</Style>
+			</StackPanel.Styles>
+			<Button 
+				MinWidth="70" 
+				Classes="ApplyButton"
+				>
+				Ok
+			</Button>
+			<Button 
+				MinWidth="70"
+				>
+				Отмена</Button>
+		</StackPanel>
+    </Grid>
+</Window>

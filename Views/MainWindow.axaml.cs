@@ -6,6 +6,7 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using DatabaseTask.Views.Analyse;
 using DatabaseTask.Views.Comparators.Enum;
 using DatabaseTask.Views.Comparators.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,6 +61,14 @@ namespace DatabaseTask.Views
                     TextBoxWatermark.RenameFolderWatermark.Value);
                 createFolderWindow.Text = _treeView.SelectedNodes[0].Name;
                 message.Reply(createFolderWindow.ShowDialog<string>(window));
+            });
+
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowUnusedFilesMessage>(this,
+            (window, message) =>
+            {
+                UnusedFilesWindow unusedFilesWindow = _serviceProvider.GetRequiredService<UnusedFilesWindow>();
+                unusedFilesWindow.Title = WindowCategory.UnusedFilesCategory.Value;
+                message.Reply(unusedFilesWindow.ShowDialog<string>(window));
             });
         }
 

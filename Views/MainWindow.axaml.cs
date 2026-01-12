@@ -5,12 +5,14 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.Analyses.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.Views.Analyse;
 using DatabaseTask.Views.Comparators.Enum;
 using DatabaseTask.Views.Comparators.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Views
 {
@@ -67,7 +69,9 @@ namespace DatabaseTask.Views
             (window, message) =>
             {
                 UnusedFilesWindow unusedFilesWindow = _serviceProvider.GetRequiredService<UnusedFilesWindow>();
-                message.Reply(unusedFilesWindow.ShowDialog<string>(window));
+                unusedFilesWindow.DataContext = _serviceProvider.GetRequiredService<IUnusedFilesViewModel>();
+                unusedFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                message.Reply(unusedFilesWindow.ShowDialog<List<string>>(window));
             });
 
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowDuplicatesFilesMessage>(this,

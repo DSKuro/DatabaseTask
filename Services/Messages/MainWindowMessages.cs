@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Messages
 {
@@ -16,6 +17,7 @@ namespace DatabaseTask.Services.Messages
     public class MainWindowCreateFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowRenameFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowCopyFolderMessage : MainWindowDialogueMessage { }
-    public class MainWindowUnusedFilesMessage : MainWindowDialogueMessage { }
+
+    public class MainWindowUnusedFilesMessage : AsyncRequestMessage<List<string>> { }
     public class MainWindowDuplicatesFilesMessage : MainWindowDialogueMessage { }
 }

@@ -2,19 +2,12 @@
 using DatabaseTask.Models.AppData;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.AnalyseServices.Interfaces;
-using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
-using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
-using DatabaseTask.Views.Analyse;
 using MsBox.Avalonia.Enums;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
@@ -75,12 +68,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
         public async Task FindUnusedFiles()
         {
-            //if (!await ValidateCatalogAndDatabaseAsync())
-            //{
-            //    return;
-            //}
+            if (!await ValidateCatalogAndDatabaseAsync())
+            {
+                return;
+            }
 
-            //var unusedFiles = _findUnusedFilesServices.FindUnusedFiles();
             var result = await WeakReferenceMessenger.Default.Send<MainWindowUnusedFilesMessage>();
         }
 

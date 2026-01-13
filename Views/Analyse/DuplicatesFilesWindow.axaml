@@ -3,10 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        xmlns:vm="using:DatabaseTask.ViewModels"
+        xmlns:vm="using:DatabaseTask.ViewModels.Analyses"
 		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
 		dialogues:DialogueManager.Register="UnusedFilesDialogues"
         x:Class="DatabaseTask.Views.Analyse.DuplicatesFilesWindow"
+		x:DataType="vm:DuplicatesFilesViewModel"
         Width="500"
         Height="400"
         Icon="/Assets/window.ico"
@@ -16,11 +17,12 @@
         <DataGrid 
               AutoGenerateColumns="False"
               CanUserResizeColumns="True"
-              GridLinesVisibility="All">
+              GridLinesVisibility="All"
+			  ItemsSource="{Binding DuplicatesFiles}">
         
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="В базу"
-                                    Width="*">
+                                    Width="Auto">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <RadioButton GroupName="еуые" 
@@ -31,7 +33,8 @@
             </DataGridTemplateColumn>
 
             <DataGridTemplateColumn Header="Удалить"
-                                    Width="*">
+                                    Width="Auto"
+									Binding="{Binding IsDelete}">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <CheckBox 

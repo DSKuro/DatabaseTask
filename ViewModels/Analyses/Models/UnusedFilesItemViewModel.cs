@@ -20,6 +20,7 @@ namespace DatabaseTask.ViewModels.Analyses.Models
                 }
             }
         }
+
         public string Path { get; set; }
 
         public UnusedFilesItemViewModel(bool isDelete, string path)

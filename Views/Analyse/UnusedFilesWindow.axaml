@@ -42,7 +42,7 @@
 					</DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 				<DataGridTextColumn Header="Путь"
-									IsReadonly="True"
+									IsReadOnly="True"
                                     Width="*"
 									Binding="{Binding Path}"/>
             </DataGrid.Columns>

@@ -19,5 +19,5 @@ namespace DatabaseTask.Services.Messages
     public class MainWindowCopyFolderMessage : MainWindowDialogueMessage { }
 
     public class MainWindowUnusedFilesMessage : AsyncRequestMessage<List<string>> { }
-    public class MainWindowDuplicatesFilesMessage : MainWindowDialogueMessage { }
+    public class MainWindowDuplicatesFilesMessage : AsyncRequestMessage<List<(string path, bool isInDatabase)>> { }
 }

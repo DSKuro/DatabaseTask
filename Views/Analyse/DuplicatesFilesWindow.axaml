@@ -11,7 +11,7 @@
         Width="500"
         Height="400"
         Icon="/Assets/window.ico"
-        Title="Анализ неиспользуемых файлов">
+        Title="Дубликаты в чертежах">
 
     <Grid RowDefinitions="*, Auto, Auto">
         <DataGrid 
@@ -25,7 +25,8 @@
                                     Width="Auto">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <RadioButton GroupName="еуые" 
+                        <RadioButton GroupName="{Binding FileName}"
+                                     IsChecked="{Binding IsDB}"
                                      HorizontalAlignment="Center"
                                      ToolTip.Tip="Сделать этот путь основным в БД"/>
                     </DataTemplate>
@@ -33,11 +34,10 @@
             </DataGridTemplateColumn>
 
             <DataGridTemplateColumn Header="Удалить"
-                                    Width="Auto"
-									Binding="{Binding IsDelete}">
+                                    Width="Auto">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <CheckBox 
+                        <CheckBox IsChecked="{Binding IsDelete}"
                                   HorizontalAlignment="Center"/>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
@@ -45,30 +45,17 @@
 
             <DataGridTextColumn Header="Имя файла" 
                                 IsReadOnly="True"
+                                Binding="{Binding FileName}"
                                 Width="*"/>
             
-            <DataGridTemplateColumn Header="Полный путь" 
-                                    Width="*">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock
-                                   Margin="5,0"
-                                   VerticalAlignment="Center"
-                                   />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="Полный путь" 
+                                IsReadOnly="True"
+                                Binding="{Binding Path}"
+                                Width="*"/>
 
         </DataGrid.Columns>
+        </DataGrid>
 
-        <!--<DataGrid.Styles>
-            <Style Selector="DataGridRow">
-                <Style Selector="^[(IsInDatabase=True)]">
-                    <Setter Property="Background" Value="#1A00FF00"/> --><!-- Легкий зеленый фон --><!--
-                </Style>
-            </Style>
-        </DataGrid.Styles>-->
-    </DataGrid>
         <StackPanel Spacing="10" 
 					Margin="10, 10, 0, 0" 
 					HorizontalAlignment="Left" 
@@ -81,11 +68,13 @@
 			</StackPanel.Styles>
 			<Button 
 				MinWidth="70" 
+                Command="{Binding CheckAllCommand}"
 				>
 				Выдёлить всё
 			</Button>
 			<Button 
 				MinWidth="70"
+                Command="{Binding UncheckAllCommand}"
 				>
 				Снять выделение</Button>
 		</StackPanel>
@@ -103,11 +92,13 @@
 			<Button 
 				MinWidth="70" 
 				Classes="ApplyButton"
+                Command="{Binding ApplyCommand}"
 				>
 				Ok
 			</Button>
 			<Button 
 				MinWidth="70"
+                Command="{Binding CancelCommand}"
 				>
 				Отмена</Button>
 		</StackPanel>

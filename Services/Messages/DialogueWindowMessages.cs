@@ -21,4 +21,14 @@ namespace DatabaseTask.Services.Messages
             Paths = paths;
         }
     }
+
+    public class DuplicatesFilesDialogueCloseMessage
+    {
+        public List<(string path, bool isInDatabase)> PathsWithDatabase { get; }
+
+        public DuplicatesFilesDialogueCloseMessage(List<(string path, bool isInDatabase)> paths)
+        {
+            PathsWithDatabase = paths;
+        }
+    }
 }

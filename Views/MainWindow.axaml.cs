@@ -78,7 +78,9 @@ namespace DatabaseTask.Views
             (window, message) =>
             {
                 DuplicatesFilesWindow duplicatesFilesWindow = _serviceProvider.GetRequiredService<DuplicatesFilesWindow>();
-                message.Reply(duplicatesFilesWindow.ShowDialog<string>(window));
+                duplicatesFilesWindow.DataContext = _serviceProvider.GetRequiredService<IDuplicatesFilesViewModel>();
+                duplicatesFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                message.Reply(duplicatesFilesWindow.ShowDialog<List<(string path, bool isInDatabase)>>(window));
             });
         }
 

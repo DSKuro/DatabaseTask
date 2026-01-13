@@ -211,6 +211,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IDatabaseInteractionViewModel, DatabaseInteractionViewModel>();
             _serviceCollection.AddScoped<IApplyChangesViewModel, ApplyChangesViewModel>();
             _serviceCollection.AddTransient<IUnusedFilesViewModel, UnusedFilesViewModel>();
+            _serviceCollection.AddTransient<IDuplicatesFilesViewModel, DuplicatesFilesViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
@@ -231,6 +232,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IFindDuplicatesService, FindDuplicatesService>();
             _serviceCollection.AddScoped<IFindUnusedFilesServices, FindUnusedFilesServices>();
             _serviceCollection.AddScoped<IUnusedFilesItemViewModel, UnusedFilesItemViewModel>();
+            _serviceCollection.AddScoped<IDuplicatesFilesItemViewModel, DuplicatesFilesItemViewModel>();
         }
     }
 }

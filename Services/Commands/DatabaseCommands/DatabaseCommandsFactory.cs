@@ -27,9 +27,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands
 
             return info.CommandType switch
             {
-                CommandType.RenameFolder or CommandType.MoveFile or CommandType.CopyFolder 
-                or CommandType.CopyFile 
-                => ActivatorUtilities.CreateInstance<UpdateDatabaseCommand>(_serviceProvider, info.Data!),
+                CommandType.RenameFolder 
+                or CommandType.MoveFile => ActivatorUtilities.CreateInstance<UpdateDatabaseCommand>(_serviceProvider, info.Data!),
+
+                CommandType.CopyFolder
+                or CommandType.CopyFile => ActivatorUtilities.CreateInstance<CopyDatabaseCommand>(_serviceProvider, info.Data!),
 
                 CommandType.DeleteFolder => ActivatorUtilities.CreateInstance<DeleteFolderCommand>(_serviceProvider, info.Data!),
                 CommandType.DeleteFile => ActivatorUtilities.CreateInstance<DeleteFileCommand>(_serviceProvider, info.Data!),

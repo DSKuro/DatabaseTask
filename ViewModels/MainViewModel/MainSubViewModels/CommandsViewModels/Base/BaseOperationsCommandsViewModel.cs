@@ -101,22 +101,23 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 name
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) });
+            var pathsNode = new List<(INode, string)>() { (node, ""), (target, name) };
+
+            string[] paths = GetPathForCommand(pathsNode);
 
             CommandInfo commandInfo = new CommandInfo
             (
                 type, paths
             );
 
+            string[] relativePaths = GetRelativePathForCommand(pathsNode);
 
-            //string[] relativePaths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) }, true);
+            CommandInfo databaseInfo = new CommandInfo
+            (
+                type, relativePaths
+            );
 
-            //CommandInfo databaseInfo = new CommandInfo
-            //(
-            //    CommandType.RenameFolder, relativePaths
-            //);
-
-            await ProcessCommand(itemInfo, commandInfo, null,
+            await ProcessCommand(itemInfo, commandInfo, databaseInfo,
                new LoggerDTO
                (
                    isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,

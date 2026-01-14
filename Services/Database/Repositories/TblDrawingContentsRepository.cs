@@ -39,10 +39,7 @@ namespace DatabaseTask.Services.Database.Repositories
         public void UpdatePath(string oldPath, string newPath)
         {
             using var context = new DataContext(_stringData.ConnectionString);
-            var records = context.TblDrawingContents
-                .Where(item => !string.IsNullOrEmpty(item.ContentDocument) 
-                && EF.Functions.Like(item.ContentDocument, $"%{oldPath}%"))
-                .ToList();
+            var records = GetRecordsByPath(context, oldPath);
 
             foreach (var record in records)
             {
@@ -50,6 +47,33 @@ namespace DatabaseTask.Services.Database.Repositories
             }
 
             context.SaveChanges();
+        }
+
+        public void CopyItems(string oldPath, string newPath)
+        {
+            using var context = new DataContext(_stringData.ConnectionString);
+            var records = 
+                GetRecordsByPath(context, oldPath)
+                .AsNoTracking()
+                .Where(item => !string.IsNullOrEmpty(item.ContentDocument)
+                && EF.Functions.Like(item.ContentDocument, $"%{oldPath}%"))
+                .ToList();
+
+            foreach (var record in records)
+            {
+                record.ContentId = 0;
+                record.ContentDocument = record.ContentDocument!.Replace(oldPath, newPath);
+            }
+
+            context.TblDrawingContents.AddRange(records);
+            context.SaveChanges();
+        }
+
+        private IQueryable<TblDrawingContent> GetRecordsByPath(DataContext context, string path)
+        {
+            return context.TblDrawingContents
+                .Where(item => !string.IsNullOrEmpty(item.ContentDocument)
+                               && EF.Functions.Like(item.ContentDocument, $"%{path}%"));
         }
     }
 }

@@ -27,12 +27,12 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands
 
             return info.CommandType switch
             {
-                CommandType.RenameFolder => ActivatorUtilities.CreateInstance<RenameDatabaseCommand>(_serviceProvider, info.Data!),
+                CommandType.RenameFolder or CommandType.MoveFile or CommandType.CopyFolder 
+                or CommandType.CopyFile 
+                => ActivatorUtilities.CreateInstance<UpdateDatabaseCommand>(_serviceProvider, info.Data!),
+
                 CommandType.DeleteFolder => ActivatorUtilities.CreateInstance<DeleteFolderCommand>(_serviceProvider, info.Data!),
                 CommandType.DeleteFile => ActivatorUtilities.CreateInstance<DeleteFileCommand>(_serviceProvider, info.Data!),
-                CommandType.CopyFolder => ActivatorUtilities.CreateInstance<CopyFolderCommand>(_serviceProvider, info.Data!),
-                CommandType.CopyFile => ActivatorUtilities.CreateInstance<CopyFileCommand>(_serviceProvider, info.Data!),
-                CommandType.MoveFile => ActivatorUtilities.CreateInstance<MoveFileCommand>(_serviceProvider, info.Data!),
                 _ => throw new ArgumentException("Неверный тип команды")
             };
         }

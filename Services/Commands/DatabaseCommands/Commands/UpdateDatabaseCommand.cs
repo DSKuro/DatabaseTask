@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 {
-    public class RenameDatabaseCommand : IResultCommand
+    public class UpdateDatabaseCommand : IResultCommand
     {
         private readonly string _oldPath;
         private readonly string _newPath;
@@ -14,7 +14,7 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 
         public bool IsSuccess => _isSuccess;
 
-        public RenameDatabaseCommand(string oldPath, string newPath, 
+        public UpdateDatabaseCommand(string oldPath, string newPath, 
             ITblDrawingContentsRepository drawingRepository)
         {
             _oldPath = oldPath;

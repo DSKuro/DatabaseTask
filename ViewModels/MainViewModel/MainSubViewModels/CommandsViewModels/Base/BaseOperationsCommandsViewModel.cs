@@ -11,6 +11,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base
@@ -107,6 +108,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 type, paths
             );
 
+
+            //string[] relativePaths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) }, true);
+
+            //CommandInfo databaseInfo = new CommandInfo
+            //(
+            //    CommandType.RenameFolder, relativePaths
+            //);
+
             await ProcessCommand(itemInfo, commandInfo, null,
                new LoggerDTO
                (
@@ -132,7 +141,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 name
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (target, name) });
+            var pathsNode = new List<(INode, string)>() { (node, ""), (target, name) };
+
+            string[] paths = GetPathForCommand(pathsNode);
 
             CommandInfo commandInfo = new CommandInfo
             (
@@ -140,7 +151,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 paths
             );
 
-            await ProcessCommand(itemInfo, commandInfo, null,
+            string[] relativePaths = GetRelativePathForCommand(pathsNode);
+
+            CommandInfo databaseInfo = new CommandInfo
+            (
+                CommandType.RenameFolder, relativePaths
+            );
+
+            await ProcessCommand(itemInfo, commandInfo, databaseInfo,
                new LoggerDTO
                (
                    (isFolder) ? LogCategory.MoveCatalogCategory
@@ -158,18 +176,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
               CommandType.RenameFolder, node.Name, newName
             );
 
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, ""), (node.Parent!, newName) });
+            var pathsNode = new List<(INode, string)>() { (node, ""), (node.Parent!, newName) };
+
+            string[] paths = GetPathForCommand(pathsNode);
 
             CommandInfo info = new CommandInfo
             (
                 CommandType.RenameFolder, paths
             );
 
-            string[] paths1 = GetPathForCommand(new List<(INode, string)>() { (node, ""), (node.Parent!, newName) }, true);
+            string[] relativePaths = GetRelativePathForCommand(pathsNode);
 
             CommandInfo databaseInfo = new CommandInfo
             (
-                CommandType.RenameFolder, paths1
+                CommandType.RenameFolder, relativePaths
             );
 
             await ProcessCommand(itemInfo, info, databaseInfo,
@@ -182,23 +202,18 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             );
         }
 
-        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths, bool isTrue = false)
+        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths)
         {
-            List<string> fullPaths = new List<string>();
+            return nodesPaths
+                   .Select(item => _fullPathService.GetPathForNewItem(item.node, item.newName))
+                   .ToArray();
+        }
 
-            foreach (var path in nodesPaths)
-            {
-                if (isTrue)
-                {
-                    fullPaths.Add(_fullPathService.GetRelativePath(path.node, path.newName));
-                }
-                else
-                {
-                    fullPaths.Add(_fullPathService.GetPathForNewItem(path.node, path.newName));
-                }                    
-            }
-
-            return fullPaths.ToArray();
+        private string[] GetRelativePathForCommand(List<(INode node, string newName)> nodesPaths)
+        {
+            return nodesPaths
+                   .Select(item => _fullPathService.GetRelativePath(item.node, item.newName))
+                   .ToArray();
         }
     }
 }

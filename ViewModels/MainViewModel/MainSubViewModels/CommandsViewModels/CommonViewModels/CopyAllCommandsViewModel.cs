@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
@@ -30,6 +31,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
+            IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IMoveFileCommandsViewModel moveFileCommandsViewModel,
@@ -37,7 +39,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFileManagerCommonOperationsPermission commonPermissions,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
         {
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;

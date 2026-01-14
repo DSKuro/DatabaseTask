@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Models.DTO;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Commands.Utility.Enum;
@@ -20,9 +21,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public BaseOperationsCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
+            IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory, IFullPath fullPath
             ) 
-            : base(messageBoxService, itemCommandsFactory, fileCommandsFactory, commandsHistory)
+            : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
+                  databaseCommandsFactory, commandsHistory)
         {
             _fullPathService = fullPath;
         }
@@ -41,7 +44,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 CommandType.CreateFolder, paths
             );
 
-            await ProcessCommand(itemInfo, info,
+            await ProcessCommand(itemInfo, info, null,
                 new LoggerDTO
                 (
                     LogCategory.CreateFolderCategory,
@@ -69,7 +72,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     type, paths
                 );
 
-                await ProcessCommand(itemInfo, commandInfo,
+                await ProcessCommand(itemInfo, commandInfo, null,
                     new LoggerDTO
                     (
                         category,
@@ -104,7 +107,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 type, paths
             );
 
-            await ProcessCommand(itemInfo, commandInfo,
+            await ProcessCommand(itemInfo, commandInfo, null,
                new LoggerDTO
                (
                    isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
@@ -137,7 +140,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 paths
             );
 
-            await ProcessCommand(itemInfo, commandInfo,
+            await ProcessCommand(itemInfo, commandInfo, null,
                new LoggerDTO
                (
                    (isFolder) ? LogCategory.MoveCatalogCategory
@@ -162,7 +165,14 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 CommandType.RenameFolder, paths
             );
 
-            await ProcessCommand(itemInfo, info,
+            string[] paths1 = GetPathForCommand(new List<(INode, string)>() { (node, ""), (node.Parent!, newName) }, true);
+
+            CommandInfo databaseInfo = new CommandInfo
+            (
+                CommandType.RenameFolder, paths1
+            );
+
+            await ProcessCommand(itemInfo, info, databaseInfo,
                 new LoggerDTO
                 (
                     LogCategory.RenameFolderCategory,
@@ -172,13 +182,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             );
         }
 
-        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths)
+        private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths, bool isTrue = false)
         {
             List<string> fullPaths = new List<string>();
 
             foreach (var path in nodesPaths)
             {
-                fullPaths.Add(_fullPathService.GetPathForNewItem(path.node, path.newName));          
+                if (isTrue)
+                {
+                    fullPaths.Add(_fullPathService.GetRelativePath(path.node, path.newName));
+                }
+                else
+                {
+                    fullPaths.Add(_fullPathService.GetPathForNewItem(path.node, path.newName));
+                }                    
             }
 
             return fullPaths.ToArray();

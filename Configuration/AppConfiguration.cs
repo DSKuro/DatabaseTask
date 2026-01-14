@@ -6,6 +6,8 @@ using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Commands;
 using DatabaseTask.Services.Commands.Base;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
@@ -112,6 +114,7 @@ namespace DatabaseTask.Configuration
             AddLogger();
             AddCommands();
             AddFilesCommands();
+            AddDatabaseCommands();
             AddViewModelsAndWindows();
             AddDatabaseFunctionality();
             AddAnalyseServices();
@@ -196,6 +199,11 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IFilesOperations, FilesOperations>();
             _serviceCollection.AddScoped<IFileCommandsFactory, FilesCommandsFactory>();
             _serviceCollection.AddSingleton<ICommandsHistory, CommandsHistory>();
+        }
+        
+        private void AddDatabaseCommands()
+        {
+            _serviceCollection.AddScoped<IDatabaseCommandsFactory, DatabaseCommandsFactory>();
         }
 
         private void AddViewModelsAndWindows()

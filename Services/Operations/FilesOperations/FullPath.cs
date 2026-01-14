@@ -27,7 +27,41 @@ namespace DatabaseTask.Services.Operations.FilesOperations
             }
             return basePath;
         }
+
+        public string GetRelativePath(INode node, string newItemName)
+        {
+            string result = ".";
+            string basePath = GetRelativeNodePath(node);
+            if (!string.IsNullOrEmpty(basePath))
+            {
+                result = Path.Combine(result, basePath);
+            }
+
+            if (!string.IsNullOrEmpty(newItemName))
+            {
+                result = Path.Combine(result, newItemName);
+            }
+
+            return result;
+        }
+
         private string GetNodePath(INode? node)
+        {
+            string relativePath = GetRelativeNodePath(node);
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                return PathToCoreFolder ?? string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(PathToCoreFolder))
+            {
+                return Path.Combine(PathToCoreFolder, relativePath);
+            }
+
+            return relativePath;
+        }
+
+        private string GetRelativeNodePath(INode? node)
         {
             INode? coreNode = _treeViewFunctionality.GetCoreNode();
             List<string> pathParts = new List<string>();
@@ -45,17 +79,6 @@ namespace DatabaseTask.Services.Operations.FilesOperations
 
             pathParts.Reverse();
             string relativePath = Path.Combine(pathParts.ToArray());
-
-            if (string.IsNullOrEmpty(relativePath))
-            {
-                return PathToCoreFolder ?? string.Empty;
-            }
-
-            if (!string.IsNullOrEmpty(PathToCoreFolder))
-            {
-                return Path.Combine(PathToCoreFolder, relativePath);
-            }
-
             return relativePath;
         }
     }

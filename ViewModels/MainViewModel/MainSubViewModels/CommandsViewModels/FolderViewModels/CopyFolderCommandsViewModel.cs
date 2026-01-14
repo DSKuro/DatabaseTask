@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
@@ -31,6 +32,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         public CopyFolderCommandViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
+            IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerFolderOperationsPermissions folderPermissions,
@@ -39,7 +41,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ITreeViewFunctionality treeViewFunctionality,
             IMergeCommandsViewModel mergeCommandsViewModel)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
         {
             _folderPermissions = folderPermissions;
             _commonPermissions = commonPermissions;

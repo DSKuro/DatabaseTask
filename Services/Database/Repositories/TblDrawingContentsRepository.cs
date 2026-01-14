@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,6 +34,22 @@ namespace DatabaseTask.Services.Database.Repositories
                                    context.TblDevices.Any(d => d.DeviceId == dc.ContentDevice))
                       .Select(t => t.ContentDocument)
                       .ToList();
+        }
+
+        public void UpdatePath(string oldPath, string newPath)
+        {
+            using var context = new DataContext(_stringData.ConnectionString);
+            var records = context.TblDrawingContents
+                .Where(item => !string.IsNullOrEmpty(item.ContentDocument) 
+                && EF.Functions.Like(item.ContentDocument, $"%{oldPath}%"))
+                .ToList();
+
+            foreach (var record in records)
+            {
+                record.ContentDocument = record.ContentDocument!.Replace(oldPath, newPath);
+            }
+
+            context.SaveChanges();
         }
     }
 }

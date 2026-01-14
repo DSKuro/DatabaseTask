@@ -7,6 +7,8 @@ namespace DatabaseTask.Services.Commands.Interfaces
     {
         public void AddCommand(IResultCommand command);
         public void RemoveCommand();
+        public void AddDatabaseCommand(IResultCommand command);
+        public void RemoveDatabaseCommand();
         public List<bool> ExecuteAllCommands();
         public void ClearAll();
     }

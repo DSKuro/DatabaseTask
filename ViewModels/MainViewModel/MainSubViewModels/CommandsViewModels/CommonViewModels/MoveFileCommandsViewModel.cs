@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Models.Categories;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
@@ -36,6 +37,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         public MoveFileCommandsViewModel(IMessageBoxService messageBoxService,
             ICommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
+            IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,
             IFullPath fullPath,
             IFileManagerCommonOperationsPermission permissions,
@@ -45,7 +47,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             INameGenerator generator,
             INodeEvents nodeEvents)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
         {
             _permissions = permissions;
             _filePermissions = filePermissions;

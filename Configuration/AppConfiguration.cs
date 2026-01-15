@@ -190,7 +190,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<INameGenerator, NameGenerator>();
             _serviceCollection.AddScoped<MoveOperationDecorator>();
             _serviceCollection.AddTransient<ICompositeCommandBuilder, CompositeCommandBuilder>();
-            _serviceCollection.AddScoped<ICommandsFactory, ItemCommandsFactory>();
+            _serviceCollection.AddScoped<ILoggerCommandsFactory, ItemCommandsFactory>();
         }
 
         private void AddFilesCommands()

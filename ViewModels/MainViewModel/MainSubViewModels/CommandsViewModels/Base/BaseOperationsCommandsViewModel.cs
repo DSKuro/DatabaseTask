@@ -21,7 +21,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private readonly IFullPath _fullPathService;
 
         public BaseOperationsCommandsViewModel(IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory, IFullPath fullPath
             ) 
@@ -33,183 +33,84 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public async Task CreateFolderOperation(INode node, string name)
         {
-            CommandInfo itemInfo = new CommandInfo
-            (
-                CommandType.CreateFolder, name
-            );
-
-            string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, name) });
-
-            CommandInfo info = new CommandInfo
-            (
-                CommandType.CreateFolder, paths
-            );
-
-            await ProcessCommand(itemInfo, info, null,
-                new LoggerDTO
-                (
-                    LogCategory.CreateFolderCategory,
-                    name.ToString()!
-                )
-            );
+            var targets = new List<(INode, string)>() { (node, name) };
+            var loggerDto = new LoggerDTO(LogCategory.CreateFolderCategory, name.ToString()!);
+            await ExecuteFileSystemOperation(CommandType.CreateFolder, targets,
+                new object[] { name }, loggerDto);
         }
 
         public async Task DeleteItemOperation(INode node, LogCategory category)
         {
-            if (node is NodeViewModel nodeViewModel)
+            if (node is not NodeViewModel nodeViewModel)
             {
-                CommandType type = nodeViewModel.IsFolder == true ?
-                    CommandType.DeleteFolder : CommandType.DeleteFile;
-
-                CommandInfo itemInfo = new CommandInfo
-                (
-                    type, node
-                );
-
-                var pathsNode = new List<(INode, string)>() { (node, "") };
-
-                string[] paths = GetPathForCommand(pathsNode);
-
-                CommandInfo commandInfo = new CommandInfo
-                (
-                    type, paths
-                );
-
-                string[] relativePaths = GetRelativePathForCommand(pathsNode);
-
-                CommandInfo databaseInfo = new CommandInfo
-                (
-                    type, relativePaths
-                );
-
-                await ProcessCommand(itemInfo, commandInfo, databaseInfo,
-                    new LoggerDTO
-                    (
-                        category,
-                        node.Name
-                    )
-                );
+                return;
             }
+
+            CommandType type = nodeViewModel.IsFolder == true ?
+                    CommandType.DeleteFolder : CommandType.DeleteFile;
+            var targets = new List<(INode, string)>() { (node, "") };
+            var loggerDto = new LoggerDTO(category, node.Name);
+            await ExecuteFileSystemOperation(type, targets,
+                new object[] { node }, loggerDto);
         }
 
         public async Task CopyItemOperation(INode node, INode target, string name)
         {
-            bool isFolder = false;
-            if (node is NodeViewModel newNode)
+            if (node is not NodeViewModel nodeViewModel)
             {
-                isFolder = newNode.IsFolder;
+                return;
             }
 
-            CommandType type = isFolder == true ?
-                  CommandType.CopyFolder : CommandType.CopyFile;
-
-            CommandInfo itemInfo = new CommandInfo
-            (
-                type, node,
-                target,
-                name
-            );
-
-            var pathsNode = new List<(INode, string)>() { (node, ""), (target, name) };
-
-            string[] paths = GetPathForCommand(pathsNode);
-
-            CommandInfo commandInfo = new CommandInfo
-            (
-                type, paths
-            );
-
-            string[] relativePaths = GetRelativePathForCommand(pathsNode);
-
-            CommandInfo databaseInfo = new CommandInfo
-            (
-                type, relativePaths
-            );
-
-            await ProcessCommand(itemInfo, commandInfo, databaseInfo,
-               new LoggerDTO
-               (
-                   isFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
-                   name ?? node.Name,
-                   target.Name
-               )
-            );
+            CommandType type = nodeViewModel.IsFolder == true ?
+                    CommandType.CopyFolder : CommandType.CopyFile;
+            var targets = new List<(INode, string)>() { (node, ""), (target, name) };
+            var loggerDto = new LoggerDTO(nodeViewModel.IsFolder ? LogCategory.CopyFolderCategory : LogCategory.CopyFileCategory,
+                name ?? node.Name, target.Name);
+            await ExecuteFileSystemOperation(type, targets,
+                new object[] { node, target, name! }, loggerDto);
         }
 
         public async Task MoveItemOperation(INode node, INode target, string name)
         {
-            bool isFolder = false;
-            if (node is NodeViewModel newNode)
+            if (node is not NodeViewModel nodeViewModel)
             {
-                isFolder = newNode.IsFolder;
+                return;
             }
 
-            CommandInfo itemInfo = new CommandInfo
-            (
-                CommandType.MoveFile, node,
-                target,
-                name
-            );
-
-            var pathsNode = new List<(INode, string)>() { (node, ""), (target, name) };
-
-            string[] paths = GetPathForCommand(pathsNode);
-
-            CommandInfo commandInfo = new CommandInfo
-            (
-                CommandType.MoveFile,
-                paths
-            );
-
-            string[] relativePaths = GetRelativePathForCommand(pathsNode);
-
-            CommandInfo databaseInfo = new CommandInfo
-            (
-                CommandType.RenameFolder, relativePaths
-            );
-
-            await ProcessCommand(itemInfo, commandInfo, databaseInfo,
-               new LoggerDTO
-               (
-                   (isFolder) ? LogCategory.MoveCatalogCategory
+            var targets = new List<(INode, string)>() { (node, ""), (target, name) };
+            var loggerDto = new LoggerDTO((nodeViewModel.IsFolder) ? LogCategory.MoveCatalogCategory
                    : LogCategory.MoveFileCategory,
                    name ?? node.Name,
-                   target.Name
-               )
-            );
+                   target.Name);
+            await ExecuteFileSystemOperation(CommandType.MoveFile, targets,
+                new object[] { node, target, name! }, loggerDto);
         }
 
         public async Task RenameFolderOperation(INode node, string newName)
         {
-            CommandInfo itemInfo = new CommandInfo
-            (
-              CommandType.RenameFolder, node.Name, newName
-            );
-
-            var pathsNode = new List<(INode, string)>() { (node, ""), (node.Parent!, newName) };
-
-            string[] paths = GetPathForCommand(pathsNode);
-
-            CommandInfo info = new CommandInfo
-            (
-                CommandType.RenameFolder, paths
-            );
-
-            string[] relativePaths = GetRelativePathForCommand(pathsNode);
-
-            CommandInfo databaseInfo = new CommandInfo
-            (
-                CommandType.RenameFolder, relativePaths
-            );
-
-            await ProcessCommand(itemInfo, info, databaseInfo,
-                new LoggerDTO
-                (
-                    LogCategory.RenameFolderCategory,
+            var targets = new List<(INode, string)>() { (node, ""), (node.Parent!, newName) };
+            var loggerDto = new LoggerDTO(LogCategory.RenameFolderCategory,
                     node.Name,
-                    newName
-                )
-            );
+                    newName);
+            await ExecuteFileSystemOperation(CommandType.RenameFolder, targets,
+                new object[] { node.Name, newName }, loggerDto);
+        }
+
+        private async Task ExecuteFileSystemOperation(
+                            CommandType type,
+                            List<(INode node, string name)> targets,
+                            object[] itemArgs,
+                            LoggerDTO logger)
+        {
+            CommandInfo itemInfo = new CommandInfo(type, itemArgs);
+
+            string[] paths = GetPathForCommand(targets);
+            CommandInfo commandInfo = new CommandInfo(type, paths);
+
+            string[] relativePaths = GetRelativePathForCommand(targets);
+            CommandInfo databaseInfo = new CommandInfo(type, relativePaths);
+
+            await ProcessCommand(itemInfo, commandInfo, databaseInfo, logger);
         }
 
         private string[] GetPathForCommand(List<(INode node, string newName)> nodesPaths)

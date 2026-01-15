@@ -2,7 +2,7 @@
 
 namespace DatabaseTask.Services.Commands.Base.Interfaces
 {
-    public interface ICommandsFactory
+    public interface ILoggerCommandsFactory
     {
         public ICommand CreateCommand(CommandInfo info, LoggerDTO data);
     }

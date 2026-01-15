@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 {
-    internal class CopyDatabaseCommand : IResultCommand
+    public class CopyDatabaseCommand : IResultCommand
     {
         private readonly string _oldPath;
         private readonly string _newPath;

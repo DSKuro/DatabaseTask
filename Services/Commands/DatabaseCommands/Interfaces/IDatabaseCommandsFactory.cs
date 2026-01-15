@@ -1,10 +1,8 @@
-﻿using DatabaseTask.Models.DTO;
-using DatabaseTask.Services.Commands.Base.Interfaces;
+﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Interfaces
 {
-    public interface IDatabaseCommandsFactory
+    public interface IDatabaseCommandsFactory : IResultCommandsFactory
     {
-        public IResultCommand CreateCommand(CommandInfo info);
     }
 }

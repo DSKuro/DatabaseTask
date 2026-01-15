@@ -28,7 +28,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public DeleteItemCommandsViewModel(IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,

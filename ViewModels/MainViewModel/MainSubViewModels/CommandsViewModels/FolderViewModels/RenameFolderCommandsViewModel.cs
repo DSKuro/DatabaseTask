@@ -30,7 +30,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private readonly IMergeCommandsViewModel _mergeCommandsViewModel;
 
         public RenameFolderCommandsViewModel(IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,

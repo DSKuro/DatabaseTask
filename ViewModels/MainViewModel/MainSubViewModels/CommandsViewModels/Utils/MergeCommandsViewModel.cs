@@ -26,7 +26,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         private bool _isMove;
 
         public MergeCommandsViewModel(IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory, IFullPath fullPath,

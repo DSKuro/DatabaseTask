@@ -2,7 +2,7 @@
 
 namespace DatabaseTask.Services.Commands.ItemCommands.Interfaces
 {
-    public interface IItemCommandsFactory : ICommandsFactory
+    public interface IItemCommandsFactory : ILoggerCommandsFactory
     {
     }
 }

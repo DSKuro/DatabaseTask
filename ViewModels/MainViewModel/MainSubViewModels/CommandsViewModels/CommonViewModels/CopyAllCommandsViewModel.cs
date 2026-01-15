@@ -29,7 +29,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public CopyAllCommandsViewModel(
             IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory,

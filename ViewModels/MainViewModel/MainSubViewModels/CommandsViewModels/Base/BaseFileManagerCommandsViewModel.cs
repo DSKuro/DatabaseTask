@@ -11,19 +11,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 {
     public class BaseFileManagerCommandsViewModel : ViewModelMessageBox
     {
-        private readonly ICommandsFactory _itemCommandsFactory;
+        private readonly ILoggerCommandsFactory _itemCommandsFactory;
         private readonly IFileCommandsFactory _fileCommandsFactory;
         private readonly IDatabaseCommandsFactory _databaseCommandsFactory;
         private readonly ICommandsHistory _commandsHistory;
 
-        public ICommandsFactory ItemCommandsFactory
+        public ILoggerCommandsFactory ItemCommandsFactory
         {
             get => _itemCommandsFactory;
         }
         
         public BaseFileManagerCommandsViewModel(
             IMessageBoxService messageBoxService,
-            ICommandsFactory itemCommandsFactory,
+            ILoggerCommandsFactory itemCommandsFactory,
             IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
             ICommandsHistory commandsHistory)

@@ -37,17 +37,22 @@ namespace DatabaseTask.Services.Commands
 
         public List<bool> ExecuteAllCommands()
         {
-            List<bool> results = new List<bool>();
-            foreach (IResultCommand command in _commands)
-            {
-                command.Execute();
-                results.Add(command.IsSuccess);
-            }
-            ClearAll();
+            List<bool> results = ExecuteQueue(_commands);
+            ExecuteQueue(_databaseCommands);
 
-            foreach (IResultCommand command in _databaseCommands)
+            return results;
+        }
+
+        private List<bool> ExecuteQueue(Queue<IResultCommand> queue)
+        {
+            var results = new List<bool>();
+
+            while (queue.Count > 0)
             {
+                var command = queue.Dequeue();
                 command.Execute();
+
+                results.Add(command.IsSuccess);
             }
 
             return results;
@@ -56,6 +61,7 @@ namespace DatabaseTask.Services.Commands
         public void ClearAll()
         {
             _commands.Clear();
+            _databaseCommands.Clear();
         }
     }
 }

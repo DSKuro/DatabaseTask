@@ -2,7 +2,6 @@
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.DatabaseCommands.Commands;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
-using DatabaseTask.Services.Commands.FilesCommands.Commands;
 using DatabaseTask.Services.Commands.Utility.Enum;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,8 +32,8 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands
                 CommandType.CopyFolder
                 or CommandType.CopyFile => ActivatorUtilities.CreateInstance<CopyDatabaseCommand>(_serviceProvider, info.Data!),
 
-                CommandType.DeleteFolder => ActivatorUtilities.CreateInstance<DeleteFolderCommand>(_serviceProvider, info.Data!),
-                CommandType.DeleteFile => ActivatorUtilities.CreateInstance<DeleteFileCommand>(_serviceProvider, info.Data!),
+                CommandType.DeleteFolder 
+                or CommandType.DeleteFile => ActivatorUtilities.CreateInstance<DeleteDatabaseCommand>(_serviceProvider, info.Data!),
                 _ => throw new ArgumentException("Неверный тип команды")
             };
         }

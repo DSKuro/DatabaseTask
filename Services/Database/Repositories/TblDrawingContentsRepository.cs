@@ -55,8 +55,6 @@ namespace DatabaseTask.Services.Database.Repositories
             var records = 
                 GetRecordsByPath(context, oldPath)
                 .AsNoTracking()
-                .Where(item => !string.IsNullOrEmpty(item.ContentDocument)
-                && EF.Functions.Like(item.ContentDocument, $"%{oldPath}%"))
                 .ToList();
 
             foreach (var record in records)
@@ -66,6 +64,15 @@ namespace DatabaseTask.Services.Database.Repositories
             }
 
             context.TblDrawingContents.AddRange(records);
+            context.SaveChanges();
+        }
+
+        public void DeleteItem(string path)
+        {
+            using var context = new DataContext(_stringData.ConnectionString);
+            var records =
+                GetRecordsByPath(context, path);
+            context.TblDrawingContents.RemoveRange(records);
             context.SaveChanges();
         }
 

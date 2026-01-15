@@ -66,14 +66,23 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     type, node
                 );
 
-                string[] paths = GetPathForCommand(new List<(INode, string)>() { (node, "") });
+                var pathsNode = new List<(INode, string)>() { (node, "") };
+
+                string[] paths = GetPathForCommand(pathsNode);
 
                 CommandInfo commandInfo = new CommandInfo
                 (
                     type, paths
                 );
 
-                await ProcessCommand(itemInfo, commandInfo, null,
+                string[] relativePaths = GetRelativePathForCommand(pathsNode);
+
+                CommandInfo databaseInfo = new CommandInfo
+                (
+                    type, relativePaths
+                );
+
+                await ProcessCommand(itemInfo, commandInfo, databaseInfo,
                     new LoggerDTO
                     (
                         category,

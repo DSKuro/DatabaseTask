@@ -34,13 +34,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _databaseCommandsFactory = databaseCommandsFactory;
             _commandsHistory = commandsHistory;
         }
-        
-        protected async Task ProcessCommand(CommandInfo itemInfo, CommandInfo commandInfo, 
-            CommandInfo databaseInfo, LoggerDTO loggerDto)
+
+        protected async Task ProcessCommand(CommandInfo itemInfo, CommandInfo commandInfo,
+            CommandInfo? databaseInfo, LoggerDTO loggerDto)
         {
             await ExecuteCommand(itemInfo, loggerDto);
             AddCommandToHistory(commandInfo);
-            AddDatabaseCommandToHistory(databaseInfo);
+            if (databaseInfo is not null)
+            {
+                AddDatabaseCommandToHistory(databaseInfo);
+            }
         }
 
         private async Task ExecuteCommand(CommandInfo commandInfo, LoggerDTO loggerDto)

@@ -8,5 +8,6 @@ namespace DatabaseTask.Services.Database.Repositories.Interfaces
         public List<string?>? GetExistedPaths();
         public void UpdatePath(string oldPath, string newPath);
         public void CopyItems(string oldPath, string newPath);
+        public void DeleteItem(string path);
     }
 }

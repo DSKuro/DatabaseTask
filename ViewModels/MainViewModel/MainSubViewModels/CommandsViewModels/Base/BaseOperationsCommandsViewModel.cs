@@ -107,8 +107,12 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             string[] paths = GetPathForCommand(targets);
             CommandInfo commandInfo = new CommandInfo(type, paths);
 
-            string[] relativePaths = GetRelativePathForCommand(targets);
-            CommandInfo databaseInfo = new CommandInfo(type, relativePaths);
+            CommandInfo? databaseInfo = null;
+            if (type is not CommandType.CreateFolder)
+            {
+                string[] relativePaths = GetRelativePathForCommand(targets);
+                databaseInfo = new CommandInfo(type, relativePaths);
+            }
 
             await ProcessCommand(itemInfo, commandInfo, databaseInfo, logger);
         }

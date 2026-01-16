@@ -16,6 +16,8 @@ using DatabaseTask.Services.Comparer;
 using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.Database.Repositories;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using DatabaseTask.Services.Database.Transaction;
+using DatabaseTask.Services.Database.Transaction.Interfaces;
 using DatabaseTask.Services.Database.Utils;
 using DatabaseTask.Services.Database.Utils.Interfaces;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality;
@@ -232,6 +234,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ConnectionStringData>();
             _serviceCollection.AddScoped<IDatabaseUtils, DatabaseUtils>();
             _serviceCollection.AddScoped<ITblDrawingContentsRepository, TblDrawingContentsRepository>();
+            _serviceCollection.AddScoped<ICommandsTransaction, CommandsTransaction>();
         }
 
         private void AddAnalyseServices()

@@ -39,6 +39,16 @@ namespace DatabaseTask.Services.Database.Repositories
         public void UpdatePath(string oldPath, string newPath)
         {
             using var context = new DataContext(_stringData.ConnectionString);
+            UpdatePathImplementation(context, oldPath, newPath);
+        }
+
+        public void UpdatePathContext(DataContext context, string oldPath, string newPath)
+        {
+            UpdatePathImplementation(context, oldPath, newPath);
+        }
+
+        private void UpdatePathImplementation(DataContext context, string oldPath, string newPath)
+        {
             var records = GetRecordsByPath(context, oldPath);
 
             foreach (var record in records)
@@ -52,7 +62,17 @@ namespace DatabaseTask.Services.Database.Repositories
         public void CopyItems(string oldPath, string newPath)
         {
             using var context = new DataContext(_stringData.ConnectionString);
-            var records = 
+            CopyItemsImplementation(context, oldPath, newPath);
+        }
+
+        public void CopyItemsContext(DataContext context, string oldPath, string newPath)
+        {
+            CopyItemsImplementation(context, oldPath, newPath);
+        }
+
+        private void CopyItemsImplementation(DataContext context, string oldPath, string newPath)
+        {
+            var records =
                 GetRecordsByPath(context, oldPath)
                 .AsNoTracking()
                 .ToList();
@@ -70,6 +90,16 @@ namespace DatabaseTask.Services.Database.Repositories
         public void DeleteItem(string path)
         {
             using var context = new DataContext(_stringData.ConnectionString);
+            DeleteItemImplementation(context, path);
+        }
+
+        public void DeleteItemContext(DataContext context, string path)
+        {
+            DeleteItemImplementation(context, path);
+        }
+
+        private void DeleteItemImplementation(DataContext context, string path)
+        {
             var records =
                 GetRecordsByPath(context, path);
             context.TblDrawingContents.RemoveRange(records);

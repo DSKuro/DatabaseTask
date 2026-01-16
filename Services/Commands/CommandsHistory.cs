@@ -1,16 +1,20 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Database.Transaction.Interfaces;
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Commands
 {
     public class CommandsHistory : ICommandsHistory
     {
+        private readonly ICommandsTransaction _transaction;
+
         private Queue<IResultCommand> _commands;
         private Queue<IResultCommand> _databaseCommands;
 
-        public CommandsHistory()
+        public CommandsHistory(ICommandsTransaction transaction)
         {
+            _transaction = transaction;
             _commands = new Queue<IResultCommand>();
             _databaseCommands = new Queue<IResultCommand>();
         }
@@ -38,7 +42,9 @@ namespace DatabaseTask.Services.Commands
         public List<bool> ExecuteAllCommands()
         {
             List<bool> results = ExecuteQueue(_commands);
-            ExecuteQueue(_databaseCommands);
+            //ExecuteQueue(_databaseCommands);
+
+            _transaction.ExecuteCommandsInTransaction(_databaseCommands);
 
             return results;
         }

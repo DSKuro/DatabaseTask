@@ -7,6 +7,7 @@ namespace DatabaseTask.Services.Operations.LoggerOperations.Interfaces
     {
         public void AddLog(LoggerDTO dto);
         public void UpdateStatus(List<bool> results);
+        public void RemoveLog();
         public void ClearAll();
     }
 }

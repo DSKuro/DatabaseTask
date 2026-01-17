@@ -31,8 +31,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         public void CancelChanges()
         {
             _commandsHistory.ClearAll();
-            _loggerOperations.ClearAll();
             _commandsHistory.ExecuteUndoItemsCommands();
+            _loggerOperations.ClearAll();
         }
     }
 }

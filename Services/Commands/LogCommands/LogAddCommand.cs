@@ -28,6 +28,10 @@ namespace DatabaseTask.Services.Commands.LogCommands
 
         public void Undo()
         {
+            if ( _loggerOperations is not null)
+            {
+                _loggerOperations.RemoveLog();
+            }
         }
     }
 }

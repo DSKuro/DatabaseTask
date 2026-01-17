@@ -23,7 +23,10 @@ namespace DatabaseTask.Services.Commands.Base
 
         public void Undo()
         {
-
+            foreach (var command in _commands)
+            {
+                command.Undo();
+            }
         }
     }
 }

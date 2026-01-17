@@ -51,6 +51,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ICommand command = _itemCommandsFactory.CreateCommand(commandInfo,
                 loggerDto);
             await command.Execute();
+            _commandsHistory.AddItemCommand(command);
         }
 
         private void AddCommandToHistory(CommandInfo commandInfo)

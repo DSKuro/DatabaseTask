@@ -9,14 +9,21 @@ namespace DatabaseTask.Services.Commands
     {
         private readonly ICommandsTransaction _transaction;
 
+        private Stack<ICommand> _itemCommands; 
         private Queue<IResultCommand> _commands;
         private Queue<IResultCommand> _databaseCommands;
 
         public CommandsHistory(ICommandsTransaction transaction)
         {
             _transaction = transaction;
+            _itemCommands = new Stack<ICommand>();
             _commands = new Queue<IResultCommand>();
             _databaseCommands = new Queue<IResultCommand>();
+        }
+
+        public void AddItemCommand(ICommand command)
+        {
+            _itemCommands.Push(command);
         }
 
         public void AddCommand(IResultCommand command)
@@ -37,6 +44,15 @@ namespace DatabaseTask.Services.Commands
         public void RemoveDatabaseCommand()
         {
             _databaseCommands.Dequeue();
+        }
+
+        public void ExecuteUndoItemsCommands()
+        {
+            while (_itemCommands.Count > 0)
+            {
+                var command = _itemCommands.Pop();
+                command.Undo();
+            }
         }
 
         public List<bool> ExecuteAllCommands()

@@ -219,7 +219,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IMergeCommandsViewModel, MergeCommandsViewModel>();
             _serviceCollection.AddScoped<ICopyAllCommandsViewModel, CopyAllCommandsViewModel>();
             _serviceCollection.AddScoped<IDatabaseInteractionViewModel, DatabaseInteractionViewModel>();
-            _serviceCollection.AddScoped<IApplyChangesViewModel, ApplyChangesViewModel>();
+            _serviceCollection.AddScoped<IChangesViewModel, ChangesViewModel>();
             _serviceCollection.AddTransient<IUnusedFilesViewModel, UnusedFilesViewModel>();
             _serviceCollection.AddTransient<IDuplicatesFilesViewModel, DuplicatesFilesViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();

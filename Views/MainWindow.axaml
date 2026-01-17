@@ -193,7 +193,9 @@
 				Classes="ApplyButton" 
 				Grid.Column="0"
 				Command="{Binding ApplyChangesCommand}">Внести изменения</Button>
-			<Button Grid.Column="1">Отменить</Button>
+			<Button 
+				Grid.Column="1"
+				Command="{Binding CancelChangesCommand}">Отменить</Button>
 		</Grid>
 	</Grid>
 </Window>

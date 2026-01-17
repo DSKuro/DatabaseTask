@@ -16,5 +16,10 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             _copyOperation.CopyItem(copied, target, newItemName);
         } 
+
+        public void UndoCopyItem(INode target, string newItemName)
+        {
+
+        }
     }
 }

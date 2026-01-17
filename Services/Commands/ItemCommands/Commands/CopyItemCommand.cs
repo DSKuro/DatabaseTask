@@ -34,8 +34,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 
         public void Undo()
         {
-
-
+            if (_folderOperation is not null)
+            {
+                _folderOperation.UndoCopyItem(_target, _newName);
+            }
         }
     }
 }

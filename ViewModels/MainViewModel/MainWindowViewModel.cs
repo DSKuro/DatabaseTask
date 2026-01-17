@@ -25,7 +25,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly IDatabaseInteractionViewModel _databaseInteractionViewModel;
         private readonly ICopyAllCommandsViewModel _copyAllCommandsViewModel;
 
-        private readonly IApplyChangesViewModel _applyChangesViewModel;
+        private readonly IChangesViewModel _changesViewModel;
 
         public IFileManager FileManager { get => _fileManager; }
         public ILogger Logger { get => _logger; }
@@ -42,7 +42,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
             IDatabaseInteractionViewModel databaseInteractionViewModel,
             ICopyAllCommandsViewModel copyAllCommandsViewModel,
-            IApplyChangesViewModel applyChangesViewModel) : base(messageBoxService)
+            IChangesViewModel changesViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
@@ -54,7 +54,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
             _databaseInteractionViewModel = databaseInteractionViewModel;
             _copyAllCommandsViewModel = copyAllCommandsViewModel;
-            _applyChangesViewModel = applyChangesViewModel;
+            _changesViewModel = changesViewModel;
         }
 
         [RelayCommand]
@@ -138,7 +138,13 @@ namespace DatabaseTask.ViewModels.MainViewModel
         [RelayCommand]
         public void ApplyChanges()
         {
-            _applyChangesViewModel.ApplyChanges();
+            _changesViewModel.ApplyChanges();
+        }
+
+        [RelayCommand]
+        public void CancelChanges()
+        {
+            _changesViewModel.CancelChanges();
         }
     }
 }

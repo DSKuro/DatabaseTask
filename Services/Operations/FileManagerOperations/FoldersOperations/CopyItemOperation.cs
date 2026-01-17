@@ -50,5 +50,16 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 }
             }
         }
+
+        public void UndoCopyItem(INode target, string newItemName)
+        {
+            var nodeToDelete = target.Children.FirstOrDefault(item => item.Name.Equals(newItemName));
+
+            if (nodeToDelete is not null)
+            {
+                _treeViewFunctionality.RemoveNode(nodeToDelete);
+                _dataGridFunctionality.RemoveProperties(nodeToDelete);
+            }
+        }
     }
 }

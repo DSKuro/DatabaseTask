@@ -51,7 +51,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        public void UndoCopyItem(INode target, string newItemName)
+        public void UndoCopyItem(INode copied, INode target, string newItemName)
         {
             var nodeToDelete = target.Children.FirstOrDefault(item => item.Name.Equals(newItemName));
 

@@ -36,7 +36,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
         {
             if (_folderOperation is not null)
             {
-                _folderOperation.UndoCopyItem(_target, _newName);
+                _folderOperation.UndoCopyItem(_copied, _target, _newName);
             }
         }
     }

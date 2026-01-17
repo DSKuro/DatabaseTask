@@ -12,14 +12,14 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _copyOperation = copyOperation;
         }
 
-        public virtual void CopyItem(INode copied,INode target, string? newItemName = null)
+        public virtual void CopyItem(INode copied,INode target, string newItemName)
         {
             _copyOperation.CopyItem(copied, target, newItemName);
         } 
 
-        public void UndoCopyItem(INode target, string newItemName)
+        public virtual void UndoCopyItem(INode copied, INode target, string newItemName)
         {
-
+            _copyOperation.UndoCopyItem(copied, target, newItemName);
         }
     }
 }

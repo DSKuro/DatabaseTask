@@ -15,10 +15,16 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _deleteItemOperation = deleteItemOperation;
         }
 
-        public override void CopyItem(INode copied, INode target, string? newItemName = null)
+        public override void CopyItem(INode copied, INode target, string newItemName)
         {
             base.CopyItem(copied, target, newItemName);
             _deleteItemOperation.DeleteItem(copied);
+        }
+
+        public override void UndoCopyItem(INode copied, INode target, string newItemName)
+        {
+            base.UndoCopyItem(copied, target, newItemName);
+            _deleteItemOperation.UndoDeleteItem(copied);
         }
     }
 }

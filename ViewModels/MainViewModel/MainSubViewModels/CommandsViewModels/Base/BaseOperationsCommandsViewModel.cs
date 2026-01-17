@@ -93,7 +93,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                     node.Name,
                     newName);
             await ExecuteFileSystemOperation(CommandType.RenameFolder, targets,
-                new object[] { node.Name, newName }, loggerDto);
+                new object[] { node, newName }, loggerDto);
         }
 
         private async Task ExecuteFileSystemOperation(

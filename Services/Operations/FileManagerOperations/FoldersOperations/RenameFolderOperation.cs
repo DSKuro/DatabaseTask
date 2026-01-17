@@ -16,6 +16,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IDataGridFunctionality _dataGridFunctionality;
 
+        private string? _oldName;
+
         public RenameFolderOperation(
             ITreeView treeView,
             ITreeViewFunctionality treeViewFunctionality,
@@ -26,11 +28,12 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGridFunctionality = dataGridFunctionality;
         }
 
-        public async Task RenameFolder(string newName)
+        public async Task RenameFolder(INode node, string newName)
         {
-            if (_treeViewFunctionality.GetFirstSelectedNode() is NodeViewModel node)
+            if (node is NodeViewModel nodeViewModel)
             {
-                await RenameFolderImpl(newName, node);
+                _oldName = nodeViewModel.Name;
+                await RenameFolderImpl(newName, nodeViewModel);
             }
         }
 
@@ -60,6 +63,14 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                     await Task.Delay(50);
                     _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));
                 }
+            }
+        }
+
+        public async Task UndoRenameFolder(INode node)
+        {
+            if (node is NodeViewModel nodeViewModel && _oldName is not null)
+            {
+                await RenameFolderImpl(_oldName, nodeViewModel);
             }
         }
     }

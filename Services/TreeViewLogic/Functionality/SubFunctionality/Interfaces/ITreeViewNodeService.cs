@@ -7,6 +7,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public bool IsNodeExist(INode parent, string name);
         public bool IsParentHasNodeWithName(INode node, string name);
         public INode? GetChildrenByName(INode node, string name);
+        public INode? GetNodeByPath(string path);
         public INode? GetCoreNode();
         public INode? CreateNode(INode template, INode parent);
         public void RemoveNode(INode node);

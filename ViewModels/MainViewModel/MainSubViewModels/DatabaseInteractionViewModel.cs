@@ -1,23 +1,40 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
+using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
+using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
-using DatabaseTask.ViewModels.Base;
+using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 {
-    public class DatabaseInteractionViewModel : ViewModelMessageBox, IDatabaseInteractionViewModel
+    public class DatabaseInteractionViewModel : BaseOperationsCommandsViewModel, IDatabaseInteractionViewModel
     {
         private readonly IValidateViewModel _validateViewModel;
+        private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public DatabaseInteractionViewModel(
             IMessageBoxService messageBoxService,
-            IValidateViewModel validateViewModel)
-            : base(messageBoxService)
+            ILoggerCommandsFactory itemCommandsFactory, 
+            IFileCommandsFactory fileCommandsFactory,
+            IDatabaseCommandsFactory databaseCommandsFactory,
+            ICommandsHistory commandsHistory, 
+            IFullPath fullPath,
+            IValidateViewModel validateViewModel,
+            ITreeViewFunctionality treeViewFunctionality)
+            : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
+                  databaseCommandsFactory, commandsHistory, fullPath)
         {
             _validateViewModel = validateViewModel;
+            _treeViewFunctionality = treeViewFunctionality;
         }
 
         public async Task FindDuplicates()
@@ -27,7 +44,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                 return;
             }
 
-            var result = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
+            var results = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
         }
 
         public async Task FindUnusedFiles()
@@ -37,7 +54,19 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                 return;
             }
 
-            var result = await WeakReferenceMessenger.Default.Send<MainWindowUnusedFilesMessage>();
+            var paths = await WeakReferenceMessenger.Default.Send<MainWindowUnusedFilesMessage>();
+
+            if (paths is not null)
+            {
+                foreach (var path in paths)
+                {
+                    INode? node = _treeViewFunctionality.GetNodeByPath(path);
+                    if (node is not null)
+                    {
+                        await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
+                    }
+                }
+            }
         }
     }
 }

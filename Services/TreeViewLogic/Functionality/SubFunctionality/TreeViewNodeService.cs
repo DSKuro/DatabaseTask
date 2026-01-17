@@ -3,6 +3,7 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfa
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
+using System;
 using System.Linq;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
@@ -40,6 +41,35 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         public INode? GetChildrenByName(INode node, string name)
         {
             return node.Children.FirstOrDefault(x => x.Name == name);
+        }
+
+        public INode? GetNodeByPath(string path)
+        {
+            INode? coreNode = GetCoreNode();
+            if (coreNode is null)
+            {
+                return null;
+            }
+
+            var parts = path.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(part => !part.Equals("."));
+
+            INode currentNode = coreNode;
+
+            foreach (var part in parts)
+            {
+                INode? nextNode = currentNode.Children
+                    .FirstOrDefault(node => node.Name.Equals(part));
+
+                if (nextNode is null)
+                {
+                    return null;
+                }
+
+                currentNode = nextNode;
+            }
+
+            return currentNode;
         }
 
         public INode? GetCoreNode()

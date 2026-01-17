@@ -57,5 +57,21 @@
                     "Вы точно хотите копировать выделенный файл?");
             }
         }
+        public static MessageBoxCategory ApplyChangesMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Принять изменения",
+                    "Вы точно хотите принять изменения?");
+            }
+        }
+        public static MessageBoxCategory CancelChangesMessageBox
+        {
+            get
+            {
+                return new MessageBoxCategory("Отменить изменения",
+                    "Вы точно хотите отменить все изменения?");
+            }
+        }
     }
 }

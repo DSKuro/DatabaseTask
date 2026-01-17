@@ -1,34 +1,28 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using DatabaseTask.Models.AppData;
-using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
-using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.Base;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
-using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 {
     public class DatabaseInteractionViewModel : ViewModelMessageBox, IDatabaseInteractionViewModel
     {
-        private readonly ITreeViewFunctionality _treeViewFunctionality;
-        private readonly ConnectionStringData _connectionStringData;
+        private readonly IValidateViewModel _validateViewModel;
 
         public DatabaseInteractionViewModel(
             IMessageBoxService messageBoxService,
-            ITreeViewFunctionality treeViewFunctionality,
-            ConnectionStringData connectionStringData)
+            IValidateViewModel validateViewModel)
             : base(messageBoxService)
         {
-            _treeViewFunctionality = treeViewFunctionality;
-            _connectionStringData = connectionStringData;
+            _validateViewModel = validateViewModel;
         }
 
         public async Task FindDuplicates()
         {
-            if (!await ValidateCatalogAndDatabaseAsync())
+            if (!await _validateViewModel.ValidateCatalogAndDatabaseAsync())
             {
                 return;
             }
@@ -38,30 +32,12 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
         public async Task FindUnusedFiles()
         {
-            if (!await ValidateCatalogAndDatabaseAsync())
+            if (!await _validateViewModel.ValidateCatalogAndDatabaseAsync())
             {
                 return;
             }
 
             var result = await WeakReferenceMessenger.Default.Send<MainWindowUnusedFilesMessage>();
-        }
-
-        private async Task<bool> ValidateCatalogAndDatabaseAsync()
-        {
-            if (IsCatalogAndDatabaseNotChosen())
-            {
-                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
-                    MessageBoxConstants.Error.Value, "База данных или каталог не выбраны",
-                    ButtonEnum.Ok));
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsCatalogAndDatabaseNotChosen()
-        {
-            return string.IsNullOrWhiteSpace(_connectionStringData.ConnectionString)
-                || _treeViewFunctionality.GetCoreNode() == null;
         }
     }
 }

@@ -38,6 +38,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <CheckBox IsChecked="{Binding IsDelete}"
+                                  IsEnabled="{Binding !IsDB}"
                                   HorizontalAlignment="Center"/>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>

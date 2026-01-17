@@ -69,17 +69,17 @@ namespace DatabaseTask.ViewModels.Analyses
         {
             var resultItems = DuplicatesFiles
                 .Where(item => item.IsDelete)
-                .Select(item => (item.Path, item.IsDB))
+                .Select(item => item.Path)
                 .ToList();
             WeakReferenceMessenger.Default
-                .Send(new DuplicatesFilesDialogueCloseMessage(resultItems));
+                .Send(new AnalyseFilesDialogueCloseMessage(resultItems));
         }
 
         [RelayCommand]
         public void Cancel()
         {
             WeakReferenceMessenger.Default
-                .Send(new DuplicatesFilesDialogueCloseMessage(new List<(string path, bool isInDatabase)>()));
+                .Send(new AnalyseFilesDialogueCloseMessage(new List<string>()));
         }
     }
 }

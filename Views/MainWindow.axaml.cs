@@ -80,7 +80,7 @@ namespace DatabaseTask.Views
                 DuplicatesFilesWindow duplicatesFilesWindow = _serviceProvider.GetRequiredService<DuplicatesFilesWindow>();
                 duplicatesFilesWindow.DataContext = _serviceProvider.GetRequiredService<IDuplicatesFilesViewModel>();
                 duplicatesFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                message.Reply(duplicatesFilesWindow.ShowDialog<List<(string path, bool isInDatabase)>>(window));
+                message.Reply(duplicatesFilesWindow.ShowDialog<List<string>>(window));
             });
         }
 

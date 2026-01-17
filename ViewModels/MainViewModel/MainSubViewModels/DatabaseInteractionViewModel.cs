@@ -12,6 +12,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
@@ -45,6 +46,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             }
 
             var results = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
+
+            if (results is not null)
+            {
+                await DeleteFiles(results);
+            }
         }
 
         public async Task FindUnusedFiles()
@@ -58,13 +64,18 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             if (paths is not null)
             {
-                foreach (var path in paths)
+                await DeleteFiles(paths);
+            }
+        }
+
+        private async Task DeleteFiles(List<string> paths)
+        {
+            foreach (var path in paths)
+            {
+                INode? node = _treeViewFunctionality.GetNodeByPath(path);
+                if (node is not null)
                 {
-                    INode? node = _treeViewFunctionality.GetNodeByPath(path);
-                    if (node is not null)
-                    {
-                        await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
-                    }
+                    await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
                 }
             }
         }

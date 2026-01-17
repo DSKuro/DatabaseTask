@@ -5,11 +5,27 @@ namespace DatabaseTask.ViewModels.Analyses.Models
 {
     public class DuplicatesFilesItemViewModel : ViewModelBase, IDuplicatesFilesItemViewModel
     {
+        private bool _isDb;
         private bool _isDelete;
 
         public bool IsDB
         {
-            get; set;
+            get => _isDb;
+            set
+            {
+                if (_isDb != value)
+                {
+                    _isDb = value;
+                    OnPropertyChanged(nameof(IsDB));
+
+                    if (_isDb)
+                    {
+                        IsDelete = false;
+                        OnPropertyChanged(nameof(IsDelete));
+                    }
+
+                }
+            }
         }
 
         public bool IsDelete

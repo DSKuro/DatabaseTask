@@ -12,23 +12,13 @@ namespace DatabaseTask.Services.Messages
         }
     }
 
-    public class UnusedFilesDialogueCloseMessage
+    public class AnalyseFilesDialogueCloseMessage
     {
         public List<string> Paths { get; }
 
-        public UnusedFilesDialogueCloseMessage(List<string> paths)
+        public AnalyseFilesDialogueCloseMessage(List<string> paths)
         {
             Paths = paths;
-        }
-    }
-
-    public class DuplicatesFilesDialogueCloseMessage
-    {
-        public List<(string path, bool isInDatabase)> PathsWithDatabase { get; }
-
-        public DuplicatesFilesDialogueCloseMessage(List<(string path, bool isInDatabase)> paths)
-        {
-            PathsWithDatabase = paths;
         }
     }
 }

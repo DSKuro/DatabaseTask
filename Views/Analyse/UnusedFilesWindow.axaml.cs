@@ -15,7 +15,7 @@ namespace DatabaseTask.Views.Analyse
         private void InitializeMessages()
         {
             WeakReferenceMessenger.Default.Register<UnusedFilesWindow,
-            UnusedFilesDialogueCloseMessage>(this, (window, message) =>
+            AnalyseFilesDialogueCloseMessage>(this, (window, message) =>
             {
                 window.Close(message.Paths);
             });

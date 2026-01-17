@@ -61,13 +61,13 @@ namespace DatabaseTask.ViewModels.Analyses
                 .Where(item => item.IsDelete)
                 .Select(item => item.Path)
                 .ToList();
-            WeakReferenceMessenger.Default.Send(new UnusedFilesDialogueCloseMessage(paths));
+            WeakReferenceMessenger.Default.Send(new AnalyseFilesDialogueCloseMessage(paths));
         }
 
         [RelayCommand]
         public void Cancel()
         {
-            WeakReferenceMessenger.Default.Send(new UnusedFilesDialogueCloseMessage(new List<string>()));
+            WeakReferenceMessenger.Default.Send(new AnalyseFilesDialogueCloseMessage(new List<string>()));
         }
     }
 }

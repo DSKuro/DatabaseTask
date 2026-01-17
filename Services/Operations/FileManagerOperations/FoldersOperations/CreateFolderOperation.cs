@@ -8,6 +8,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -27,10 +28,9 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGridFunctionality = dataGridFunctionality;
         }
 
-        public async Task CreateFolder(string folderName)
+        public async Task CreateFolder(INode parent, string folderName)
         {
-            INode? parent = _treeViewFunctionality.GetFirstSelectedNode();
-            if (parent != null)
+            if (parent is not null)
             {
                 await CreateFolderImplementation(folderName, parent);
             }
@@ -75,6 +75,20 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 IconPath = IconCategory.Folder.Value,
                 Parent = _treeView.SelectedNodes[0]
             };
+        }
+
+        public void UndoCreateFolder(INode parent, string folderName)
+        {
+            if (parent is not null)
+            {
+                var node = parent.Children
+                    .FirstOrDefault(item => item.Name.Equals(folderName));
+                if (node is not null)
+                {
+                    _treeViewFunctionality.RemoveNode(node);
+                    _dataGridFunctionality.RemoveProperties(node);
+                }
+            }
         }
     }
 }

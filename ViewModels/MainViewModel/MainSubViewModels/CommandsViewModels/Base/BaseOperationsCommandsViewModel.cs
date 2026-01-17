@@ -36,7 +36,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             var targets = new List<(INode, string)>() { (node, name) };
             var loggerDto = new LoggerDTO(LogCategory.CreateFolderCategory, name.ToString()!);
             await ExecuteFileSystemOperation(CommandType.CreateFolder, targets,
-                new object[] { name }, loggerDto);
+                new object[] { node, name }, loggerDto);
         }
 
         public async Task DeleteItemOperation(INode node, LogCategory category)

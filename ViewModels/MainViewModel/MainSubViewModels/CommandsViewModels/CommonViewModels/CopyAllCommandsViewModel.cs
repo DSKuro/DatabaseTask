@@ -39,7 +39,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             IFileManagerCommonOperationsPermission commonPermissions,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _moveFileCommandsViewModel = moveFileCommandsViewModel;
             _copyFolderCommandsViewModel = copyFolderCommandsViewModel;
@@ -75,7 +76,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
                 if (foldersToDelete.Count > 1)
                 {
-                    await _copyFolderCommandsViewModel.CopyFolderImplementation(foldersToDelete);
+                    await _copyFolderCommandsViewModel.CopyFolderImplementation(foldersToDelete, false);
                 }
             }
             catch (FileManagerOperationsException ex)

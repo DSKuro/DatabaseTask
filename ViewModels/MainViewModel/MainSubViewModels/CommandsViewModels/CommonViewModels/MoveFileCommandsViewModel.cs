@@ -47,7 +47,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             INameGenerator generator,
             INodeEvents nodeEvents)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _permissions = permissions;
             _filePermissions = filePermissions;
@@ -136,6 +137,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             List<INode> items = nodes.SkipLast(1).ToList();
             INode target = nodes.Last();
 
+            _treeViewFunctionality.ClearAll();
             foreach (INode item in items)
             {
                 await ProcessMoveForSingleItem(item, target);

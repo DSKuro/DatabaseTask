@@ -10,6 +10,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public void UpdateSelectedNodes(INode node);
         public void AddNodeToSelected(INode node);
         public void RemoveSelectedNodes(INode node);
+        public void ClearAll();
         public void AddSelectedNodeByIndex(int index);
     }
 }

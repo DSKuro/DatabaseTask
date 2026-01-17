@@ -34,7 +34,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ITreeView treeView,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _folderPermissions = folderPermissions;
             _treeViewFunctionality = treeViewFunctionality;

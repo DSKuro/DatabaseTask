@@ -32,7 +32,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             IValidateViewModel validateViewModel,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
-                  databaseCommandsFactory, commandsHistory, fullPath)
+                  databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _validateViewModel = validateViewModel;
             _treeViewFunctionality = treeViewFunctionality;

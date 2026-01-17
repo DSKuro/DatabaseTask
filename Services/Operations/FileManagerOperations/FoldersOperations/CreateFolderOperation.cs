@@ -5,8 +5,6 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
-using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,15 +14,12 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public class CreateFolderOperation : ICreateFolderOperation
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
-        private readonly ITreeView _treeView;
         private readonly IDataGridFunctionality _dataGridFunctionality;
 
         public CreateFolderOperation(ITreeViewFunctionality treeViewFunctionality,
-            ITreeView treeView,
             IDataGridFunctionality dataGridFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
-            _treeView = treeView;
             _dataGridFunctionality = dataGridFunctionality;
         }
 
@@ -38,7 +33,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private async Task CreateFolderImplementation(string folderName, INode parent)
         {
-            NodeViewModel node = CreateNode(folderName);
+            NodeViewModel node = CreateNode(folderName, parent);
             int index = 0;
             bool isInsert = _treeViewFunctionality.TryInsertNode(parent, node, out index);
             if (isInsert)
@@ -52,7 +47,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGridFunctionality.AddProperties(CreateFileProperties(node));
             _treeViewFunctionality.UpdateSelectedNodes(node);
             await Task.Delay(100);
-            _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));
+            _treeViewFunctionality.BringIntoView(node);
         }
 
         private FileProperties CreateFileProperties(INode node)
@@ -66,14 +61,14 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 );
         }
 
-        private NodeViewModel CreateNode(string folderName)
+        private NodeViewModel CreateNode(string folderName, INode parent)
         {
             return new NodeViewModel()
             {
                 Name = folderName,
                 IsFolder = true,
                 IconPath = IconCategory.Folder.Value,
-                Parent = _treeView.SelectedNodes[0]
+                Parent = parent
             };
         }
 

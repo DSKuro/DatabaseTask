@@ -11,5 +11,6 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public INode? GetCoreNode();
         public INode? CreateNode(INode template, INode parent);
         public void RemoveNode(INode node);
+        public void BringIntoView(INode node);
     }
 }

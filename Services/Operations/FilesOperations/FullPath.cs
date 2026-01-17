@@ -71,7 +71,7 @@ namespace DatabaseTask.Services.Operations.FilesOperations
                 return PathToCoreFolder ?? string.Empty;
             }
 
-            while (node != coreNode)
+            while (node is not null && node != coreNode)
             {
                 pathParts.Add(node!.Name);
                 node = node.Parent as NodeViewModel;

@@ -30,6 +30,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 {
                     _dataGridFunctionality.CopyProperties(copied, newNode, target);
                     RecursiveCopyChildren(copied, newNode);
+                    _treeViewFunctionality.AddNodeToSelected(newNode);
+                    _treeViewFunctionality.BringIntoView(newNode);
                 }
             }
         }

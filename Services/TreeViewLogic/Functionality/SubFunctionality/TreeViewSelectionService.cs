@@ -62,6 +62,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             _treeView.SelectedNodes.Remove(node);
         }
 
+        public void ClearAll()
+        {
+            _treeView.SelectedNodes.Clear();
+        }
+
         public void AddSelectedNodeByIndex(int index)
         {
             if (index < 0 || index > _treeView.Nodes.Count)

@@ -7,6 +7,7 @@ using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Base.Interfaces;
@@ -23,10 +24,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         public BaseOperationsCommandsViewModel(IMessageBoxService messageBoxService,
             ILoggerCommandsFactory itemCommandsFactory, IFileCommandsFactory fileCommandsFactory,
             IDatabaseCommandsFactory databaseCommandsFactory,
-            ICommandsHistory commandsHistory, IFullPath fullPath
+            ICommandsHistory commandsHistory, IFullPath fullPath,
+            ITreeViewFunctionality treeViewFunctionality
             ) 
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
-                  databaseCommandsFactory, commandsHistory)
+                  databaseCommandsFactory, commandsHistory, treeViewFunctionality)
         {
             _fullPathService = fullPath;
         }

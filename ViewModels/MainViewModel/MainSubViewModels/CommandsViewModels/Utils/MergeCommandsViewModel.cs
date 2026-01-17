@@ -33,7 +33,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             INameGenerator generator,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _generator = generator;
             _treeViewFunctionality = treeViewFunctionality;

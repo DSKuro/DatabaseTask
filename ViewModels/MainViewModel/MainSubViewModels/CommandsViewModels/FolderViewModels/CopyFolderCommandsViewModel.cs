@@ -41,7 +41,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             ITreeViewFunctionality treeViewFunctionality,
             IMergeCommandsViewModel mergeCommandsViewModel)
             : base(messageBoxService, itemCommandsFactory,
-                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath)
+                  fileCommandsFactory, databaseCommandsFactory, commandsHistory, fullPath,
+                  treeViewFunctionality)
         {
             _folderPermissions = folderPermissions;
             _commonPermissions = commonPermissions;
@@ -65,7 +66,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             }
         }
 
-        public async Task CopyFolderImplementation(List<INode> nodes)
+        public async Task CopyFolderImplementation(List<INode> nodes, bool isUpdateSelection = true)
         {
             _folderPermissions.CanCopyCatalog(nodes);
             ButtonResult? result = await MessageBoxHelper("MainDialogueWindow",
@@ -76,13 +77,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
               ));
             if (result != null && result == ButtonResult.Yes)
             {
-                await ProcessMove(nodes);
+                await ProcessMove(nodes, isUpdateSelection);
             }
         }
 
-        private async Task ProcessMove(List<INode> nodes)
+        private async Task ProcessMove(List<INode> nodes, bool isUpdateSelection)
         {
             List<INode> files = nodes.SkipLast(1).ToList();
+            if (isUpdateSelection)
+            {
+                _treeViewFunctionality.ClearAll();
+            }
             foreach (INode file in files)
             {
                 await ProcessCopy(file, nodes.Last());

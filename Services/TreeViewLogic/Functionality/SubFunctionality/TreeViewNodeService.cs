@@ -2,6 +2,7 @@
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Linq;
@@ -97,6 +98,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         public void RemoveNode(INode node)
         {
             node.Parent?.Children.Remove(node);
+        }
+
+        public void BringIntoView(INode node)
+        {
+            _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));
         }
     }
 }

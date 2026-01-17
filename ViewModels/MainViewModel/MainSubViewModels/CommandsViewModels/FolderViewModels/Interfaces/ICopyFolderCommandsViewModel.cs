@@ -7,6 +7,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public interface ICopyFolderCommandsViewModel
     {
         public Task CopyFolder();
-        public Task CopyFolderImplementation(List<INode> nodes);
+        public Task CopyFolderImplementation(List<INode> nodes, bool isUpdateSelection);
     }
 }

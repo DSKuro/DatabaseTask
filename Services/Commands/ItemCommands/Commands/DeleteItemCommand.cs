@@ -22,7 +22,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
         {
             if (_folderOperation != null)
             {
-                _folderOperation.DeleteItem(_node);
+                _folderOperation.DeleteItem(_node, true);
             }
             return Task.CompletedTask;
         }

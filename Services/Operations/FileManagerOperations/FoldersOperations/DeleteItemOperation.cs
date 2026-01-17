@@ -20,12 +20,16 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _dataGridFunctionality = dataGridFunctionality;
         }
 
-        public void DeleteItem(INode node)
+        public void DeleteItem(INode node, bool isUpdateSelection = true)
         {
             _treeViewFunctionality.RemoveNode(node);
             properties = _dataGridFunctionality.GetPropertiesForNode(node);
             _dataGridFunctionality.RemoveProperties(node);
-            _treeViewFunctionality.RemoveSelectedNodes(node);
+            if (node.Parent is not null && isUpdateSelection)
+            {
+                _treeViewFunctionality.UpdateSelectedNodes(node.Parent);
+                _treeViewFunctionality.BringIntoView(node.Parent);
+            }
         }
 
         public void UndoDeleteItem(INode node)

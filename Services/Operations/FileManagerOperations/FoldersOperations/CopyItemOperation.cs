@@ -58,6 +58,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (nodeToDelete is not null)
             {
                 _treeViewFunctionality.RemoveNode(nodeToDelete);
+                _treeViewFunctionality.UpdateSelectedNodes(target);
                 _dataGridFunctionality.RemoveProperties(nodeToDelete);
             }
         }

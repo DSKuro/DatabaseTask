@@ -40,6 +40,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         public INode? CreateNode(INode template, INode parent) => _nodeService.CreateNode(template, parent);
         public void RemoveNode(INode node) => _nodeService.RemoveNode(node);
         public void UpdateSelectedNodes(INode node) => _selectionService.UpdateSelectedNodes(node);
+        public void AddNodeToSelected(INode node) => _selectionService.AddNodeToSelected(node);
         public void RemoveSelectedNodes(INode node) => _selectionService.RemoveSelectedNodes(node);
         public void AddSelectedNodeByIndex(int index) => _selectionService.AddSelectedNodeByIndex(index);
     }

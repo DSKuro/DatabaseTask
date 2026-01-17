@@ -5,10 +5,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
 {
     public interface ITreeViewSelectionService
     {
-        INode? GetFirstSelectedNode();
-        List<INode> GetAllSelectedNodes();
-        void UpdateSelectedNodes(INode node);
-        void RemoveSelectedNodes(INode node);
-        void AddSelectedNodeByIndex(int index);
+        public INode? GetFirstSelectedNode();
+        public List<INode> GetAllSelectedNodes();
+        public void UpdateSelectedNodes(INode node);
+        public void AddNodeToSelected(INode node);
+        public void RemoveSelectedNodes(INode node);
+        public void AddSelectedNodeByIndex(int index);
     }
 }

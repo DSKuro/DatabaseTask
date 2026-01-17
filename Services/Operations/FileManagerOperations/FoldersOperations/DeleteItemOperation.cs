@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -9,6 +10,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IDataGridFunctionality _dataGridFunctionality;
+
+        private FileProperties? properties;
 
         public DeleteItemOperation(ITreeViewFunctionality treeViewFunctionality,
             IDataGridFunctionality dataGridFunctionality)
@@ -20,8 +23,24 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         public void DeleteItem(INode node)
         {
             _treeViewFunctionality.RemoveNode(node);
+            properties = _dataGridFunctionality.GetPropertiesForNode(node);
             _dataGridFunctionality.RemoveProperties(node);
             _treeViewFunctionality.RemoveSelectedNodes(node);
+        }
+
+        public void UndoDeleteItem(INode node)
+        {
+            if (node.Parent is not null)
+            {
+                if (_treeViewFunctionality.TryInsertNode(node.Parent, node, out int index))
+                {
+                    _treeViewFunctionality.AddNodeToSelected(node);
+                    if (properties is not null)
+                    {
+                        _dataGridFunctionality.AddProperties(properties);
+                    }
+                }
+            }
         }
     }
 }

@@ -41,6 +41,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
                 selectedNode.IsExpanded = true;
             }
             _treeView.SelectedNodes.Clear();
+            AddNodeToSelected(node);
+        }
+
+        public void AddNodeToSelected(INode node)
+        {
             _treeView.SelectedNodes.Add(node);
         }
 

@@ -1,7 +1,6 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.ItemCommands.Commands
@@ -30,7 +29,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 
         public void Undo()
         {
-
+            if (_folderOperation is not null)
+            {
+                _folderOperation.UndoDeleteItem(_node);
+            }
         }
     }
 }

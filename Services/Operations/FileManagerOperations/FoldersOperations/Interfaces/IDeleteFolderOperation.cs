@@ -5,5 +5,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public interface IDeleteItemOperation
     {
         public void DeleteItem(INode node);
+        public void UndoDeleteItem(INode node);
     }
 }

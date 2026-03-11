@@ -24,7 +24,7 @@ namespace DatabaseTask.ViewModels.Logger
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public LogData(string time, string operation, string? imagePath = "")
+        public LogData(string operation, string time, string? imagePath = "")
         {
             Time = time;
             Operation = operation;

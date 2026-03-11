@@ -13,5 +13,6 @@ namespace DatabaseTask.Services.Commands.Interfaces
         public void ExecuteUndoItemsCommands();
         public List<bool> ExecuteAllCommands();
         public void ClearAll();
+        public int GetItemsCommandsCount();
     }
 }

@@ -10,6 +10,8 @@
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
 		xmlns:models="using:DatabaseTask.Models"
 		xmlns:log="using:DatabaseTask.ViewModels.Logger"
+		xmlns:local="clr-namespace:DatabaseTask.Views.Converters"
+		xmlns:attachedprop="clr-namespace:DatabaseTask.Views.AttachedProperties"
         x:Class="DatabaseTask.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/window.ico"
@@ -19,6 +21,15 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+
+	<Window.Resources>
+		<local:HighlightedConverter x:Key="HighlightConverter"
+                                HighlightBrush="Red"
+								NonHighlightBrush="Transparent"/>
+		<local:PointOverHighlightedConverter x:Key="PointOverHighlightedConverter"
+											 NonHighlightBrush="{StaticResource ButtonBackgroundPointerOver}"
+											 />
+	</Window.Resources>
 
 	<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 		<Border>
@@ -46,15 +57,25 @@
 				<TreeView.Styles>
 						<Style Selector="TreeViewItem" x:DataType="vm:Controls.Nodes.NodeViewModel">
 							<Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+							<Setter Property="Background" Value="{Binding IsOperationHighlighted, Converter={StaticResource HighlightConverter}}"/>
 							<Setter Property="ContextMenu">
-							<ContextMenu>
-								 <MenuItem Header="Копировать"
-										   Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuCopyCommand}"/>
-								 <MenuItem Header="Удалить" 
-									       Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuDeleteCommand}"/>
-							</ContextMenu>
+								<ContextMenu>
+									 <MenuItem Header="Копировать"
+											   Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuCopyCommand}"/>
+									 <MenuItem Header="Удалить" 
+											   Command="{Binding #TreeViewControl.((vm:MainWindowViewModel)DataContext).ContextMenuDeleteCommand}"/>
+								</ContextMenu>
 						   </Setter>
 						</Style>
+					
+					<Style Selector="TreeViewItem:selected /template/ Border#PART_LayoutRoot" x:DataType="vm:Controls.Nodes.NodeViewModel">
+						<Setter Property="Background" Value="{Binding IsOperationHighlighted, Converter={StaticResource HighlightConverter}}"/>
+					</Style>
+
+					<Style Selector="TreeViewItem /template/ Border#PART_LayoutRoot:pointerover" x:DataType="vm:Controls.Nodes.NodeViewModel">
+						<Setter Property="Background" Value="{Binding IsOperationHighlighted, Converter={StaticResource PointOverHighlightedConverter}}"/>
+					</Style>
+
 				</TreeView.Styles>
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate x:DataType="vm:Controls.Nodes.NodeViewModel" ItemsSource="{Binding Children}">

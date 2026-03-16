@@ -8,6 +8,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
     public class NodeViewModel : ViewModelBase, INode
     {
         private bool _isExpanded;
+        private bool _isOperationHighlighted;
         private string _name = null!;
         private string _iconPath = null!;
 
@@ -27,6 +28,12 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
                 _name = value;
                 OnPropertyChanged();
             }
+        }
+
+        public bool IsOperationHighlighted
+        {
+            get => _isOperationHighlighted;
+            set => SetProperty(ref _isOperationHighlighted, value);
         }
 
         public bool IsExpanded

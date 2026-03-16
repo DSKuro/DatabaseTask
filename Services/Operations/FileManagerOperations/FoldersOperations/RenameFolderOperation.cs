@@ -28,11 +28,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (node is NodeViewModel nodeViewModel)
             {
                 _oldName = nodeViewModel.Name;
-                await RenameFolderImpl(newName, nodeViewModel, true);
+                await RenameFolderImpl(newName, nodeViewModel, true, true);
             }
         }
 
-        private async Task RenameFolderImpl(string newName, NodeViewModel node, bool isScroll)
+        private async Task RenameFolderImpl(string newName, NodeViewModel node, bool isScroll, bool isHighlight)
         {
             node.Name = newName;
             FileProperties? item = _dataGridFunctionality.GetPropertiesForNode(node);
@@ -40,6 +40,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 item.Name = newName;
                 await UpdatePlacement(node, item, true);
+                node.IsOperationHighlighted = isHighlight;
             }
         }
 
@@ -68,7 +69,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             if (node is NodeViewModel nodeViewModel && _oldName is not null)
             {
-                await RenameFolderImpl(_oldName, nodeViewModel, false);
+                await RenameFolderImpl(_oldName, nodeViewModel, false, false);
             }
         }
     }

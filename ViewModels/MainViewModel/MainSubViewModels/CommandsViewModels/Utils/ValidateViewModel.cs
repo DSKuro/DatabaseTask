@@ -29,7 +29,15 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
 
         public async Task<bool> ValidateChanges()
         {
+            if (IsCatalogAndDatabaseNotChosen())
+            {
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                    MessageBoxConstants.Error.Value, "База данных или каталог не выбраны",
+                    ButtonEnum.Ok));
+                return false;
+            }
 
+            return true;
         }
 
         public async Task<bool> ValidateCatalogAndDatabaseAsync()
@@ -42,7 +50,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return false;
             }
             
-            if (_commandsHistory.GetItemsCommandsCount() is not 0)
+            if (_commandsHistory.GetCommandsCount() is not 0)
             {
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                     MessageBoxConstants.Error.Value, "Обнаружены операции с каталогами. Примите изменения или отмените их.",

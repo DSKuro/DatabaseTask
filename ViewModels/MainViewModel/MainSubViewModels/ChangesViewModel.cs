@@ -33,7 +33,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
         public async Task ApplyChanges()
         {
-            if (!await _validateViewModel.ValidateCatalogAndDatabaseAsync())
+            if (!await _validateViewModel.ValidateChanges())
             {
                 return;
             }

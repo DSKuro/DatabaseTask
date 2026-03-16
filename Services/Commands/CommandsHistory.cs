@@ -86,9 +86,9 @@ namespace DatabaseTask.Services.Commands
             _databaseCommands.Clear();
         }
 
-        public int GetItemsCommandsCount()
+        public int GetCommandsCount()
         {
-            return _itemCommands.Count;
+            return _commands.Count;
         }
     }
 }

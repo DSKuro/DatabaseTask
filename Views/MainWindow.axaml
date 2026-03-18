@@ -24,9 +24,10 @@
 
 	<Window.Resources>
 		<local:HighlightedConverter x:Key="HighlightConverter"
-                                HighlightBrush="Red"
+                                HighlightBrush="#FFB74D"
 								NonHighlightBrush="Transparent"/>
 		<local:PointOverHighlightedConverter x:Key="PointOverHighlightedConverter"
+											 HighlightBrush="#FFCC80"
 											 NonHighlightBrush="{StaticResource ButtonBackgroundPointerOver}"
 											 />
 	</Window.Resources>

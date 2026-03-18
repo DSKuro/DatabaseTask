@@ -4,10 +4,12 @@ using DatabaseTask.Models.AppData;
 using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Models.StorageOptions;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.Services.Exceptions;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
 using DatabaseTask.ViewModels.Base;
@@ -83,6 +85,13 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             {
                 _stringData.ConnectionString = string.Empty;
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                    MessageBoxConstants.Error.Value, "Ошибка работы с базой данных",
+                    ButtonEnum.Ok));
+            }
+            catch (DatabaseUnavailableException)
+            {
+                _stringData.ConnectionString = string.Empty;
+                await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                     MessageBoxConstants.Error.Value, "Невозможно установить соединение с базой данных",
                     ButtonEnum.Ok));
             }
@@ -109,7 +118,16 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             {
                 _databaseUtils.DetachDatabase();
             }
-            _drawingRepository.GetFirstItem();
+            CanConnect();
+        }
+
+        private void CanConnect()
+        {
+            using var context = new DataContext(_stringData.ConnectionString);
+            if (!context.Database.CanConnect())
+            {
+                throw new DatabaseUnavailableException(string.Empty);
+            }
         }
 
         public async Task OpenFolder()

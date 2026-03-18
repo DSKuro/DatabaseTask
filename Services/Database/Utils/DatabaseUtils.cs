@@ -57,7 +57,7 @@ namespace DatabaseTask.Services.Database.Utils
                 InitialCatalog = _mainCatalog,
                 IntegratedSecurity = true,
                 TrustServerCertificate = true,
-                ConnectTimeout = 50
+                ConnectTimeout = 15
             };
 
             return builder.ConnectionString;

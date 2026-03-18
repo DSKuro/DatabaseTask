@@ -38,7 +38,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             bool isInsert = _treeViewFunctionality.TryInsertNode(parent, node, out index);
             if (isInsert)
             {
-                await UpdateProperties(index, parent, node) ;
+                await UpdateProperties(index, parent, node);
+                node.IsOperationHighlighted = true;
             }
         }
 
@@ -82,6 +83,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 {
                     _treeViewFunctionality.RemoveNode(node);
                     _dataGridFunctionality.RemoveProperties(node);
+                    node.IsOperationHighlighted = false;
                 }
             }
         }

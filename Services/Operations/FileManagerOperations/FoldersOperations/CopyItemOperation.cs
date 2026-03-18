@@ -33,6 +33,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                     target.IsExpanded = true;
                     _treeViewFunctionality.AddNodeToSelected(newNode);
                     _treeViewFunctionality.BringIntoView(newNode);
+                    newNode.IsOperationHighlighted = true;
                 }
             }
         }
@@ -63,6 +64,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 _treeViewFunctionality.RemoveNode(nodeToDelete);
                 _treeViewFunctionality.UpdateSelectedNodes(target);
                 _dataGridFunctionality.RemoveProperties(nodeToDelete);
+                nodeToDelete.IsOperationHighlighted = false;
             }
         }
     }

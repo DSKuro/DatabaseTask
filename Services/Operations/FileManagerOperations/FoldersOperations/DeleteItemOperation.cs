@@ -29,6 +29,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 _treeViewFunctionality.UpdateSelectedNodes(node.Parent);
                 _treeViewFunctionality.BringIntoView(node.Parent);
+                node.Parent.IsOperationHighlighted = true;
             }
         }
 
@@ -42,6 +43,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                     if (properties is not null)
                     {
                         _dataGridFunctionality.AddProperties(properties);
+                        node.Parent.IsOperationHighlighted = false;
                     }
                 }
             }

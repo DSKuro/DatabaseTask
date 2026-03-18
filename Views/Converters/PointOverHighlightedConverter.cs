@@ -9,7 +9,10 @@ namespace DatabaseTask.Views.Converters
     public class PointOverHighlightedConverter : IValueConverter
     {
         public IBrush HighlightBrush { get; set; } = new SolidColorBrush(Color.Parse("#FFCC80"));
-        public IBrush NonHighlightBrush { get; set; } = (IBrush)Application.Current.Resources["ButtonBackgroundPointerOver"];
+        public IBrush NonHighlightBrush { get; set; } =
+            Application.Current?.TryGetResource("ButtonBackgroundPointerOver", null, out var brush) is true
+           ? (IBrush)brush!
+           : new SolidColorBrush(Colors.Transparent);
 
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

@@ -6,5 +6,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         public void DeleteItem(INode node, bool isUpdateSelection);
         public void UndoDeleteItem(INode node);
+        public void CommitDeleteItem(INode node);
     }
 }

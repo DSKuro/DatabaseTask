@@ -67,5 +67,15 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 nodeToDelete.IsOperationHighlighted = false;
             }
         }
+
+        public void CommitCopyItem(INode copied, INode target, string newItemName)
+        {
+            var nodeToDelete = target.Children.FirstOrDefault(item => item.Name.Equals(newItemName));
+
+            if (nodeToDelete is not null)
+            {
+                nodeToDelete.IsOperationHighlighted = false;
+            }
+        }
     }
 }

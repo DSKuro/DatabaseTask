@@ -42,7 +42,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 
         public void Commit()
         {
-
+            if (_folderOperation is not null)
+            {
+                _folderOperation.CommitCopyItem(_copied, _target, _newName);
+            }
         }
     }
 }

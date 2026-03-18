@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Decorator
 {
@@ -20,6 +21,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         public virtual void UndoCopyItem(INode copied, INode target, string newItemName)
         {
             _copyOperation.UndoCopyItem(copied, target, newItemName);
+        }
+
+        public virtual void CommitCopyItem(INode copied, INode target, string newItemName)
+        {
+            _copyOperation.CommitCopyItem(copied, target, newItemName);
         }
     }
 }

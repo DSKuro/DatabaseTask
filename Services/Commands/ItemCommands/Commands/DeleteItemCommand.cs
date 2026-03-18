@@ -37,7 +37,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
 
         public void Commit()
         {
-
+            if (_folderOperation is not null)
+            {
+                _folderOperation.CommitDeleteItem(_node);
+            }
         }
     }
 }

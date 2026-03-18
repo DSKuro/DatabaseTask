@@ -48,5 +48,13 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 }
             }
         }
+
+        public void CommitDeleteItem(INode node)
+        {
+            if (node.Parent is not null)
+            {
+                node.Parent.IsOperationHighlighted = false;
+            }
+        }
     }
 }

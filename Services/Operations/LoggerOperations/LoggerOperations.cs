@@ -5,6 +5,7 @@ using DatabaseTask.ViewModels.Logger;
 using DatabaseTask.ViewModels.Logger.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DatabaseTask.Services.Operations.LoggerOperations
 {
@@ -36,7 +37,7 @@ namespace DatabaseTask.Services.Operations.LoggerOperations
 
         public void UpdateStatus(List<bool> results)
         {
-            var logs = _logger.LogOperations;
+            var logs = _logger.LogOperations.Where(x => string.IsNullOrEmpty(x.ImagePath)).ToList();
             for (int i = 0; i < results.Count; i++)
             {
                 string path = results[i] == true ? StatusCategory.CorrectStatus.Path :

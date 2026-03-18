@@ -62,6 +62,8 @@ namespace DatabaseTask.Services.Commands
 
             _transaction.ExecuteCommandsInTransaction(_databaseCommands);
 
+            CommitSuccessfulItemCommands(results);
+
             return results;
         }
 
@@ -79,6 +81,23 @@ namespace DatabaseTask.Services.Commands
 
             return results;
         }
+
+        private void CommitSuccessfulItemCommands(List<bool> commandResults)
+        {
+            var itemCommandsArray = _itemCommands.ToArray();
+            int n = itemCommandsArray.Length;
+
+            for (int i = 0; i < n && i < commandResults.Count; i++)
+            {
+                if (commandResults[i])
+                {
+                    itemCommandsArray[n - 1 - i].Commit();
+                }
+            }
+
+            _itemCommands.Clear();
+        }
+
 
         public void ClearAll()
         {

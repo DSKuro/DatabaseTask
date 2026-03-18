@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.ItemCommands.Commands
@@ -33,6 +34,14 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
             if (_folderOperation is not null)
             {
                 _folderOperation.UndoCreateFolder(_parent, _folderName);
+            }
+        }
+
+        public void Commit()
+        {
+            if (_folderOperation is not null)
+            {
+                _folderOperation.CommitCreateFolder(_parent, _folderName);
             }
         }
     }

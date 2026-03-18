@@ -36,5 +36,13 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
                 _renameOperation.UndoRenameFolder(_node);
             }
         }
+
+        public void Commit()
+        {
+            if (_renameOperation is not null)
+            {
+                _renameOperation.CommitRenameFolder(_node);
+            }
+        }
     }
 }

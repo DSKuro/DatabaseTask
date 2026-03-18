@@ -7,5 +7,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         public Task CreateFolder(INode parent, string folderName);
         public void UndoCreateFolder(INode parent, string folderName);
+        public void CommitCreateFolder(INode parent, string folderName);
     }
 }

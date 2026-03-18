@@ -33,5 +33,10 @@ namespace DatabaseTask.Services.Commands.LogCommands
                 _loggerOperations.RemoveLog();
             }
         }
+
+        public void Commit()
+        {
+
+        }
     }
 }

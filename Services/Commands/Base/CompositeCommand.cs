@@ -28,5 +28,13 @@ namespace DatabaseTask.Services.Commands.Base
                 command.Undo();
             }
         }
+
+        public void Commit()
+        {
+            foreach (var command in _commands)
+            {
+                command.Commit();
+            }
+        }
     }
 }

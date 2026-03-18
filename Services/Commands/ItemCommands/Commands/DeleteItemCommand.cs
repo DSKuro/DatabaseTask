@@ -34,5 +34,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
                 _folderOperation.UndoDeleteItem(_node);
             }
         }
+
+        public void Commit()
+        {
+
+        }
     }
 }

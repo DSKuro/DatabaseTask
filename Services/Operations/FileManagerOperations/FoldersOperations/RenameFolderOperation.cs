@@ -72,5 +72,10 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 await RenameFolderImpl(_oldName, nodeViewModel, false, false);
             }
         }
+
+        public void CommitRenameFolder(INode node)
+        {
+            node.IsOperationHighlighted = false;
+        }
     }
 }

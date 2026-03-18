@@ -33,5 +33,10 @@ namespace DatabaseTask.Services.Commands.FilesCommands.Commands
         {
 
         }
+
+        public void Commit()
+        {
+
+        }
     }
 }

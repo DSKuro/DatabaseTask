@@ -7,5 +7,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         public Task RenameFolder(INode node, string newName);
         public Task UndoRenameFolder(INode node);
+        public void CommitRenameFolder(INode node);
     }
 }

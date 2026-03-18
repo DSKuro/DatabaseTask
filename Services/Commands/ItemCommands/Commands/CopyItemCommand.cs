@@ -39,5 +39,10 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
                 _folderOperation.UndoCopyItem(_copied, _target, _newName);
             }
         }
+
+        public void Commit()
+        {
+
+        }
     }
 }

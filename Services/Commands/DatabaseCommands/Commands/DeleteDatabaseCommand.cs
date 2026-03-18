@@ -40,5 +40,10 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
         {
 
         }
+
+        public void Commit()
+        {
+
+        }
     }
 }

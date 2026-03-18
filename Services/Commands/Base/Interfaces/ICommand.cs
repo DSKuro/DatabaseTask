@@ -6,5 +6,6 @@ namespace DatabaseTask.Services.Commands.Base.Interfaces
     {
         public Task Execute();
         public void Undo();
+        public void Commit();
     }
 }

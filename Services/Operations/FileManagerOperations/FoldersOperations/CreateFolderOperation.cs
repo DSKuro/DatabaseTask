@@ -87,5 +87,18 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 }
             }
         }
+
+        public void CommitCreateFolder(INode parent, string folderName)
+        {
+            if (parent is not null)
+            {
+                var node = parent.Children
+                    .FirstOrDefault(item => item.Name.Equals(folderName));
+                if (node is not null)
+                {
+                    node.IsOperationHighlighted = false;
+                }
+            }
+        }
     }
 }

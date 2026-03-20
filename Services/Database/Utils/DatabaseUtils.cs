@@ -8,7 +8,7 @@ namespace DatabaseTask.Services.Database.Utils
     {
         private const string _mainCatalog = "master";
         private const string _initialCatalog = "Data";
-        private const string _source = ".\\SQLEXPRESS";
+        private const string _source = "(localdb)\\mssqllocaldb";
         private const string _detachCommand = 
             @"ALTER DATABASE [Data] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; " +
             @"EXEC sp_detach_db 'Data', 'true'";

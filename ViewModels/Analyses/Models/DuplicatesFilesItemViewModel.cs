@@ -41,6 +41,12 @@ namespace DatabaseTask.ViewModels.Analyses.Models
             }
         }
 
+        public bool IsFirstInGroup
+        {
+            get;
+            set;
+        }
+
         public string FileName
         {
             get; set;

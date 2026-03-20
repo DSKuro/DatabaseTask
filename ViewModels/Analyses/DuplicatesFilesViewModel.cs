@@ -31,13 +31,16 @@ namespace DatabaseTask.ViewModels.Analyses
         {
             var duplicates = _findDuplicatesService.FindDuplicatesByNameAndSize();
             var individualViewModels = duplicates.SelectMany(group =>
-                group.files.Select(file =>
+                group.files.Select((file, index) =>
                     new DuplicatesFilesItemViewModel(
                         file.isInDatabase,
                         false,
                         group.key,
                         file.path
                     )
+                    {
+                        IsFirstInGroup = index is 0
+                    }
                 )
             );
 

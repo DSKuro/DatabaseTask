@@ -8,10 +8,18 @@
 		dialogues:DialogueManager.Register="UnusedFilesDialogues"
         x:Class="DatabaseTask.Views.Analyse.DuplicatesFilesWindow"
 		x:DataType="vm:DuplicatesFilesViewModel"
+		xmlns:local="clr-namespace:DatabaseTask.Views.Converters"
         Width="500"
         Height="400"
         Icon="/Assets/window.ico"
         Title="Дубликаты в чертежах">
+
+	<Window.Resources>
+		<local:DuplicateFirstGroupConverter x:Key="DuplicateFirstGroupConverter"
+									FirstBrush="LightYellow"
+									NonFirstBrush="Transparent"
+											/>
+	</Window.Resources>
 
     <Grid RowDefinitions="*, Auto, Auto">
         <DataGrid 
@@ -19,7 +27,13 @@
               CanUserResizeColumns="True"
               GridLinesVisibility="All"
 			  ItemsSource="{Binding DuplicatesFiles}">
-        
+
+		<DataGrid.Styles>
+			<Style Selector="DataGridRow" x:DataType="vm:Models.DuplicatesFilesItemViewModel">
+				<Setter Property="Background" Value="{Binding IsFirstInGroup, Converter={StaticResource DuplicateFirstGroupConverter}}"/>
+			</Style>
+		</DataGrid.Styles>
+			
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="В базу"
                                     Width="Auto">

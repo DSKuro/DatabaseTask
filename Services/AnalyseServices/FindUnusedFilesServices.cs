@@ -26,7 +26,15 @@ namespace DatabaseTask.Services.AnalyseServices
         public List<string> FindUnusedFiles()
         {
             List<string?>? existedPaths = _drawingRepository.GetExistedPaths();
+
             if (existedPaths == null)
+            {
+                return new List<string>();
+            }
+
+            var newExistedPaths = GetCorrectDatabasePaths(existedPaths);
+
+            if (newExistedPaths is null || !newExistedPaths.Any())
             {
                 return new List<string>();
             }
@@ -39,7 +47,21 @@ namespace DatabaseTask.Services.AnalyseServices
 
             List<string> filesInCatalog = GetPathsForFilesInCatalog(directory);
 
-            return GetUnusedFiles(existedPaths, filesInCatalog);
+            return GetUnusedFiles(newExistedPaths!, filesInCatalog); ;
+        }
+
+        private List<string>? GetCorrectDatabasePaths(List<string?> paths)
+        {
+            return paths.Distinct()
+                .Select(x =>
+                {
+                    string baseFolder = @".\..\dwg"; 
+                    string? result = x.Contains(@"\dwg\") ? 
+                    @".\" + Path.GetRelativePath(baseFolder, x) : 
+                    x; 
+                    return result;
+                })
+                .ToList();
         }
 
         private List<string> GetPathsForFilesInCatalog(IEnumerable<FileInfo?> directory)
@@ -70,6 +92,7 @@ namespace DatabaseTask.Services.AnalyseServices
                     unusedFiles.Add(file);
                 }
             }
+            
             return unusedFiles;
         }
     }

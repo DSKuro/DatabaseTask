@@ -106,6 +106,12 @@
 			</StackPanel.Styles>
 			<Button 
 				MinWidth="70" 
+                Command="{Binding ExcelDuplicateFilesCommand}"
+				>
+				Excel
+			</Button>
+			<Button 
+				MinWidth="70" 
 				Classes="ApplyButton"
                 Command="{Binding ApplyCommand}"
 				>

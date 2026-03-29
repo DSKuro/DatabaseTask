@@ -13,6 +13,7 @@ namespace DatabaseTask.Services.Excel
 {
     public class ExcelUnusedPaths : IExcelUnusedPaths
     {
+        private const string _filePrefix = "unusedfiles_";
         private const string _unusedFiles = "Неиспользуемые файлы";
         private const string _unrecognisedFiles = "Неопознанные файлы";
 
@@ -28,7 +29,7 @@ namespace DatabaseTask.Services.Excel
                 return;
             }
 
-            string tempFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+            string tempFile = Path.Combine(Path.GetTempPath(), $"{_filePrefix}" + Guid.NewGuid() + ".xlsx");
 
             using var document = SpreadsheetDocument.Create(tempFile, SpreadsheetDocumentType.Workbook, true);
 

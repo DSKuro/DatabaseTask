@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
 using DatabaseTask.Services.AnalyseServices.Interfaces;
+using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Excel.UnusedFiles.Interfaces;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
@@ -16,6 +17,7 @@ namespace DatabaseTask.ViewModels.Analyses
     {
         private readonly IFindUnusedFilesServices _findUnusedFilesServices;
         private readonly IExcelUnusedPaths _excelUnusedPaths;
+        private readonly IAnalyseUtils _analyseUtils;
 
         private List<string> _exceptFiles = new List<string>();
 
@@ -26,11 +28,14 @@ namespace DatabaseTask.ViewModels.Analyses
         }
 
         public UnusedFilesViewModel(IFindUnusedFilesServices findUnusedFilesServices,
-                                    IExcelUnusedPaths excelUnusedPaths)
+                                    IExcelUnusedPaths excelUnusedPaths,
+                                    IAnalyseUtils analyseUtils)
         {
             _findUnusedFilesServices = findUnusedFilesServices;
             _excelUnusedPaths = excelUnusedPaths;
+            _analyseUtils = analyseUtils;
             UnusedFiles = new SmartCollection<UnusedFilesItemViewModel>();
+            _analyseUtils.ClearTempFiles();
             LoadUnusedFilesAsync();
         }
 

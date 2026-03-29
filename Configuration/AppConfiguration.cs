@@ -27,6 +27,8 @@ using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Inte
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
+using DatabaseTask.Services.Excel;
+using DatabaseTask.Services.Excel.UnusedFiles.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations;
@@ -245,6 +247,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IFindUnusedFilesServices, FindUnusedFilesServices>();
             _serviceCollection.AddScoped<IUnusedFilesItemViewModel, UnusedFilesItemViewModel>();
             _serviceCollection.AddScoped<IDuplicatesFilesItemViewModel, DuplicatesFilesItemViewModel>();
+            _serviceCollection.AddScoped<IExcelUnusedPaths, ExcelUnusedPaths>();
         }
     }
 }

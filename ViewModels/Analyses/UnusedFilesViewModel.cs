@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
 using DatabaseTask.Services.AnalyseServices.Interfaces;
+using DatabaseTask.Services.Excel.UnusedFiles.Interfaces;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
 using DatabaseTask.ViewModels.Analyses.Models;
@@ -14,6 +15,9 @@ namespace DatabaseTask.ViewModels.Analyses
     public partial class UnusedFilesViewModel : ViewModelBase, IUnusedFilesViewModel
     {
         private readonly IFindUnusedFilesServices _findUnusedFilesServices;
+        private readonly IExcelUnusedPaths _excelUnusedPaths;
+
+        private List<string> _exceptFiles = new List<string>();
 
         public SmartCollection<UnusedFilesItemViewModel> UnusedFiles
         {
@@ -21,17 +25,19 @@ namespace DatabaseTask.ViewModels.Analyses
             set;
         }
 
-        public UnusedFilesViewModel(IFindUnusedFilesServices findUnusedFilesServices)
+        public UnusedFilesViewModel(IFindUnusedFilesServices findUnusedFilesServices,
+                                    IExcelUnusedPaths excelUnusedPaths)
         {
             _findUnusedFilesServices = findUnusedFilesServices;
+            _excelUnusedPaths = excelUnusedPaths;
             UnusedFiles = new SmartCollection<UnusedFilesItemViewModel>();
             LoadUnusedFilesAsync();
         }
 
         private void LoadUnusedFilesAsync()
         {
-            var files = _findUnusedFilesServices.FindUnusedFiles(); ;
-            UnusedFiles.AddRange(files.Select(f => new UnusedFilesItemViewModel(false, f)));
+            (var unusedFiles, _exceptFiles)  = _findUnusedFilesServices.FindUnusedFiles(); ;
+            UnusedFiles.AddRange(unusedFiles.Select(f => new UnusedFilesItemViewModel(false, f)));
         }
 
         [RelayCommand]
@@ -52,6 +58,13 @@ namespace DatabaseTask.ViewModels.Analyses
             {
                 item.IsDelete = value;
             }
+        }
+
+        [RelayCommand]
+        public void WriteUnusedExcelPaths()
+        {
+            _excelUnusedPaths.WriteUnusedPathsToExcel(UnusedFiles.Select(x => x.Path).ToList(),
+                _exceptFiles);
         }
 
         [RelayCommand]

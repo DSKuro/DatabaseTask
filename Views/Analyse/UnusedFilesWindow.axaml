@@ -68,6 +68,11 @@
 				Command="{Binding UncheckAllCommand}"
 				>
 				Снять выделение</Button>
+			<Button 
+				MinWidth="70"
+				Command="{Binding WriteUnusedExcelPathsCommand}"
+				>
+				Excel</Button>
 		</StackPanel>
         <StackPanel Spacing="10" 
 					Margin="0, 0, 10, 10" 

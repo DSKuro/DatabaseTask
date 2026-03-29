@@ -4,6 +4,6 @@ namespace DatabaseTask.Services.AnalyseServices.Interfaces
 {
     public interface IFindUnusedFilesServices
     {
-        public List<string> FindUnusedFiles();
+        public (List<string>, List<string>) FindUnusedFiles();
     }
 }

@@ -17,64 +17,71 @@
 		<vm:UnusedFilesViewModel/>
 	</Design.DataContext>
     
-    <Grid RowDefinitions="*, Auto, Auto">
-        <DataGrid Grid.Row="0"
-				  Margin="10, 10, 0, 0"
-				  AutoGenerateColumns="False"
-                  CanUserResizeColumns="True"
-				  HorizontalScrollBarVisibility="Visible"
-				  ItemsSource="{Binding UnusedFiles}">
-			<DataGrid.Styles>
-				<Style Selector="DataGridColumnHeader">
-					<Setter Property="HorizontalAlignment" Value="Center"/>
-				</Style>
-			</DataGrid.Styles>
+   <Grid RowDefinitions="*, Auto, Auto">
+        <TabControl Grid.Row="0"
+                    Margin="10, 0, 0, 0">
+            <TabControl.Styles>
+                <Style Selector="TabItem">
+                    <Setter Property="FontSize" Value="14"/> 
+                    <Setter Property="Padding" Value="4,2"/>
+                </Style>
+            </TabControl.Styles>
 
-			<DataGrid.Columns>
-                <DataGridTemplateColumn Header="Удалить" 
-                                        CanUserSort="True"
-                                        Width="Auto">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<CheckBox IsChecked="{Binding IsDelete}"
-									  HorizontalAlignment="Center"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-				<DataGridTextColumn Header="Путь"
-									IsReadOnly="True"
-                                    Width="*"
-									Binding="{Binding Path}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Spacing="10" 
-					Margin="10, 10, 0, 0" 
-					HorizontalAlignment="Left" 
-					Orientation="Horizontal" 
-					Grid.Row="1">
-			<StackPanel.Styles>
-				<Style Selector="Button">
-					<Setter Property="HorizontalContentAlignment" Value="Center"/>
-				</Style>
-			</StackPanel.Styles>
-			<Button 
-				MinWidth="70" 
-				Command="{Binding CheckAllCommand}"
-				>
-				Выделить всё
-			</Button>
-			<Button 
-				MinWidth="70"
-				Command="{Binding UncheckAllCommand}"
-				>
-				Снять выделение</Button>
-			<Button 
-				MinWidth="70"
-				Command="{Binding WriteUnusedExcelPathsCommand}"
-				>
-				Excel</Button>
-		</StackPanel>
-        <StackPanel Spacing="10" 
+            <TabItem Header="Неиспользуемые файлы">
+                <Grid>
+                    <DataGrid AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              HorizontalScrollBarVisibility="Visible"
+                              ItemsSource="{Binding UnusedFiles}"
+                              Margin="0,0,0,30">
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridColumnHeader">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGrid.Styles>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Удалить" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsDelete}" HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Путь"
+                                                IsReadOnly="True"
+                                                Width="*"
+                                                Binding="{Binding Path}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="5" Margin="0,0,0,0" VerticalAlignment="Bottom">
+                        <Button MinWidth="50" 
+                                Command="{Binding CheckAllCommand}">
+                            Выделить</Button>
+                        <Button MinWidth="50" 
+                                Command="{Binding UncheckAllCommand}">
+                            Снять</Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Неопознанные файлы">
+                <DataGrid AutoGenerateColumns="False"
+                          CanUserResizeColumns="True"
+                          HorizontalScrollBarVisibility="Visible"
+                          ItemsSource="{Binding ExceptFiles}"
+                          Margin="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Путь"
+                                            IsReadOnly="True"
+                                            Width="*"
+                                            Binding="{Binding}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+
+          <StackPanel Spacing="10" 
 					Margin="0, 0, 10, 10" 
 					MaxHeight="200"
 					HorizontalAlignment="Right" 
@@ -85,18 +92,17 @@
 					<Setter Property="HorizontalContentAlignment" Value="Center"/>
 				</Style>
 			</StackPanel.Styles>
-			<Button 
-				MinWidth="70" 
-				Classes="ApplyButton"
-				Command="{Binding ApplyCommand}"
-				>
-				Ok
-			</Button>
-			<Button 
-				MinWidth="70"
-				Command="{Binding CancelCommand}"
-				>
-				Отмена</Button>
-		</StackPanel>
+            <Button MinWidth="70" 
+                    Command="{Binding WriteUnusedExcelPathsCommand}">
+                Excel</Button>
+            <Button MinWidth="70" 
+                    Classes="ApplyButton" 
+                    Command="{Binding ApplyCommand}">
+                Ok</Button>
+            <Button MinWidth="70" 
+                    Command="{Binding CancelCommand}">
+                Отмена</Button>
+        </StackPanel>
+
     </Grid>
 </Window>

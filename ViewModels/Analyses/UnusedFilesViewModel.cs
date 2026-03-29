@@ -10,6 +10,7 @@ using DatabaseTask.ViewModels.Analyses.Models;
 using DatabaseTask.ViewModels.Base;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace DatabaseTask.ViewModels.Analyses
 {
@@ -19,9 +20,13 @@ namespace DatabaseTask.ViewModels.Analyses
         private readonly IExcelUnusedPaths _excelUnusedPaths;
         private readonly IAnalyseUtils _analyseUtils;
 
-        private List<string> _exceptFiles = new List<string>();
-
         public SmartCollection<UnusedFilesItemViewModel> UnusedFiles
+        {
+            get;
+            set;
+        }
+
+        public SmartCollection<string> ExceptFiles
         {
             get;
             set;
@@ -35,14 +40,16 @@ namespace DatabaseTask.ViewModels.Analyses
             _excelUnusedPaths = excelUnusedPaths;
             _analyseUtils = analyseUtils;
             UnusedFiles = new SmartCollection<UnusedFilesItemViewModel>();
+            ExceptFiles = new SmartCollection<string>();
             _analyseUtils.ClearTempFiles();
             LoadUnusedFilesAsync();
         }
 
         private void LoadUnusedFilesAsync()
         {
-            (var unusedFiles, _exceptFiles)  = _findUnusedFilesServices.FindUnusedFiles(); ;
+            (var unusedFiles, var exceptFiles)  = _findUnusedFilesServices.FindUnusedFiles();
             UnusedFiles.AddRange(unusedFiles.Select(f => new UnusedFilesItemViewModel(false, f)));
+            ExceptFiles.AddRange(exceptFiles);
         }
 
         [RelayCommand]
@@ -69,7 +76,7 @@ namespace DatabaseTask.ViewModels.Analyses
         public void WriteUnusedExcelPaths()
         {
             _excelUnusedPaths.WriteUnusedPathsToExcel(UnusedFiles.Select(x => x.Path).ToList(),
-                _exceptFiles);
+                ExceptFiles.ToList());
         }
 
         [RelayCommand]

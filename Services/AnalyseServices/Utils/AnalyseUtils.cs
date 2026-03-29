@@ -9,7 +9,8 @@ namespace DatabaseTask.Services.AnalyseServices.Utils
 {
     public class AnalyseUtils : IAnalyseUtils
     {
-        private const string _filePrefix = "unusedfiles_";
+        private const string _unusedPrefix = "unusedfiles_";
+        private const string _duplicatePrefix = "duplicates_";
 
         private readonly IFullPath _fullPath;
 
@@ -21,9 +22,12 @@ namespace DatabaseTask.Services.AnalyseServices.Utils
         public void ClearTempFiles()
         {
             string tempPath = Path.GetTempPath();
-            var files = Directory.GetFiles(tempPath, $"{_filePrefix}*.xlsx");
+            var unusedFiles = Directory.GetFiles(tempPath, $"{_unusedPrefix}*.xlsx");
+            var duplicatesFiles = Directory.GetFiles(tempPath, $"{_duplicatePrefix}*.xlsx");
 
-            foreach (var file in files)
+            var unionFiles = unusedFiles.Concat(duplicatesFiles);
+
+            foreach (var file in unionFiles)
             {
                 try
                 {

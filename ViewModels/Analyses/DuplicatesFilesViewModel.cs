@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
 using DatabaseTask.Services.AnalyseServices.Interfaces;
+using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Excel.DuplicatesFiles.Interfaces;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
@@ -16,6 +17,7 @@ namespace DatabaseTask.ViewModels.Analyses
     {
         private readonly IFindDuplicatesService _findDuplicatesService;
         private readonly IExcelDuplicatesFiles _excelDuplicatesFiles;
+        private readonly IAnalyseUtils _analyseUtils;
 
         public SmartCollection<DuplicatesFilesItemViewModel> DuplicatesFiles
         {
@@ -23,11 +25,14 @@ namespace DatabaseTask.ViewModels.Analyses
         }
 
         public DuplicatesFilesViewModel(IFindDuplicatesService findDuplicatesService,
-                                        IExcelDuplicatesFiles excelDuplicatesFiles)
+                                        IExcelDuplicatesFiles excelDuplicatesFiles,
+                                        IAnalyseUtils analyseUtils)
         {
             _findDuplicatesService = findDuplicatesService;
             _excelDuplicatesFiles = excelDuplicatesFiles;
+            _analyseUtils = analyseUtils;
             DuplicatesFiles = new SmartCollection<DuplicatesFilesItemViewModel>();
+            _analyseUtils.ClearTempFiles();
             LoadDuplicatesFiles();
         }
 

@@ -115,6 +115,8 @@ namespace DatabaseTask.Services.Excel.DuplicatesFiles
         {
             double width = (maxLength + 2) * 1.2;
 
+            width = Math.Min(width, 30);
+
             return new Column()
             {
                 Min = index,

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using DatabaseTask.Models.Duplicates;
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Messages
@@ -18,6 +19,6 @@ namespace DatabaseTask.Services.Messages
     public class MainWindowRenameFolderMessage : MainWindowDialogueMessage { }
     public class MainWindowCopyFolderMessage : MainWindowDialogueMessage { }
 
-    public class MainWindowDuplicatesFilesMessage : AsyncRequestMessage<List<string>> { }
+    public class MainWindowDuplicatesFilesMessage : AsyncRequestMessage<DuplicatesFilesDialogResult> { }
     public class MainWindowUnusedFilesMessage : AsyncRequestMessage<List<string>> { }
 }

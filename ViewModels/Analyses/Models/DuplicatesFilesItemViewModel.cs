@@ -57,9 +57,8 @@ namespace DatabaseTask.ViewModels.Analyses.Models
             get; set;
         }
 
-        public DuplicatesFilesItemViewModel(bool isDB, bool isDelete, string fileName, string path)
+        public DuplicatesFilesItemViewModel(bool isDelete, string fileName, string path)
         {
-            IsDB = isDB;
             IsDelete = isDelete;
             FileName = fileName;
             Path = path;

@@ -65,7 +65,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             _commandsHistory.AddCommand(command);
         }
 
-        private void AddDatabaseCommandToHistory(CommandInfo info)
+        protected void AddDatabaseCommandToHistory(CommandInfo info)
         {
             IResultCommand command = _databaseCommandsFactory.CreateCommand(info);
             _commandsHistory.AddDatabaseCommand(command);

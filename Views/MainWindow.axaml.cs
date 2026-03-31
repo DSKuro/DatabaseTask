@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Models.Duplicates;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
@@ -80,7 +81,7 @@ namespace DatabaseTask.Views
                 DuplicatesFilesWindow duplicatesFilesWindow = _serviceProvider.GetRequiredService<DuplicatesFilesWindow>();
                 duplicatesFilesWindow.DataContext = _serviceProvider.GetRequiredService<IDuplicatesFilesViewModel>();
                 duplicatesFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                message.Reply(duplicatesFilesWindow.ShowDialog<List<string>>(window));
+                message.Reply(duplicatesFilesWindow.ShowDialog<DuplicatesFilesDialogResult>(window));
             });
         }
 

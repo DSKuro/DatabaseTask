@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Models.Duplicates;
 using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
+using DatabaseTask.Services.Commands.Utility.Enum;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
@@ -13,6 +15,7 @@ using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
@@ -32,8 +35,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             IValidateViewModel validateViewModel,
             ITreeViewFunctionality treeViewFunctionality)
             : base(messageBoxService, itemCommandsFactory, fileCommandsFactory,
-                  databaseCommandsFactory, commandsHistory, fullPath,
-                  treeViewFunctionality)
+                  databaseCommandsFactory, commandsHistory, fullPath, treeViewFunctionality)
         {
             _validateViewModel = validateViewModel;
             _treeViewFunctionality = treeViewFunctionality;
@@ -48,9 +50,21 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             var results = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
 
-            if (results is not null)
+            if (results is not null
+                && results.PathsToUpdate.Any()
+                && results.PathsToDelete.Any())
             {
-                await DeleteFiles(results);
+                UpdateDuplicatePaths(results.PathsToUpdate);
+                await DeleteFiles(results.PathsToDelete);
+            }
+        }
+
+        private void UpdateDuplicatePaths(List<DuplicatePathUpdate> pathUpdates)
+        {
+            foreach (var pathUpdate in pathUpdates)
+            {
+                AddDatabaseCommandToHistory(new Models.DTO.CommandInfo(CommandType.MoveFile,
+                    pathUpdate.OldPath, pathUpdate.NewPath));
             }
         }
 

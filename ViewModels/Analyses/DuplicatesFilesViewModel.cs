@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DatabaseTask.Models;
+using DatabaseTask.Models.Duplicates;
 using DatabaseTask.Services.AnalyseServices.Interfaces;
 using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Excel.DuplicatesFiles.Interfaces;
@@ -8,7 +9,6 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
 using DatabaseTask.ViewModels.Analyses.Models;
 using DatabaseTask.ViewModels.Base;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DatabaseTask.ViewModels.Analyses
@@ -38,17 +38,17 @@ namespace DatabaseTask.ViewModels.Analyses
 
         private void LoadDuplicatesFiles()
         {
-            var duplicates = _findDuplicatesService.FindDuplicatesByNameAndSize();
+            var duplicates = _findDuplicatesService.FindDuplicatesByHash();
             var individualViewModels = duplicates.SelectMany(group =>
                 group.files.Select((file, index) =>
                     new DuplicatesFilesItemViewModel(
-                        file.isInDatabase,
                         false,
                         group.key,
                         file.path
                     )
                     {
-                        IsFirstInGroup = index is 0
+                        IsFirstInGroup = index is 0,
+                        IsDB = index is 0
                     }
                 )
             );
@@ -72,7 +72,10 @@ namespace DatabaseTask.ViewModels.Analyses
         {
             foreach (var item in DuplicatesFiles)
             {
-                item.IsDelete = value;
+                if (!item.IsDB)
+                {
+                    item.IsDelete = value;
+                }
             }
         }
 
@@ -85,19 +88,36 @@ namespace DatabaseTask.ViewModels.Analyses
         [RelayCommand]
         public void Apply()
         {
-            var resultItems = DuplicatesFiles
-                .Where(item => item.IsDelete)
-                .Select(item => item.Path)
+            var pathsToDelete = DuplicatesFiles
+                                .Where(item => item.IsDelete)
+                                .Select(item => item.Path)
+                                .ToList();
+
+            var pathsToUpdate = DuplicatesFiles
+                .GroupBy(item => item.FileName)
+                .Where(group => group.Any(item => item.IsDelete))
+                .SelectMany(group =>
+                {
+                    var selectedItem = group.FirstOrDefault(item => item.IsDB) ?? group.First();
+
+                    return group
+                        .Where(item => item.IsDelete)
+                        .Where(item => item.Path != selectedItem.Path)
+                        .Select(item => new DuplicatePathUpdate(item.Path, selectedItem.Path));
+                })
                 .ToList();
+
+            var result = new DuplicatesFilesDialogResult(pathsToDelete, pathsToUpdate);
+
             WeakReferenceMessenger.Default
-                .Send(new AnalyseFilesDialogueCloseMessage(resultItems));
+                .Send(new DuplicatesFilesDialogueCloseMessage(result));
         }
 
         [RelayCommand]
         public void Cancel()
         {
             WeakReferenceMessenger.Default
-                .Send(new AnalyseFilesDialogueCloseMessage(new List<string>()));
+                .Send(new DuplicatesFilesDialogueCloseMessage(new DuplicatesFilesDialogResult()));
         }
     }
 }

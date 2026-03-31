@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DatabaseTask.Models.Duplicates;
+using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Messages
 { 
@@ -17,6 +18,16 @@ namespace DatabaseTask.Services.Messages
         public List<string> Paths { get; }
 
         public AnalyseFilesDialogueCloseMessage(List<string> paths)
+        {
+            Paths = paths;
+        }
+    }
+
+    public class DuplicatesFilesDialogueCloseMessage
+    {
+        public DuplicatesFilesDialogResult Paths { get; }
+
+        public DuplicatesFilesDialogueCloseMessage(DuplicatesFilesDialogResult paths)
         {
             Paths = paths;
         }

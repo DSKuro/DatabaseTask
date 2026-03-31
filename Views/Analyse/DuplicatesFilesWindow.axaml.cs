@@ -16,7 +16,7 @@ namespace DatabaseTask.Views.Analyse
         private void InitializeMessages()
         {
             WeakReferenceMessenger.Default.Register<DuplicatesFilesWindow,
-            AnalyseFilesDialogueCloseMessage>(this, (window, message) =>
+            DuplicatesFilesDialogueCloseMessage>(this, (window, message) =>
             {
                 window.Close(message.Paths);
             });

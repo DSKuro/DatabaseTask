@@ -47,19 +47,17 @@ namespace DatabaseTask.Services.Excel.DuplicatesFiles
 
             uint rowIndex = 1;
 
-            sheetData.Append(CreateRow(rowIndex++, "Группа", "Путь", "В БД"));
+            sheetData.Append(CreateRow(rowIndex++, "Группа", "Путь"));
 
             int maxGroup = "Группа".Length;
             int maxPath = "Путь".Length;
-            int maxDb = "В БД".Length;
 
             foreach (var item in data)
             {
                 string group = item.FileName ?? "";
                 string path = item.Path ?? "";
-                string dbValue = item.IsDB ? "Да" : "Нет";
 
-                sheetData.Append(CreateRow(rowIndex++, group, path, dbValue));
+                sheetData.Append(CreateRow(rowIndex++, group, path));
 
                 if (group.Length > maxGroup)
                 {
@@ -70,17 +68,11 @@ namespace DatabaseTask.Services.Excel.DuplicatesFiles
                 {
                     maxPath = path.Length;
                 }
-
-                if (dbValue.Length > maxDb) 
-                { 
-                    maxDb = dbValue.Length; 
-                }
             }
 
             columns.Append(
                 CreateColumn(1, maxGroup),
-                CreateColumn(2, maxPath),
-                CreateColumn(3, maxDb)
+                CreateColumn(2, maxPath)
             );
 
             workbookPart.Workbook.Save();
@@ -91,13 +83,12 @@ namespace DatabaseTask.Services.Excel.DuplicatesFiles
             });
         }
 
-        private Row CreateRow(uint index, string col1, string col2, string col3)
+        private Row CreateRow(uint index, string col1, string col2)
         {
             var row = new Row() { RowIndex = index };
 
             row.Append(CreateCell(col1));
             row.Append(CreateCell(col2));
-            row.Append(CreateCell(col3));
 
             return row;
         }

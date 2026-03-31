@@ -240,6 +240,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IDatabaseUtils, DatabaseUtils>();
             _serviceCollection.AddScoped<ITblDrawingContentsRepository, TblDrawingContentsRepository>();
             _serviceCollection.AddScoped<ICommandsTransaction, CommandsTransaction>();
+            _serviceCollection.AddScoped<IDatabasePath, DatabasePath>();
         }
 
         private void AddAnalyseServices()

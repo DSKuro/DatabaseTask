@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using DatabaseTask.Services.Database.Utils.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,13 @@ namespace DatabaseTask.Services.Database.Repositories
     public class TblDrawingContentsRepository : ITblDrawingContentsRepository
     {
         private readonly ConnectionStringData _stringData;
+        private readonly IDatabasePath _databasePath;
 
-        public TblDrawingContentsRepository(ConnectionStringData stringData)
+        public TblDrawingContentsRepository(ConnectionStringData stringData,
+            IDatabasePath databasePath)
         {
             _stringData = stringData;
+            _databasePath = databasePath;
         }
 
         public TblDrawingContent? GetFirstItem()

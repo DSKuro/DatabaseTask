@@ -1,8 +1,8 @@
 ﻿using DatabaseTask.Services.AnalyseServices.Interfaces;
 using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using DatabaseTask.Services.Database.Utils.Interfaces;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,14 +15,17 @@ namespace DatabaseTask.Services.AnalyseServices
         private readonly ITblDrawingContentsRepository _drawingRepository;
         private readonly IAnalyseUtils _analyseUtils;
         private readonly IFullPath _fullPath;
+        private readonly IDatabasePath _databasePath;
 
         public FindUnusedFilesServices(ITblDrawingContentsRepository drawingRepository,
             IAnalyseUtils analyseUtils,
-            IFullPath fullPath)
+            IFullPath fullPath,
+            IDatabasePath databasePath)
         {
             _drawingRepository = drawingRepository;
             _analyseUtils = analyseUtils;
             _fullPath = fullPath;
+            _databasePath = databasePath;
         }
 
         public (List<string>, List<string>) FindUnusedFiles()
@@ -63,11 +66,7 @@ namespace DatabaseTask.Services.AnalyseServices
             return paths.Distinct()
                 .Select(x =>
                 {
-                    string baseFolder = @".\..\dwg"; 
-                    string? result = x!.Contains(@"\dwg\") ? 
-                    @".\" + Path.GetRelativePath(baseFolder, x) : 
-                    x; 
-                    return result;
+                    return _databasePath.NormalizeDatabasePath(x);
                 })
                 .ToList();
         }

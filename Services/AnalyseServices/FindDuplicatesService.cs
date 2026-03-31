@@ -13,27 +13,17 @@ namespace DatabaseTask.Services.AnalyseServices
     public class FindDuplicatesService : IFindDuplicatesService
     {
         private readonly IFullPath _fullPath;
-        private readonly ITblDrawingContentsRepository _drawingRepository;
         private readonly IAnalyseUtils _analyseUtils;
 
         public FindDuplicatesService(IFullPath fullPath,
-            ITblDrawingContentsRepository drawingRepository,
             IAnalyseUtils analyseUtils)
         {
             _fullPath = fullPath;
-            _drawingRepository = drawingRepository;
             _analyseUtils = analyseUtils;
         }
 
-        public IEnumerable<(string key, List<(string path, bool isInDatabase)> files)> FindDuplicatesByHash()
+        public IEnumerable<(string key, List<string> files)> FindDuplicatesByHash()
         {
-            var existedPaths = _drawingRepository.GetExistedPaths();
-
-            if (existedPaths == null)
-            {
-                return new List<(string key, List<(string path, bool isInDatabase)>)>();
-            }
-
             return _analyseUtils.GetCoreFiles()
                    .GroupBy(file => file.Length)
                    .Where(sizeGroup => sizeGroup.Count() > 1)
@@ -43,7 +33,7 @@ namespace DatabaseTask.Services.AnalyseServices
                    .Select(hashGroup =>
                    (
                        hashGroup.First().Name,
-                       files: hashGroup.Select(file => GetPaths(existedPaths, file)).ToList()
+                       files: hashGroup.Select(file => GetPaths(file)).ToList()
                    ));
         }
 
@@ -56,13 +46,13 @@ namespace DatabaseTask.Services.AnalyseServices
             }
         }
 
-        public IEnumerable<(string key, List<(string path, bool isInDatabase)> files)> FindDuplicatesByNameAndSize()
+        public IEnumerable<(string key, List<string> files)> FindDuplicatesByNameAndSize()
         {
             var existedPaths = _drawingRepository.GetExistedPaths();
 
             if (existedPaths == null)
             {
-                return new List<(string key, List<(string path, bool isInDatabase)>)>();
+                return new List<(string key, List<string>)>();
             }
 
             return _analyseUtils.GetCoreFiles()
@@ -70,22 +60,16 @@ namespace DatabaseTask.Services.AnalyseServices
                    .Where(group => group.Count() > 1)
                    .Select(group => (
                        group.Key.Name,
-                       files: group.Select(file => GetPaths(existedPaths, file)).ToList()
+                       files: group.Select(file => GetPaths(file)).ToList()
                    ));
         }
 
-        private (string path, bool isInDatabase) GetPaths(List<string?> existedPaths, FileInfo info)
+        private string GetPaths(FileInfo info)
         {
             string simpleRelativePath = Path.GetRelativePath(_fullPath.PathToCoreFolder!, info.FullName);
             string result = Path.Combine(".", simpleRelativePath);
-            bool isExisted = false;
 
-            if (existedPaths.Contains(result))
-            {
-                isExisted = true;
-            }
-
-            return (result, isExisted);
+            return result;
         }
     }
 }

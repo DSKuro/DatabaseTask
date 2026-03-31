@@ -44,7 +44,7 @@ namespace DatabaseTask.ViewModels.Analyses
                     new DuplicatesFilesItemViewModel(
                         false,
                         group.key,
-                        file.path
+                        file
                     )
                     {
                         IsFirstInGroup = index is 0,

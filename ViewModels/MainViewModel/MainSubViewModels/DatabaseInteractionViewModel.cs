@@ -79,18 +79,18 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             if (paths is not null)
             {
-                await DeleteFiles(paths);
+                await DeleteFiles(paths, false);
             }
         }
 
-        private async Task DeleteFiles(List<string> paths)
+        private async Task DeleteFiles(List<string> paths, bool isInDatabase = true)
         {
             foreach (var path in paths)
             {
                 INode? node = _treeViewFunctionality.GetNodeByPath(path);
                 if (node is not null)
                 {
-                    await DeleteItemOperation(node, LogCategory.DeleteFileCategory);
+                    await DeleteItemOperation(node, LogCategory.DeleteFileCategory, isInDatabase);
                 }
             }
         }

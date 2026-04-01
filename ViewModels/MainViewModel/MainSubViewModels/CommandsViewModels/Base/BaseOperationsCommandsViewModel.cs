@@ -41,7 +41,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 new object[] { node, name }, loggerDto);
         }
 
-        public async Task DeleteItemOperation(INode node, LogCategory category)
+        public async Task DeleteItemOperation(INode node, LogCategory category, bool isDatabase = true)
         {
             if (node is not NodeViewModel nodeViewModel)
             {
@@ -53,7 +53,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             var targets = new List<(INode, string)>() { (node, "") };
             var loggerDto = new LoggerDTO(category, node.Name);
             await ExecuteFileSystemOperation(type, targets,
-                new object[] { node }, loggerDto);
+                new object[] { node }, loggerDto, isDatabase);
         }
 
         public async Task CopyItemOperation(INode node, INode target, string name)
@@ -102,7 +102,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                             CommandType type,
                             List<(INode node, string name)> targets,
                             object[] itemArgs,
-                            LoggerDTO logger)
+                            LoggerDTO logger, bool isDatabase = true)
         {
             CommandInfo itemInfo = new CommandInfo(type, itemArgs);
 
@@ -110,7 +110,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             CommandInfo commandInfo = new CommandInfo(type, paths);
 
             CommandInfo? databaseInfo = null;
-            if (type is not CommandType.CreateFolder)
+            if (type is not CommandType.CreateFolder && isDatabase)
             {
                 string[] relativePaths = GetRelativePathForCommand(targets);
                 databaseInfo = new CommandInfo(type, relativePaths);

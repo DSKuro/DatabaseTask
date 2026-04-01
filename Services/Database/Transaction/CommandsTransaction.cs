@@ -21,9 +21,10 @@ namespace DatabaseTask.Services.Database.Transaction
             try
             {
                 ExecuteQueue(commands);
+                context.SaveChanges();
                 transaction.Commit();
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
                 transaction.Rollback();
             }

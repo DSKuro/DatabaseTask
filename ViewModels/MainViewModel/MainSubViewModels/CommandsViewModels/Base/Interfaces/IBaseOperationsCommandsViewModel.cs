@@ -7,7 +7,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     public interface IBaseOperationsCommandsViewModel
     {
         public Task CreateFolderOperation(INode node, string name);
-        public Task DeleteItemOperation(INode node, LogCategory category);
+        public Task DeleteItemOperation(INode node, LogCategory category, bool isDatabase = true);
         public Task CopyItemOperation(INode node, INode target, string name);
         public Task MoveItemOperation(INode node, INode target, string name);
         public Task RenameFolderOperation(INode node, string newName);

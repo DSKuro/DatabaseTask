@@ -2,6 +2,8 @@
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -55,9 +57,32 @@ namespace DatabaseTask.Services.Database.Repositories
         {
             var records = GetRecordsByPath(context, oldPath);
 
+            var relativeOldPath = oldPath.StartsWith(@".\")
+                ? oldPath[2..]
+                : oldPath;
+
+            var relativeNewPath = newPath.StartsWith(@".\")
+                ? newPath[2..]
+                : newPath;
+
             foreach (var record in records)
             {
-                record.ContentDocument = record.ContentDocument!.Replace(oldPath, newPath);
+                if (string.IsNullOrEmpty(record.ContentDocument))
+                {
+                    continue;
+                }
+
+                if (record.ContentDocument.Contains(oldPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    record.ContentDocument = record.ContentDocument.Replace(oldPath, newPath);
+                }
+                else if (record.ContentDocument.Contains(@"\dwg\", StringComparison.OrdinalIgnoreCase))
+                {
+                    record.ContentDocument = record.ContentDocument.Replace(
+                        relativeOldPath,
+                        relativeNewPath,
+                        StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             context.SaveChanges();
@@ -88,7 +113,7 @@ namespace DatabaseTask.Services.Database.Repositories
             }
 
             context.TblDrawingContents.AddRange(records);
-            context.SaveChanges();
+            //context.SaveChanges();
         }
 
         public void DeleteItem(string path)
@@ -107,14 +132,23 @@ namespace DatabaseTask.Services.Database.Repositories
             var records =
                 GetRecordsByPath(context, path);
             context.TblDrawingContents.RemoveRange(records);
-            context.SaveChanges();
+            //context.SaveChanges();
         }
 
         private IQueryable<TblDrawingContent> GetRecordsByPath(DataContext context, string path)
         {
-            return context.TblDrawingContents
+            var relativePath = path.StartsWith(@".\")
+                ? path.Substring(2)
+                : path;
+
+            var baseRecords = context.TblDrawingContents
                 .Where(item => !string.IsNullOrEmpty(item.ContentDocument)
-                               && EF.Functions.Like(item.ContentDocument, $"%{path}%"));
+                        && (
+                            EF.Functions.Like(item.ContentDocument, $"%{path}%")
+                            || EF.Functions.Like(item.ContentDocument, $"%\\dwg\\%{relativePath}%")
+                        ));
+
+            return baseRecords;
         }
     }
 }

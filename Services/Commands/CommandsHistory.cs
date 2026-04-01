@@ -2,6 +2,7 @@
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DatabaseTask.Services.Commands
 {
@@ -59,8 +60,11 @@ namespace DatabaseTask.Services.Commands
         {
             List<bool> results = ExecuteQueue(_commands);
             //ExecuteQueue(_databaseCommands);
-
-            _transaction.ExecuteCommandsInTransaction(_databaseCommands);
+            
+            if (_databaseCommands.Any())
+            {
+                _transaction.ExecuteCommandsInTransaction(_databaseCommands);
+            }
 
             CommitSuccessfulItemCommands(results);
 
@@ -87,7 +91,7 @@ namespace DatabaseTask.Services.Commands
             var itemCommandsArray = _itemCommands.ToArray();
             int n = itemCommandsArray.Length;
 
-            for (int i = 0; i < n && i < commandResults.Count; i++)
+            for (int i = 0; i < n && i < commandResults.Count; i++) 
             {
                 if (commandResults[i])
                 {

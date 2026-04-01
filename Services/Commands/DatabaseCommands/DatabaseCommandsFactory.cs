@@ -1,5 +1,4 @@
 ﻿using DatabaseTask.Models.DTO;
-using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.DatabaseCommands.Commands;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.Utility.Enum;
@@ -17,7 +16,7 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands
             _serviceProvider = serviceProvider;
         }
 
-        public IResultCommand CreateCommand(CommandInfo info)
+        public IDatabaseCommand CreateCommand(CommandInfo info)
         {
             if (info.Data == null)
             {

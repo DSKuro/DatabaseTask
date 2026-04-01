@@ -1,4 +1,5 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using System.Collections.Generic;
 
 namespace DatabaseTask.Services.Commands.Interfaces
@@ -8,7 +9,7 @@ namespace DatabaseTask.Services.Commands.Interfaces
         public void AddItemCommand(ICommand command);
         public void AddCommand(IResultCommand command);
         public void RemoveCommand();
-        public void AddDatabaseCommand(IResultCommand command);
+        public void AddDatabaseCommand(IDatabaseCommand command);
         public void RemoveDatabaseCommand();
         public void ExecuteUndoItemsCommands();
         public List<bool> ExecuteAllCommands();

@@ -1,5 +1,6 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
 using System.Collections.Generic;
 
@@ -14,13 +15,13 @@ namespace DatabaseTask.Services.Database.Transaction
             _stringData = stringData;
         }
 
-        public void ExecuteCommandsInTransaction(Queue<IResultCommand> commands)
+        public void ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands)
         {
             using var context = new DataContext(_stringData.ConnectionString);
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                ExecuteQueue(commands);
+                ExecuteQueue(commands, context);
                 context.SaveChanges();
                 transaction.Commit();
             }
@@ -30,14 +31,14 @@ namespace DatabaseTask.Services.Database.Transaction
             }
         }
 
-        private List<bool> ExecuteQueue(Queue<IResultCommand> queue)
+        private List<bool> ExecuteQueue(Queue<IDatabaseCommand> queue, DataContext context)
         {
             var results = new List<bool>();
 
             while (queue.Count > 0)
             {
                 var command = queue.Dequeue();
-                command.Execute();
+                command.Execute(context);
 
                 results.Add(command.IsSuccess);
             }

@@ -1,10 +1,12 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
+using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 {
-    public class DeleteDatabaseCommand : IResultCommand
+    public class DeleteDatabaseCommand : IDatabaseCommand
     {
         private readonly string _path;
         private readonly ITblDrawingContentsRepository _drawingRepository;
@@ -21,11 +23,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
             _isSuccess = false;
         }
 
-        public Task Execute()
+        public Task Execute(DataContext context)
         {
             try
             {
-                _drawingRepository.DeleteItem(_path);
+                _drawingRepository.DeleteItemContext(context, _path);
                 _isSuccess = true;
             }
             catch

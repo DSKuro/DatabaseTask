@@ -1,10 +1,12 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
+using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 {
-    public class UpdateDatabaseCommand : IResultCommand
+    public class UpdateDatabaseCommand : IDatabaseCommand
     {
         private readonly string _oldPath;
         private readonly string _newPath;
@@ -23,11 +25,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
             _isSuccess = false;
         }
 
-        public Task Execute()
+        public Task Execute(DataContext context)
         {
             try
             {
-                _drawingRepository.UpdatePath(_oldPath, _newPath);
+                _drawingRepository.UpdatePathContext(context, _oldPath, _newPath);
                 _isSuccess = true;
             }
             catch

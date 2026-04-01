@@ -1,4 +1,5 @@
 ﻿using DatabaseTask.Services.Commands.Base.Interfaces;
+using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Commands.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
 using System.Collections.Generic;
@@ -12,14 +13,14 @@ namespace DatabaseTask.Services.Commands
 
         private Stack<ICommand> _itemCommands; 
         private Queue<IResultCommand> _commands;
-        private Queue<IResultCommand> _databaseCommands;
+        private Queue<IDatabaseCommand> _databaseCommands;
 
         public CommandsHistory(ICommandsTransaction transaction)
         {
             _transaction = transaction;
             _itemCommands = new Stack<ICommand>();
             _commands = new Queue<IResultCommand>();
-            _databaseCommands = new Queue<IResultCommand>();
+            _databaseCommands = new Queue<IDatabaseCommand>();
         }
 
         public void AddItemCommand(ICommand command)
@@ -37,7 +38,7 @@ namespace DatabaseTask.Services.Commands
             _commands.Dequeue();
         }
 
-        public void AddDatabaseCommand(IResultCommand command)
+        public void AddDatabaseCommand(IDatabaseCommand command)
         {
             _databaseCommands.Enqueue(command);
         }

@@ -48,13 +48,6 @@ namespace DatabaseTask.Services.AnalyseServices
 
         public IEnumerable<(string key, List<string> files)> FindDuplicatesByNameAndSize()
         {
-            var existedPaths = _drawingRepository.GetExistedPaths();
-
-            if (existedPaths == null)
-            {
-                return new List<(string key, List<string>)>();
-            }
-
             return _analyseUtils.GetCoreFiles()
                    .GroupBy(file => new { file.Name, file.Length })
                    .Where(group => group.Count() > 1)

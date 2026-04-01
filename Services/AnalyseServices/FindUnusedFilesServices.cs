@@ -54,16 +54,16 @@ namespace DatabaseTask.Services.AnalyseServices
 
             List<string> unusedFiles = GetUnusedFiles(newExistedPaths!, filesInCatalog);
 
-            var existFiles = filesInCatalog.Except(unusedFiles);
+            var existFiles = filesInCatalog.Except(unusedFiles, StringComparer.OrdinalIgnoreCase).ToList();
 
-            var exceptFiles = newExistedPaths.Except(existFiles).ToList();
+            var exceptFiles = newExistedPaths.Except(existFiles, StringComparer.OrdinalIgnoreCase).ToList();
 
             return (unusedFiles, exceptFiles);
         }
 
         private List<string>? GetCorrectDatabasePaths(List<string?> paths)
         {
-            return paths.Distinct()
+            return paths.Distinct(StringComparer.OrdinalIgnoreCase)
                 .Select(x =>
                 {
                     return _databasePath.NormalizeDatabasePath(x);
@@ -74,8 +74,6 @@ namespace DatabaseTask.Services.AnalyseServices
         private List<string> GetPathsForFilesInCatalog(IEnumerable<FileInfo?> directory)
         {
             List<string> filesList = new List<string>();
-
-
 
             foreach (var file in directory)
             {

@@ -17,6 +17,8 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 
         public bool IsSuccess => _isSuccess;
 
+        public string SourcePath { get => _oldPath; }
+
         public CopyDatabaseCommand(string oldPath, string newPath,
             ITblDrawingContentsRepository drawingRepository)
         {
@@ -26,11 +28,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
             _isSuccess = false;
         }
 
-        public Task Execute(DataContext context, List<TblDrawingContent> allRecords)
+        public Task Execute(DataContext context, Dictionary<string, List<TblDrawingContent>> pathIndex)
         {
             try
             {
-                _drawingRepository.CopyItemsContext(context, allRecords, _oldPath, _newPath);
+                _drawingRepository.CopyItemsContext(context, pathIndex[_oldPath], _oldPath, _newPath);
                 _isSuccess = true;
             }
             catch

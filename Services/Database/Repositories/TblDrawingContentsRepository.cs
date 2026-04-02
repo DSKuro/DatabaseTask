@@ -53,11 +53,11 @@ namespace DatabaseTask.Services.Database.Repositories
         }
 
         private void UpdatePathImplementation(
-            List<TblDrawingContent> allRecords,
+            List<TblDrawingContent> records,
             string oldPath,
             string newPath)
         {
-            var records = GetRecordsByPath(allRecords, oldPath);
+            //var records = GetRecordsByPath(allRecords, oldPath);
 
             var relativeOldPath = oldPath.StartsWith(@".\")
                 ? oldPath[2..]
@@ -95,15 +95,13 @@ namespace DatabaseTask.Services.Database.Repositories
             CopyItemsImplementation(context, null, oldPath, newPath);
         }
 
-        public void CopyItemsContext(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
+        public void CopyItemsContext(DataContext context, List<TblDrawingContent> records, string oldPath, string newPath)
         {
-            CopyItemsImplementation(context, allRecords, oldPath, newPath);
+            CopyItemsImplementation(context, records, oldPath, newPath);
         }
 
-        private void CopyItemsImplementation(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
+        private void CopyItemsImplementation(DataContext context, List<TblDrawingContent> records, string oldPath, string newPath)
         {
-            var records = GetRecordsByPath(allRecords, oldPath);
-
             foreach (var record in records)
             {
                 record.ContentId = 0;
@@ -125,9 +123,8 @@ namespace DatabaseTask.Services.Database.Repositories
             DeleteItemImplementation(context, allRecords, path);
         }
 
-        private void DeleteItemImplementation(DataContext context, List<TblDrawingContent> allRecords, string path)
+        private void DeleteItemImplementation(DataContext context, List<TblDrawingContent> records, string path)
         {
-            var records = GetRecordsByPath(allRecords, path);
             context.TblDrawingContents.RemoveRange(records);
             //context.SaveChanges();
         }

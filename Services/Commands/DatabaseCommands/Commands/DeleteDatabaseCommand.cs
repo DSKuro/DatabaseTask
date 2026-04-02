@@ -16,6 +16,8 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
 
         public bool IsSuccess => _isSuccess;
 
+        public string SourcePath => _path;
+
         public DeleteDatabaseCommand(string path, 
             ITblDrawingContentsRepository drawingRepository)
         {
@@ -24,11 +26,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
             _isSuccess = false;
         }
 
-        public Task Execute(DataContext context, List<TblDrawingContent> allRecords)
+        public Task Execute(DataContext context, Dictionary<string, List<TblDrawingContent>> pathIndex)
         {
             try
             {
-                _drawingRepository.DeleteItemContext(context, allRecords, _path);
+                _drawingRepository.DeleteItemContext(context, pathIndex[_path], _path);
                 _isSuccess = true;
             }
             catch

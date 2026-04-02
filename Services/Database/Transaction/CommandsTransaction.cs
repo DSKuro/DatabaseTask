@@ -33,6 +33,7 @@ namespace DatabaseTask.Services.Database.Transaction
 
                 ExecuteQueue(commands, context, pathIndex);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (System.Exception)
             {

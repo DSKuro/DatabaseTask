@@ -2,6 +2,7 @@
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Database;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
@@ -23,11 +24,11 @@ namespace DatabaseTask.Services.Commands.DatabaseCommands.Commands
             _isSuccess = false;
         }
 
-        public Task Execute(DataContext context)
+        public Task Execute(DataContext context, List<TblDrawingContent> allRecords)
         {
             try
             {
-                _drawingRepository.DeleteItemContext(context, _path);
+                _drawingRepository.DeleteItemContext(context, allRecords, _path);
                 _isSuccess = true;
             }
             catch

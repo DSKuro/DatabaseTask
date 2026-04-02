@@ -2,7 +2,6 @@
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,17 +44,20 @@ namespace DatabaseTask.Services.Database.Repositories
         public void UpdatePath(string oldPath, string newPath)
         {
             using var context = new DataContext(_stringData.ConnectionString);
-            UpdatePathImplementation(context, oldPath, newPath);
+            UpdatePathImplementation(null, oldPath, newPath);
         }
 
-        public void UpdatePathContext(DataContext context, string oldPath, string newPath)
+        public void UpdatePathContext(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
         {
-            UpdatePathImplementation(context, oldPath, newPath);
+            UpdatePathImplementation(allRecords, oldPath, newPath);
         }
 
-        private void UpdatePathImplementation(DataContext context, string oldPath, string newPath)
+        private void UpdatePathImplementation(
+            List<TblDrawingContent> allRecords,
+            string oldPath,
+            string newPath)
         {
-            var records = GetRecordsByPath(context, oldPath);
+            var records = GetRecordsByPath(allRecords, oldPath);
 
             var relativeOldPath = oldPath.StartsWith(@".\")
                 ? oldPath[2..]
@@ -68,43 +70,39 @@ namespace DatabaseTask.Services.Database.Repositories
             foreach (var record in records)
             {
                 if (string.IsNullOrEmpty(record.ContentDocument))
-                {
                     continue;
-                }
 
-                if (record.ContentDocument.Contains(oldPath, StringComparison.OrdinalIgnoreCase))
+                if (record.ContentDocument.Contains(oldPath,
+                    StringComparison.OrdinalIgnoreCase))
                 {
-                    record.ContentDocument = record.ContentDocument.Replace(oldPath, newPath);
+                    record.ContentDocument =
+                        record.ContentDocument.Replace(oldPath, newPath);
                 }
-                else if (record.ContentDocument.Contains(@"\dwg\", StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    record.ContentDocument = record.ContentDocument.Replace(
-                        relativeOldPath,
-                        relativeNewPath,
-                        StringComparison.OrdinalIgnoreCase);
+                    record.ContentDocument =
+                        record.ContentDocument.Replace(
+                            relativeOldPath,
+                            relativeNewPath,
+                            StringComparison.OrdinalIgnoreCase);
                 }
             }
-
-            context.SaveChanges();
         }
 
         public void CopyItems(string oldPath, string newPath)
         {
             using var context = new DataContext(_stringData.ConnectionString);
-            CopyItemsImplementation(context, oldPath, newPath);
+            CopyItemsImplementation(context, null, oldPath, newPath);
         }
 
-        public void CopyItemsContext(DataContext context, string oldPath, string newPath)
+        public void CopyItemsContext(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
         {
-            CopyItemsImplementation(context, oldPath, newPath);
+            CopyItemsImplementation(context, allRecords, oldPath, newPath);
         }
 
-        private void CopyItemsImplementation(DataContext context, string oldPath, string newPath)
+        private void CopyItemsImplementation(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
         {
-            var records =
-                GetRecordsByPath(context, oldPath)
-                .AsNoTracking()
-                .ToList();
+            var records = GetRecordsByPath(allRecords, oldPath);
 
             foreach (var record in records)
             {
@@ -119,36 +117,42 @@ namespace DatabaseTask.Services.Database.Repositories
         public void DeleteItem(string path)
         {
             using var context = new DataContext(_stringData.ConnectionString);
-            DeleteItemImplementation(context, path);
+            DeleteItemImplementation(context, null, path);
         }
 
-        public void DeleteItemContext(DataContext context, string path)
+        public void DeleteItemContext(DataContext context, List<TblDrawingContent> allRecords, string path)
         {
-            DeleteItemImplementation(context, path);
+            DeleteItemImplementation(context, allRecords, path);
         }
 
-        private void DeleteItemImplementation(DataContext context, string path)
+        private void DeleteItemImplementation(DataContext context, List<TblDrawingContent> allRecords, string path)
         {
-            var records =
-                GetRecordsByPath(context, path);
+            var records = GetRecordsByPath(allRecords, path);
             context.TblDrawingContents.RemoveRange(records);
             //context.SaveChanges();
         }
 
-        private IQueryable<TblDrawingContent> GetRecordsByPath(DataContext context, string path)
+        private List<TblDrawingContent> GetRecordsByPath(
+            List<TblDrawingContent> allRecords,
+            string path)
         {
             var relativePath = path.StartsWith(@".\")
-                ? path.Substring(2)
+                ? path[2..]
                 : path;
 
-            var baseRecords = context.TblDrawingContents
-                .Where(item => !string.IsNullOrEmpty(item.ContentDocument)
-                        && (
-                            EF.Functions.Like(item.ContentDocument, $"%{path}%")
-                            || EF.Functions.Like(item.ContentDocument, $"%\\dwg\\%{relativePath}%")
-                        ));
-
-            return baseRecords;
+            return allRecords
+                .Where(item =>
+                    !string.IsNullOrEmpty(item.ContentDocument)
+                    && (
+                        item.ContentDocument.Contains(
+                            path,
+                            StringComparison.OrdinalIgnoreCase)
+                        ||
+                        item.ContentDocument.Contains(
+                            $@"\dwg\{relativePath}",
+                            StringComparison.OrdinalIgnoreCase)
+                    ))
+                .ToList();
         }
     }
 }

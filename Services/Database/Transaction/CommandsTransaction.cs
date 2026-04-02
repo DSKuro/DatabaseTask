@@ -3,6 +3,8 @@ using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace DatabaseTask.Services.Database.Transaction
 {
@@ -21,9 +23,12 @@ namespace DatabaseTask.Services.Database.Transaction
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                ExecuteQueue(commands, context);
+                var allRecords = context.TblDrawingContents
+                      .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
+                      .ToList();
+                ExecuteQueue(commands, context, allRecords);
                 context.SaveChanges();
-                transaction.Commit();
+                watch.Stop();
             }
             catch (System.Exception ex)
             {
@@ -31,14 +36,15 @@ namespace DatabaseTask.Services.Database.Transaction
             }
         }
 
-        private List<bool> ExecuteQueue(Queue<IDatabaseCommand> queue, DataContext context)
+        private List<bool> ExecuteQueue(Queue<IDatabaseCommand> queue, DataContext context,
+             List<TblDrawingContent> allRecords)
         {
             var results = new List<bool>();
 
             while (queue.Count > 0)
             {
                 var command = queue.Dequeue();
-                command.Execute(context);
+                command.Execute(context, allRecords);
 
                 results.Add(command.IsSuccess);
             }

@@ -28,7 +28,6 @@ namespace DatabaseTask.Services.Database.Transaction
                       .ToList();
                 ExecuteQueue(commands, context, allRecords);
                 context.SaveChanges();
-                watch.Stop();
             }
             catch (System.Exception ex)
             {

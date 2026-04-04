@@ -1,6 +1,8 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
+using ExCSS;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,13 +13,10 @@ namespace DatabaseTask.Services.Database.Repositories
     public class TblDrawingContentsRepository : ITblDrawingContentsRepository
     {
         private readonly ConnectionStringData _stringData;
-        private readonly IDatabasePath _databasePath;
 
-        public TblDrawingContentsRepository(ConnectionStringData stringData,
-            IDatabasePath databasePath)
+        public TblDrawingContentsRepository(ConnectionStringData stringData)
         {
             _stringData = stringData;
-            _databasePath = databasePath;
         }
 
         public TblDrawingContent? GetFirstItem()
@@ -41,10 +40,65 @@ namespace DatabaseTask.Services.Database.Repositories
                       .ToList();
         }
 
-        public void UpdatePath(string oldPath, string newPath)
+        public Dictionary<string, List<TblDrawingContent>> GetPathIndex(DataContext context, List<string> paths)
         {
-            using var context = new DataContext(_stringData.ConnectionString);
-            UpdatePathImplementation(null, oldPath, newPath);
+            List<TblDrawingContent>? records = GetPaths(context, paths);
+
+            if (records is null)
+            {
+                return new Dictionary<string, List<TblDrawingContent>>();
+            }
+
+            return BuildPathIndex(records, paths);
+        }
+
+        private List<TblDrawingContent>? GetPaths(DataContext context, List<string> paths)
+        {
+            var predicate = PredicateBuilder.New<TblDrawingContent>(false);
+
+            foreach (var path in paths)
+            {
+                string localPath = path;
+
+                predicate = predicate.Or(x =>
+                                x.ContentDocument != null &&
+                                EF.Functions.Like(x.ContentDocument, $"%{localPath}%"));
+            }
+
+            var records = context.TblDrawingContents
+                .AsExpandable()
+                .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
+                .Where(predicate)
+                .ToList();
+
+            return records;
+        }
+
+        private Dictionary<string, List<TblDrawingContent>> BuildPathIndex(
+                List<TblDrawingContent> allRecords,
+                List<string> paths)
+        {
+            var index = new Dictionary<string, List<TblDrawingContent>>(
+                StringComparer.OrdinalIgnoreCase);
+
+            foreach (var path in paths)
+            {
+                var relativePath = path.StartsWith(@".\")
+                    ? path[2..]
+                    : path;
+
+                index[path] = allRecords
+                    .Where(r =>
+                        r.ContentDocument!.Contains(path,
+                            StringComparison.OrdinalIgnoreCase)
+                        ||
+                        r.ContentDocument.Contains(
+                            $@"\dwg\{relativePath}",
+                            StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            return index;
         }
 
         public void UpdatePathContext(DataContext context, List<TblDrawingContent> allRecords, string oldPath, string newPath)
@@ -57,8 +111,6 @@ namespace DatabaseTask.Services.Database.Repositories
             string oldPath,
             string newPath)
         {
-            //var records = GetRecordsByPath(allRecords, oldPath);
-
             var relativeOldPath = oldPath.StartsWith(@".\")
                 ? oldPath[2..]
                 : oldPath;
@@ -70,7 +122,9 @@ namespace DatabaseTask.Services.Database.Repositories
             foreach (var record in records)
             {
                 if (string.IsNullOrEmpty(record.ContentDocument))
+                {
                     continue;
+                }
 
                 if (record.ContentDocument.Contains(oldPath,
                     StringComparison.OrdinalIgnoreCase))
@@ -89,12 +143,6 @@ namespace DatabaseTask.Services.Database.Repositories
             }
         }
 
-        public void CopyItems(string oldPath, string newPath)
-        {
-            using var context = new DataContext(_stringData.ConnectionString);
-            CopyItemsImplementation(context, null, oldPath, newPath);
-        }
-
         public void CopyItemsContext(DataContext context, List<TblDrawingContent> records, string oldPath, string newPath)
         {
             CopyItemsImplementation(context, records, oldPath, newPath);
@@ -109,47 +157,11 @@ namespace DatabaseTask.Services.Database.Repositories
             }
 
             context.TblDrawingContents.AddRange(records);
-            //context.SaveChanges();
-        }
-
-        public void DeleteItem(string path)
-        {
-            using var context = new DataContext(_stringData.ConnectionString);
-            DeleteItemImplementation(context, null, path);
         }
 
         public void DeleteItemContext(DataContext context, List<TblDrawingContent> allRecords, string path)
         {
-            DeleteItemImplementation(context, allRecords, path);
-        }
-
-        private void DeleteItemImplementation(DataContext context, List<TblDrawingContent> records, string path)
-        {
-            context.TblDrawingContents.RemoveRange(records);
-            //context.SaveChanges();
-        }
-
-        private List<TblDrawingContent> GetRecordsByPath(
-            List<TblDrawingContent> allRecords,
-            string path)
-        {
-            var relativePath = path.StartsWith(@".\")
-                ? path[2..]
-                : path;
-
-            return allRecords
-                .Where(item =>
-                    !string.IsNullOrEmpty(item.ContentDocument)
-                    && (
-                        item.ContentDocument.Contains(
-                            path,
-                            StringComparison.OrdinalIgnoreCase)
-                        ||
-                        item.ContentDocument.Contains(
-                            $@"\dwg\{relativePath}",
-                            StringComparison.OrdinalIgnoreCase)
-                    ))
-                .ToList();
+            context.TblDrawingContents.RemoveRange(allRecords);
         }
     }
 }

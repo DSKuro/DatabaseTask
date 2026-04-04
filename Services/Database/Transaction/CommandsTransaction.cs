@@ -1,11 +1,9 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
+using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace DatabaseTask.Services.Database.Transaction
@@ -13,10 +11,13 @@ namespace DatabaseTask.Services.Database.Transaction
     public class CommandsTransaction : ICommandsTransaction
     {
         private readonly ConnectionStringData _stringData;
+        private readonly ITblDrawingContentsRepository _drawingRepository;
 
-        public CommandsTransaction(ConnectionStringData stringData)
+        public CommandsTransaction(ConnectionStringData stringData,
+                                   ITblDrawingContentsRepository drawingRepository)
         {
             _stringData = stringData;
+            _drawingRepository = drawingRepository;
         }
 
         public void ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands)
@@ -25,6 +26,9 @@ namespace DatabaseTask.Services.Database.Transaction
             using var transaction = context.Database.BeginTransaction();
             try
             {
+                var t = context.TblDrawingContents.ToList();
+
+
                 var commandList = commands.ToList();
 
                 var paths = commandList
@@ -32,24 +36,7 @@ namespace DatabaseTask.Services.Database.Transaction
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
-                var predicate = PredicateBuilder.New<TblDrawingContent>(false);
-
-                foreach (var path in paths)
-                {
-                    string localPath = path;
-
-                    predicate = predicate.Or(x =>
-                        x.ContentDocument != null &&
-                        EF.Functions.Like(x.ContentDocument, $"%{localPath}%"));
-                }
-
-                var records = context.TblDrawingContents
-                    .AsExpandable()
-                    .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
-                    .Where(predicate)
-                    .ToList();
-
-                var pathIndex = BuildPathIndex(records, commandList);
+                var pathIndex = _drawingRepository.GetPathIndex(context, paths);
 
                 ExecuteQueue(commands, context, pathIndex);
                 context.SaveChanges();
@@ -59,38 +46,6 @@ namespace DatabaseTask.Services.Database.Transaction
             {
                 transaction.Rollback();
             }
-        }
-
-        private Dictionary<string, List<TblDrawingContent>> BuildPathIndex(
-    List<TblDrawingContent> allRecords,
-    List<IDatabaseCommand> commands)
-        {
-            var paths = commands
-                .Select(x => x.SourcePath)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            var index = new Dictionary<string, List<TblDrawingContent>>(
-                StringComparer.OrdinalIgnoreCase);
-
-            foreach (var path in paths)
-            {
-                var relativePath = path.StartsWith(@".\")
-                    ? path[2..]
-                    : path;
-
-                index[path] = allRecords
-                    .Where(r =>
-                        r.ContentDocument!.Contains(path,
-                            StringComparison.OrdinalIgnoreCase)
-                        ||
-                        r.ContentDocument.Contains(
-                            $@"\dwg\{relativePath}",
-                            StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-            }
-
-            return index;
         }
 
         private List<bool> ExecuteQueue(Queue<IDatabaseCommand> queue, DataContext context,

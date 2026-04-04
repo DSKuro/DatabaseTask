@@ -1,7 +1,8 @@
 ﻿using DatabaseTask.Models.AppData;
-using DatabaseTask.Services.Commands.Base.Interfaces;
 using DatabaseTask.Services.Commands.DatabaseCommands.Interfaces;
 using DatabaseTask.Services.Database.Transaction.Interfaces;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,12 +25,31 @@ namespace DatabaseTask.Services.Database.Transaction
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var allRecords = context.TblDrawingContents
-                      .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
-                      .ToList();
-
                 var commandList = commands.ToList();
-                var pathIndex = BuildPathIndex(allRecords, commandList);
+
+                var paths = commandList
+                    .Select(x => x.SourcePath)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var predicate = PredicateBuilder.New<TblDrawingContent>(false);
+
+                foreach (var path in paths)
+                {
+                    string localPath = path;
+
+                    predicate = predicate.Or(x =>
+                        x.ContentDocument != null &&
+                        EF.Functions.Like(x.ContentDocument, $"%{localPath}%"));
+                }
+
+                var records = context.TblDrawingContents
+                    .AsExpandable()
+                    .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
+                    .Where(predicate)
+                    .ToList();
+
+                var pathIndex = BuildPathIndex(records, commandList);
 
                 ExecuteQueue(commands, context, pathIndex);
                 context.SaveChanges();

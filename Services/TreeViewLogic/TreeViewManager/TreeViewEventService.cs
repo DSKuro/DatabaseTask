@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Comparer;
+using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
@@ -23,11 +25,13 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
         private readonly ITreeViewManagerHelper _treeViewManagerHelper;
+        private readonly INodeComparer _comparer;
 
         public TreeViewEventService(ITreeView treeView, IDataGrid dataGrid,
                                    ITreeViewFunctionality treeViewFunctionality,
                                    IDataGridFunctionality dataGridFunctionality,
-                                   ITreeViewManagerHelper treeViewManagerHelper)
+                                   ITreeViewManagerHelper treeViewManagerHelper,
+                                   INodeComparer comparer)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += HandleSelectionChanged;
@@ -35,6 +39,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             _treeViewFunctionality = treeViewFunctionality;
             _dataGridFunctionality = dataGridFunctionality;
             _treeViewManagerHelper = treeViewManagerHelper;
+            _comparer = comparer;
         }
 
         public void HandleSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -62,7 +67,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         private async void UpdatePropertiesOnSelection()
         {
             INode? node = _treeViewFunctionality.GetFirstSelectedNode();
-
             if (node is not NodeViewModel selectedNode)
             {
                 return;
@@ -70,7 +74,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
             _dataGrid.FilesProperties.Clear();
 
-            var items = new List<FileProperties>();
+            var realNodes = new List<NodeViewModel>();
 
             if (selectedNode.StorageItem is IStorageFolder folder)
             {
@@ -79,23 +83,18 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
                     await foreach (var item in folder.GetItemsAsync())
                     {
                         if (_treeViewManagerHelper.HasFlag(item, FileAttributes.Hidden))
-                        {
                             continue;
-                        }
 
-                        var properties = await item.GetBasicPropertiesAsync();
+                        var nvm = new NodeViewModel
+                        {
+                            Name = item.Name,
+                            IsFolder = item is IStorageFolder,
+                            StorageItem = item,
+                            Parent = selectedNode,
+                            IconPath = item is IStorageFolder ? IconCategory.Folder.Value : IconCategory.File.Value
+                        };
 
-                        items.Add(new FileProperties(
-                            item.Name,
-                            item is IStorageFolder
-                                ? ""
-                                : _dataGridFunctionality.SizeToString(properties.Size),
-                            _dataGridFunctionality.TimeToString(properties.DateModified),
-                            item is IStorageFolder
-                                ? IconCategory.Folder.Value
-                                : IconCategory.File.Value,
-                            selectedNode
-                        ));
+                        realNodes.Add(nvm);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -103,27 +102,42 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
                 }
             }
 
-            var virtualItems = selectedNode.Children
+            var virtualNodes = selectedNode.Children
                 .OfType<NodeViewModel>()
                 .Where(x => x.StorageItem is null && x.Name != "Loading...")
-                .Select(x => new FileProperties(
-                    x.Name,
-                    x.IsFolder ? "" : "",
-                    _dataGridFunctionality.TimeToString(DateTime.Now),
-                    x.IsFolder
-                        ? IconCategory.Folder.Value
-                        : IconCategory.File.Value,
-                    x
-                ));
-
-            items.AddRange(virtualItems);
-
-            var sorted = items
-                .OrderByDescending(x => string.IsNullOrEmpty(x.Size))
-                .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            _dataGrid.FilesProperties.AddRange(sorted);
+            var combinedNodes = realNodes.Concat(virtualNodes).ToList();
+            combinedNodes.Sort(_comparer);
+
+            var filePropertiesList = new List<FileProperties>();
+            foreach (var n in combinedNodes)
+            {
+                if (n.StorageItem is not null)
+                {
+                    var basicProperties = await n.StorageItem.GetBasicPropertiesAsync();
+
+                    filePropertiesList.Add(new FileProperties(
+                        n.StorageItem.Name,
+                        n.StorageItem is IStorageFolder ? "" : _dataGridFunctionality.SizeToString(basicProperties.Size),
+                        _dataGridFunctionality.TimeToString(basicProperties.DateModified),
+                        n.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                        n
+                    ));
+                }
+                else
+                {
+                    filePropertiesList.Add(new FileProperties(
+                        n.Name,
+                        "",
+                        _dataGridFunctionality.TimeToString(DateTime.Now),
+                        n.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                        n
+                    ));
+                }
+            }
+
+            _dataGrid.FilesProperties.AddRange(filePropertiesList);
         }
     }
 }

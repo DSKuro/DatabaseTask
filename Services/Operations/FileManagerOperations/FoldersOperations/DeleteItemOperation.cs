@@ -1,7 +1,5 @@
-﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -9,26 +7,17 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public class DeleteItemOperation : IDeleteItemOperation
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
-        private readonly IDataGridFunctionality _dataGridFunctionality;
 
-        private FileProperties? properties;
-
-        public DeleteItemOperation(ITreeViewFunctionality treeViewFunctionality,
-            IDataGridFunctionality dataGridFunctionality)
+        public DeleteItemOperation(ITreeViewFunctionality treeViewFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
-            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public void DeleteItem(INode node, bool isUpdateSelection = true)
         {
             _treeViewFunctionality.RemoveNode(node);
-            properties = _dataGridFunctionality.GetPropertiesForNode(node);
-            _dataGridFunctionality.RemoveProperties(node);
             if (node.Parent is not null && isUpdateSelection)
             {
-                _treeViewFunctionality.UpdateSelectedNodes(node.Parent);
-                _treeViewFunctionality.BringIntoView(node.Parent);
                 node.Parent.IsOperationHighlighted = true;
             }
         }
@@ -40,11 +29,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 if (_treeViewFunctionality.TryInsertNode(node.Parent, node, out int index))
                 {
                     _treeViewFunctionality.AddNodeToSelected(node);
-                    if (properties is not null)
-                    {
-                        _dataGridFunctionality.AddProperties(properties);
-                        node.Parent.IsOperationHighlighted = false;
-                    }
+                    node.Parent.IsOperationHighlighted = false;
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
@@ -18,16 +19,19 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         private readonly IDataGridFunctionality _dataGridFunctionality;
         private readonly ITreeViewEventService _eventService;
         private readonly ITreeViewManagerHelper _managerHelper;
+        private readonly INodeComparer _nodeComparer;
 
         public TreeViewManager(ITreeView treeView,
                               IDataGridFunctionality dataGridFunctionality,
                               ITreeViewEventService eventService,
-                              ITreeViewManagerHelper managerHelper)
+                              ITreeViewManagerHelper managerHelper,
+                              INodeComparer nodeComparer)
         {
             _treeView = treeView;
             _dataGridFunctionality = dataGridFunctionality;
             _eventService = eventService;
             _managerHelper = managerHelper;
+            _nodeComparer = nodeComparer;
         }
 
         public void LoadFoldersAsync(IEnumerable<IStorageFolder> folders)
@@ -117,11 +121,9 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
                 var virtualNodes = node.Children.Where(c => c.StorageItem is null && !c.Name.Equals("Loading...")).ToList();
 
                 var combined = realNodes.Concat(virtualNodes)
-                                        .Select(x => x as NodeViewModel)
-                                        .Where(x => x is not null)
-                                        .OrderByDescending(n => n!.IsFolder)
-                                        .ThenBy(n => n!.Name, StringComparer.OrdinalIgnoreCase)
                                         .ToList();
+
+                combined.Sort(_nodeComparer);
 
                 node.Children.Clear();
 

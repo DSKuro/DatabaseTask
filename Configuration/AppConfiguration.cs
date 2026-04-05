@@ -171,6 +171,7 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<ITreeViewSortService, TreeViewSortService>();
             _serviceCollection.AddScoped<ITreeViewManager, TreeViewManager>();
             _serviceCollection.AddScoped<ITreeViewEventService, TreeViewEventService>();
+            _serviceCollection.AddScoped<ITreeViewManagerHelper, TreeViewManagerHelper>();
         }
 
         private void AddDataGridFunctions()

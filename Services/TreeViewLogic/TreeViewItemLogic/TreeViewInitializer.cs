@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Operations.Interfaces;

@@ -1,135 +1,149 @@
 ﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 {
     public class TreeViewManager : ITreeViewManager
     {
         private readonly ITreeView _treeView;
-        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IDataGridFunctionality _dataGridFunctionality;
         private readonly ITreeViewEventService _eventService;
+        private readonly ITreeViewManagerHelper _managerHelper;
 
-        public TreeViewManager(ITreeView treeView, ITreeViewFunctionality treeViewFunctionality,
+        public TreeViewManager(ITreeView treeView,
                               IDataGridFunctionality dataGridFunctionality,
-                              ITreeViewEventService eventService)
+                              ITreeViewEventService eventService,
+                              ITreeViewManagerHelper managerHelper)
         {
             _treeView = treeView;
-            _treeViewFunctionality = treeViewFunctionality;
             _dataGridFunctionality = dataGridFunctionality;
             _eventService = eventService;
+            _managerHelper = managerHelper;
         }
 
-        public async Task LoadFoldersAsync(IEnumerable<IStorageFolder> folders)
+        public void LoadFoldersAsync(IEnumerable<IStorageFolder> folders)
         {
             _treeView.Nodes.Clear();
             _dataGridFunctionality.ClearSavedProperties();
             _dataGridFunctionality.ClearFilesProperties();
-            await GetCollectionByRecursion(folders);
+            GetCollection(folders);
         }
 
-        private async Task GetCollectionByRecursion(IEnumerable<IStorageFolder> folders)
+        private void GetCollection(IEnumerable<IStorageFolder> folders)
         {
-            foreach (IStorageFolder folder in folders)
+            var nodes = new List<INode>();
+            foreach (var folder in folders)
             {
-                NodeViewModel rootNode = await CreateNodeRecursive(folder);
-                _treeView.Nodes.Add(rootNode);
+                AddNode(nodes, null, folder);
             }
+            _treeView.Nodes.AddRange(nodes);
         }
 
-        private async Task<NodeViewModel> CreateNodeRecursive(IStorageItem item, INode? parent = null)
+        private NodeViewModel CreateNode(IStorageItem item, INode? parent)
         {
-            StorageItemProperties properties = await item.GetBasicPropertiesAsync();
-            NodeViewModel node = CreateMainNode(item, parent);
-            await CreateNode(item, properties, node);
-            return node;
-        }
-
-        private NodeViewModel CreateMainNode(IStorageItem item, INode? parent)
-        {
-            return new NodeViewModel
+            var node = new NodeViewModel
             {
                 Name = item.Name,
                 IsFolder = item is IStorageFolder,
                 IconPath = item is IStorageFolder
                     ? IconCategory.Folder.Value
                     : IconCategory.File.Value,
-                Parent = parent
+                Parent = parent,
+                StorageItem = item
             };
-        }
 
-        private async Task CreateNode(IStorageItem item, StorageItemProperties properties,
-            INode node)
-        {
-            AddFileProperties(item, properties, node);
-            await CreateChildren(item, node);
             node.Expanded += _eventService.ExpandHandler;
+            node.Expanded += ExpandNodeAsync;
             node.Collapsed += _eventService.CollapsedHandler;
+
+            return node;
         }
 
-        private void AddPlaceholder(NodeViewModel node)
+        private async void AddPlaceholder(NodeViewModel node, IStorageItem item)
         {
-            string modifiedString = _dataGridFunctionality.TimeToString(properties.DateModified);
-
-            var newProperties = new FileProperties(
-                item.Name,
-                item is IStorageFolder ? "" : _dataGridFunctionality.SizeToString(properties.Size),
-                modifiedString,
-                item is IStorageFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
-                node
-            );
-
-            _dataGridFunctionality.AddProperties(newProperties);
-        }
-
-        private async Task CreateChildren(IStorageItem item, INode node)
-        {
-            if (item is IStorageFolder folder)
+            if (!node.IsFolder || item is not IStorageFolder folder)
             {
-                try
+                return;
+            }
+
+            await foreach (var child in folder.GetItemsAsync())
+            {
+                if (_managerHelper.HasFlag(child, FileAttributes.Hidden))
                 {
-                    IAsyncEnumerable<IStorageItem> items = folder.GetItemsAsync();
-                    await foreach (IStorageItem? childItem in items)
-                    {
-                        if (!HasFlag(childItem, FileAttributes.Hidden))
-                        {
-                            NodeViewModel childNode = await CreateNodeRecursive(childItem, node);
-                            _treeViewFunctionality.TryInsertNode(node, childNode, out _);
-                        }
-                    }
+                    continue;
                 }
-                catch (UnauthorizedAccessException)
+
+                node.Children.Add(new NodeViewModel
                 {
-                }
+                    Name = "Loading..."
+                });
+
+                return;
             }
         }
 
-        private bool HasFlag(IStorageItem item, FileAttributes flag)
+        private async void ExpandNodeAsync(INode expandedNode)
         {
+            if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
+            {
+                return;
+            }
+
             try
             {
-                string? path = item.TryGetLocalPath();
-                if (string.IsNullOrEmpty(path))
-                    return false;
+                var realNodes = new List<INode>();
+                if (node.StorageItem is IStorageFolder folder)
+                {
+                    await foreach (var item in folder.GetItemsAsync())
+                    {
+                        if (_managerHelper.HasFlag(item, FileAttributes.Hidden))
+                        {
+                            continue;
+                        }
 
-                FileAttributes attributes = File.GetAttributes(path);
-                return attributes.HasFlag(flag);
+                        AddNode(realNodes, node, item);
+                    }
+                }
+
+                var virtualNodes = node.Children.Where(c => c.StorageItem is null && !c.Name.Equals("Loading...")).ToList();
+
+                var combined = realNodes.Concat(virtualNodes)
+                                        .Select(x => x as NodeViewModel)
+                                        .Where(x => x is not null)
+                                        .OrderByDescending(n => n!.IsFolder)
+                                        .ThenBy(n => n!.Name, StringComparer.OrdinalIgnoreCase)
+                                        .ToList();
+
+                node.Children.Clear();
+
+                if (combined is not null && combined.Any())
+                {
+                    node.Children.AddRange(combined!);
+                }
+
+                node.IsLoaded = true;
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
-                return false;
             }
+        }
+
+        private void AddNode(List<INode> nodes, INode? parent, IStorageItem item)
+        {
+            var child = CreateNode(item, parent);
+
+            AddPlaceholder(child, item);
+
+            nodes.Add(child);
         }
     }
 }

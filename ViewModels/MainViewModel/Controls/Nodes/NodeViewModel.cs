@@ -1,4 +1,5 @@
-﻿using DatabaseTask.Models;
+﻿using Avalonia.Platform.Storage;
+using DatabaseTask.Models;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
@@ -16,6 +17,8 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
         public event Action<INode> Collapsed = null!;
 
         public bool IsFolder { get; set; }
+        public bool IsLoaded { get; set; }
+        public IStorageItem? StorageItem { get; set; }
         public INode? Parent { get; set; }
 
         public SmartCollection<INode> Children { get; set; } = new SmartCollection<INode>();

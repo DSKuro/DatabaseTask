@@ -1,11 +1,8 @@
 ﻿using DatabaseTask.Models.Categories;
-using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,19 +11,17 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public class CreateFolderOperation : ICreateFolderOperation
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
-        private readonly IDataGridFunctionality _dataGridFunctionality;
 
-        public CreateFolderOperation(ITreeViewFunctionality treeViewFunctionality,
-            IDataGridFunctionality dataGridFunctionality)
+        public CreateFolderOperation(ITreeViewFunctionality treeViewFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
-            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public async Task CreateFolder(INode parent, string folderName)
         {
             if (parent is not null)
             {
+                parent.IsExpanded = true;
                 await CreateFolderImplementation(folderName, parent);
             }
         }
@@ -45,21 +40,9 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private async Task UpdateProperties(int index, INode parent, INode node)
         {
-            _dataGridFunctionality.AddProperties(CreateFileProperties(node));
             _treeViewFunctionality.UpdateSelectedNodes(node);
             await Task.Delay(100);
             _treeViewFunctionality.BringIntoView(node);
-        }
-
-        private FileProperties CreateFileProperties(INode node)
-        {
-            return new FileProperties
-                (
-                    node.Name,
-                    "",
-                    _dataGridFunctionality.TimeToString(DateTime.Now),
-                    IconCategory.Folder.Value, node
-                );
         }
 
         private NodeViewModel CreateNode(string folderName, INode parent)
@@ -82,8 +65,18 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 if (node is not null)
                 {
                     _treeViewFunctionality.RemoveNode(node);
-                    _dataGridFunctionality.RemoveProperties(node);
+                    _treeViewFunctionality.UpdateSelectedNodes(parent);
                     node.IsOperationHighlighted = false;
+                    if (!parent.Children.Any())
+                    {
+                        parent.IsExpanded = false;
+
+                        if (parent is NodeViewModel parentNode)
+                        {
+                            parentNode.IconPath = IconCategory.Folder.Value;
+                            parentNode.IsLoaded = false;
+                        }
+                    }
                 }
             }
         }

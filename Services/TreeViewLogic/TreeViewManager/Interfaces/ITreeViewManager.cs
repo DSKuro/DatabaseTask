@@ -1,11 +1,11 @@
 ﻿using Avalonia.Platform.Storage;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces
 {
     public interface ITreeViewManager
     {
-        public Task LoadFoldersAsync(IEnumerable<IStorageFolder> folders);
+        public void LoadFoldersAsync(IEnumerable<IStorageFolder> folders);
     }
 }

@@ -35,12 +35,12 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private async Task RenameFolderImpl(string newName, NodeViewModel node, bool isScroll, bool isHighlight)
         {
             node.Name = newName;
+            node.IsOperationHighlighted = isHighlight;
             FileProperties? item = _dataGridFunctionality.GetPropertiesForNode(node);
             if (item != null)
             {
                 item.Name = newName;
                 await UpdatePlacement(node, item, true);
-                node.IsOperationHighlighted = isHighlight;
             }
         }
 

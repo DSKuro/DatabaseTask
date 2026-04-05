@@ -30,14 +30,14 @@ namespace DatabaseTask.Services.AnalyseServices
 
         public (List<string>, List<string>) FindUnusedFiles()
         {
-            List<string?>? existedPaths = _drawingRepository.GetExistedPaths();
+            List<string>? existedPaths = _drawingRepository.GetExistedPathsWithoutDuplicates();
 
-            if (existedPaths == null)
+            if (existedPaths is null)
             {
                 return (new List<string>(), new List<string>());
             }
 
-            var newExistedPaths = GetCorrectDatabasePaths(existedPaths);
+            var newExistedPaths = GetCorrectDatabasePaths(existedPaths!);
 
             if (newExistedPaths is null || !newExistedPaths.Any())
             {
@@ -63,7 +63,7 @@ namespace DatabaseTask.Services.AnalyseServices
 
         private List<string>? GetCorrectDatabasePaths(List<string?> paths)
         {
-            return paths.Distinct(StringComparer.OrdinalIgnoreCase)
+            return paths
                 .Select(x =>
                 {
                     return _databasePath.NormalizeDatabasePath(x);
@@ -97,7 +97,7 @@ namespace DatabaseTask.Services.AnalyseServices
 
             foreach (string file in filesInCatalog)
             {
-                if (!existedSet.Contains(file))
+                if (!existedSet.Contains(file, StringComparer.OrdinalIgnoreCase))
                 {
                     unusedFiles.Add(file);
                 }

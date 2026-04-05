@@ -26,9 +26,6 @@ namespace DatabaseTask.Services.Database.Transaction
             using var transaction = context.Database.BeginTransaction();
             try
             {
-                var t = context.TblDrawingContents.ToList();
-
-
                 var commandList = commands.ToList();
 
                 var paths = commandList

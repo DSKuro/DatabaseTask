@@ -17,5 +17,15 @@ namespace DatabaseTask.Services.Database.Utils
 
             return path;
         }
+
+        public string DenormalizePath(string path)
+        {
+            if (path.StartsWith(_baseFolder))
+            {
+                return path;
+            }
+
+            return $@"{_baseFolder}\{path.TrimStart('.', '\\')}";
+        }
     }
 }

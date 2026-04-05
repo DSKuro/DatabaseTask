@@ -2,7 +2,6 @@
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
 using ExCSS;
-using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,10 +12,13 @@ namespace DatabaseTask.Services.Database.Repositories
     public class TblDrawingContentsRepository : ITblDrawingContentsRepository
     {
         private readonly ConnectionStringData _stringData;
+        private readonly IDatabasePath _databasePath;
 
-        public TblDrawingContentsRepository(ConnectionStringData stringData)
+        public TblDrawingContentsRepository(ConnectionStringData stringData,
+            IDatabasePath databasePath)
         {
             _stringData = stringData;
+            _databasePath = databasePath;
         }
 
         public TblDrawingContent? GetFirstItem()
@@ -30,14 +32,22 @@ namespace DatabaseTask.Services.Database.Repositories
             return context.TblDrawingContents.FirstOrDefault();
         }
 
-        public List<string?>? GetExistedPaths()
+        public List<string>? GetExistedPathsWithoutDuplicates()
         {
-            using var context = new DataContext(_stringData.ConnectionString);
-            return context.TblDrawingContents
-                      .Where(dc => dc.ContentDevice != null &&
-                                   context.TblDevices.Any(d => d.DeviceId == dc.ContentDevice))
-                      .Select(t => t.ContentDocument)
-                      .ToList();
+            try
+            {
+                using var context = new DataContext(_stringData.ConnectionString);
+                return context.TblDrawingContents
+                          .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
+                          .Select(x => (string)(object)x.ContentDocument!)
+                          .Distinct()
+                          .ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
 
         public Dictionary<string, List<TblDrawingContent>> GetPathIndex(DataContext context, List<string> paths)
@@ -54,24 +64,25 @@ namespace DatabaseTask.Services.Database.Repositories
 
         private List<TblDrawingContent>? GetPaths(DataContext context, List<string> paths)
         {
-            var predicate = PredicateBuilder.New<TblDrawingContent>(false);
-
-            foreach (var path in paths)
+            try
             {
-                string localPath = path;
+                var normalizedPaths = paths
+               .Select(p => _databasePath.DenormalizePath(p))
+               .ToList();
 
-                predicate = predicate.Or(x =>
-                                x.ContentDocument != null &&
-                                EF.Functions.Like(x.ContentDocument, $"%{localPath}%"));
+                var records = context.TblDrawingContents
+                    .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
+                    .Where(x =>
+                        paths.Contains((string)(object)x.ContentDocument!)
+                        || normalizedPaths.Contains((string)(object)x.ContentDocument!))
+                    .ToList();
+
+                return records;
             }
-
-            var records = context.TblDrawingContents
-                .AsExpandable()
-                .Where(x => !string.IsNullOrEmpty(x.ContentDocument))
-                .Where(predicate)
-                .ToList();
-
-            return records;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private Dictionary<string, List<TblDrawingContent>> BuildPathIndex(
@@ -83,9 +94,7 @@ namespace DatabaseTask.Services.Database.Repositories
 
             foreach (var path in paths)
             {
-                var relativePath = path.StartsWith(@".\")
-                    ? path[2..]
-                    : path;
+                var relativePath = ToRelativePath(path);
 
                 index[path] = allRecords
                     .Where(r =>
@@ -111,13 +120,9 @@ namespace DatabaseTask.Services.Database.Repositories
             string oldPath,
             string newPath)
         {
-            var relativeOldPath = oldPath.StartsWith(@".\")
-                ? oldPath[2..]
-                : oldPath;
+            var relativeOldPath = ToRelativePath(oldPath);
 
-            var relativeNewPath = newPath.StartsWith(@".\")
-                ? newPath[2..]
-                : newPath;
+            var relativeNewPath = ToRelativePath(newPath);
 
             foreach (var record in records)
             {
@@ -141,6 +146,13 @@ namespace DatabaseTask.Services.Database.Repositories
                             StringComparison.OrdinalIgnoreCase);
                 }
             }
+        }
+
+        private string ToRelativePath(string path)
+        {
+            return path.StartsWith(@".\")
+                ? path[2..]
+                : path;
         }
 
         public void CopyItemsContext(DataContext context, List<TblDrawingContent> records, string oldPath, string newPath)

@@ -1,9 +1,9 @@
-﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
-using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -11,23 +11,17 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     public class RenameFolderOperation : IRenameFolderOperation
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
-        private readonly IDataGridFunctionality _dataGridFunctionality;
-
-        private string? _oldName;
 
         public RenameFolderOperation(
-            ITreeViewFunctionality treeViewFunctionality,
-            IDataGridFunctionality dataGridFunctionality)
+            ITreeViewFunctionality treeViewFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
-            _dataGridFunctionality = dataGridFunctionality;
         }
 
         public async Task RenameFolder(INode node, string newName)
         {
             if (node is NodeViewModel nodeViewModel)
             {
-                _oldName = nodeViewModel.Name;
                 await RenameFolderImpl(newName, nodeViewModel, true, true);
             }
         }
@@ -36,40 +30,36 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             node.Name = newName;
             node.IsOperationHighlighted = isHighlight;
-            FileProperties? item = _dataGridFunctionality.GetPropertiesForNode(node);
-            if (item != null)
+            RefreshNodePosition(node);
+            _treeViewFunctionality.UpdateSelectedNodes(node);
+
+            if (isScroll)
             {
-                item.Name = newName;
-                await UpdatePlacement(node, item, true);
+                await Task.Delay(10);
+                _treeViewFunctionality.BringIntoView(node);
             }
         }
 
-        private async Task UpdatePlacement(INode node, FileProperties properties, bool isScroll)
+        private void RefreshNodePosition(INode node)
         {
-            _treeViewFunctionality.RemoveNode(node);
-            if (node.Parent != null)
+            if (node.Parent is not null)
             {
-                int index = 0;
-                bool isInsert = _treeViewFunctionality.TryInsertNode(node.Parent, node, out index);
-                if (isInsert)
-                {
-                    _dataGridFunctionality.RemoveProperties(node);
-                    _dataGridFunctionality.AddProperties(properties);
-                    if (isScroll)
-                    {
-                        _treeViewFunctionality.UpdateSelectedNodes(node);
-                        await Task.Delay(50);
-                        _treeViewFunctionality.BringIntoView(node);
-                    }
-                }
+                var sorted = node.Parent.Children
+                    .OfType<NodeViewModel>()
+                    .OrderByDescending(x => x.IsFolder)
+                    .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                node.Parent.Children.Clear();
+                node.Parent.Children.AddRange(sorted);
             }
         }
 
-        public async Task UndoRenameFolder(INode node)
+        public async Task UndoRenameFolder(INode node, string oldName)
         {
-            if (node is NodeViewModel nodeViewModel && _oldName is not null)
+            if (node is NodeViewModel nodeViewModel)
             {
-                await RenameFolderImpl(_oldName, nodeViewModel, false, false);
+                await RenameFolderImpl(oldName, nodeViewModel, false, false);
             }
         }
 

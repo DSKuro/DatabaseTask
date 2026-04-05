@@ -8,6 +8,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
     public class RenameFolderItemCommand : ICommand
     {
         private readonly INode _node;
+        private readonly string _oldName;
         private readonly string _newName;
         private readonly IRenameFolderOperation _renameOperation;
 
@@ -17,6 +18,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
         {
             _renameOperation = renameOperation;
             _node = node;
+            _oldName = _node.Name;
             _newName = newName;
         }
 
@@ -33,7 +35,7 @@ namespace DatabaseTask.Services.Commands.ItemCommands.Commands
         {
             if (_renameOperation != null)
             {
-                _renameOperation.UndoRenameFolder(_node);
+                _renameOperation.UndoRenameFolder(_node, _oldName);
             }
         }
 

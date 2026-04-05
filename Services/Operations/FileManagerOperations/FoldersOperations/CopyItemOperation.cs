@@ -1,6 +1,6 @@
-﻿using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Linq;
 
@@ -8,14 +8,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 {
     public class CopyItemOperation : ICopyItemOperation
     {
-        private readonly IDataGridFunctionality _dataGridFunctionality;
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
         public CopyItemOperation(
-            IDataGridFunctionality dataGridFunctionality,
             ITreeViewFunctionality treeViewFunctionality)
         {
-            _dataGridFunctionality = dataGridFunctionality;
             _treeViewFunctionality = treeViewFunctionality;
         }
 
@@ -26,12 +23,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 target.IsExpanded = true;
                 newNode.Name = newItemName;
+                newNode.Children = copied.Children;
                 bool isInsert = _treeViewFunctionality.TryInsertNode(target, newNode, out _);
                 if (isInsert)
                 {
-                    //_dataGridFunctionality.CopyProperties(copied, newNode, target);
                     RecursiveCopyChildren(copied, newNode);
-                    //target.IsExpanded = true;
                     _treeViewFunctionality.AddNodeToSelected(newNode);
                     _treeViewFunctionality.BringIntoView(newNode);
                     newNode.IsOperationHighlighted = true;
@@ -41,21 +37,25 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private void RecursiveCopyChildren(INode sourceParent, INode targetParent)
         {
-            foreach (INode child in sourceParent.Children
+            foreach (var child in sourceParent.Children
                          .Where(x => x.Name != "Loading..."))
             {
-                INode? newChildNode = _treeViewFunctionality.CreateNode(child, targetParent);
+                var newChildNode = _treeViewFunctionality.CreateNode(child, targetParent);
 
                 if (newChildNode == null)
-                {
                     continue;
-                }
 
+                // Вставляем узел на нужное место
                 _treeViewFunctionality.TryInsertNode(targetParent, newChildNode, out _);
 
-                _dataGridFunctionality.CopyProperties(child, newChildNode, targetParent);
-
-                RecursiveCopyChildren(child, newChildNode);
+                var nodeChild = child as NodeViewModel;
+                if (nodeChild is not null)
+                {
+                    if (nodeChild.IsFolder && nodeChild.Children.Any())
+                    {
+                        RecursiveCopyChildren(child, newChildNode);
+                    }
+                }
             }
         }
 
@@ -67,7 +67,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 _treeViewFunctionality.RemoveNode(nodeToDelete);
                 _treeViewFunctionality.UpdateSelectedNodes(target);
-                _dataGridFunctionality.RemoveProperties(nodeToDelete);
                 nodeToDelete.IsOperationHighlighted = false;
             }
         }

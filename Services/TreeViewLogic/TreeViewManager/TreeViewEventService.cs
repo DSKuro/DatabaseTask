@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using DatabaseTask.Models.Categories;
-using DatabaseTask.Services.Comparer;
 using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
@@ -20,7 +19,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 {
     public class TreeViewEventService : ITreeViewEventService
     {
-        private readonly ITreeViewFunctionality _treeViewFunctionality;
         private readonly IDataGridFunctionality _dataGridFunctionality;
         private readonly ITreeView _treeView;
         private readonly IDataGrid _dataGrid;
@@ -28,7 +26,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         private readonly INodeComparer _comparer;
 
         public TreeViewEventService(ITreeView treeView, IDataGrid dataGrid,
-                                   ITreeViewFunctionality treeViewFunctionality,
                                    IDataGridFunctionality dataGridFunctionality,
                                    ITreeViewManagerHelper treeViewManagerHelper,
                                    INodeComparer comparer)
@@ -36,7 +33,6 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             _treeView = treeView;
             _treeView.SelectionChanged += HandleSelectionChanged;
             _dataGrid = dataGrid;
-            _treeViewFunctionality = treeViewFunctionality;
             _dataGridFunctionality = dataGridFunctionality;
             _treeViewManagerHelper = treeViewManagerHelper;
             _comparer = comparer;
@@ -45,7 +41,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         public void HandleSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             _dataGridFunctionality.ClearFilesProperties();
-            if (_treeViewFunctionality.GetAllSelectedNodes().Count is 1)
+            if (_treeView.Nodes.Count is 1)
             {
                 UpdatePropertiesOnSelection();
             }
@@ -59,14 +55,14 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             if (model is NodeViewModel node)
             {
                 node.IconPath = iconPath.Value;
-                _treeViewFunctionality.GetAllSelectedNodes().Clear();
-                _treeViewFunctionality.GetAllSelectedNodes().Add(node);
+                _treeView.SelectedNodes.Clear();
+                _treeView.SelectedNodes.Add(node);
             }
         }
 
         private async void UpdatePropertiesOnSelection()
         {
-            INode? node = _treeViewFunctionality.GetFirstSelectedNode();
+            INode? node = _treeView.Nodes.FirstOrDefault();
             if (node is not NodeViewModel selectedNode)
             {
                 return;

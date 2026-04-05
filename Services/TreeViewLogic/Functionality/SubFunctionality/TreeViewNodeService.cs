@@ -1,10 +1,16 @@
-﻿using DatabaseTask.Models;
+﻿using Avalonia.Platform.Storage;
+using DatabaseTask.Models;
+using DatabaseTask.Models.Categories;
+using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.EventArguments;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
@@ -12,10 +18,19 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
     public class TreeViewNodeService : ITreeViewNodeService
     {
         private readonly ITreeView _treeView;
+        private readonly ITreeViewManagerHelper _managerHelper;
+        private readonly INodeComparer _nodeComparer;
+        private readonly ITreeViewEventService _eventService;
 
-        public TreeViewNodeService(ITreeView treeView)
+        public TreeViewNodeService(ITreeView treeView,
+                                    ITreeViewEventService eventService,
+                                    INodeComparer nodeComparer,
+                                    ITreeViewManagerHelper managerHelper)
         {
             _treeView = treeView;
+            _managerHelper = managerHelper;
+            _eventService = eventService;
+            _nodeComparer = nodeComparer;
         }
 
         public bool IsNodeExist(INode parent, string name)
@@ -82,17 +97,121 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         {
             if (template is NodeViewModel nodeTemplate)
             {
-                return new NodeViewModel()
+                var node = new NodeViewModel()
                 {
                     Name = nodeTemplate.Name,
                     IsExpanded = nodeTemplate.IsExpanded,
                     IsFolder = nodeTemplate.IsFolder,
                     IconPath = nodeTemplate.IconPath,
                     Parent = parent,
+                    StorageItem = template.StorageItem,
                     Children = new SmartCollection<INode>()
                 };
+                node.Expanded += _eventService.ExpandHandler;
+                node.Expanded += ExpandNodeAsync;
+                node.Collapsed += _eventService.CollapsedHandler;
+
+                return node;
             }
+
+
             return null;
+        }
+
+        private NodeViewModel CreateNode(IStorageItem item, INode? parent)
+        {
+            var node = new NodeViewModel
+            {
+                Name = item.Name,
+                IsFolder = item is IStorageFolder,
+                IconPath = item is IStorageFolder
+                    ? IconCategory.Folder.Value
+                    : IconCategory.File.Value,
+                Parent = parent,
+                StorageItem = item
+            };
+
+            node.Expanded += _eventService.ExpandHandler;
+            node.Expanded += ExpandNodeAsync;
+            node.Collapsed += _eventService.CollapsedHandler;
+
+            return node;
+        }
+
+        private async void AddPlaceholder(NodeViewModel node, IStorageItem item)
+        {
+            if (!node.IsFolder || item is not IStorageFolder folder)
+            {
+                return;
+            }
+
+            await foreach (var child in folder.GetItemsAsync())
+            {
+                if (_managerHelper.HasFlag(child, FileAttributes.Hidden))
+                {
+                    continue;
+                }
+
+                node.Children.Add(new NodeViewModel
+                {
+                    Name = "Loading..."
+                });
+
+                return;
+            }
+        }
+
+        private async void ExpandNodeAsync(INode expandedNode)
+        {
+            if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
+            {
+                return;
+            }
+
+            try
+            {
+                var realNodes = new List<INode>();
+                if (node.StorageItem is IStorageFolder folder)
+                {
+                    await foreach (var item in folder.GetItemsAsync())
+                    {
+                        if (_managerHelper.HasFlag(item, FileAttributes.Hidden))
+                        {
+                            continue;
+                        }
+
+                        AddNode(realNodes, node, item);
+                    }
+                }
+
+                var virtualNodes = node.Children.Where(c => c.StorageItem is null && !c.Name.Equals("Loading...")).ToList();
+
+                var combined = realNodes.Concat(virtualNodes)
+                                        .ToList();
+
+                combined.Sort(_nodeComparer);
+
+                node.Children.Clear();
+
+                if (combined is not null && combined.Any())
+                {
+                    node.Children.AddRange(combined!);
+                }
+
+                node.IsLoaded = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+        }
+
+        private void AddNode(List<INode> nodes, INode? parent, IStorageItem item)
+        {
+            var child = CreateNode(item, parent);
+
+            AddPlaceholder(child, item);
+
+            nodes.Add(child);
         }
 
         public void RemoveNode(INode node)

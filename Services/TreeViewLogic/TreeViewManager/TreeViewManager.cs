@@ -78,7 +78,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             node.Collapsed += _eventService.CollapsedHandler;
         }
 
-        public void AddFileProperties(IStorageItem item, StorageItemProperties properties, INode node)
+        private void AddPlaceholder(NodeViewModel node)
         {
             string modifiedString = _dataGridFunctionality.TimeToString(properties.DateModified);
 

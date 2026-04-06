@@ -64,8 +64,16 @@ namespace DatabaseTask.Services.Commands
             
             if (_databaseCommands.Any())
             {
-                _transaction.ExecuteCommandsInTransaction(_databaseCommands);
+                bool result = _transaction.ExecuteCommandsInTransaction(_databaseCommands);
+
+                if (!result)
+                {
+                    results = results.Select(_ => false).ToList();
+                }
             }
+
+            // если всё-таки делаем отмену и для файлов, то коммитим операции
+            // здесь
 
             CommitSuccessfulItemCommands(results);
 
@@ -102,7 +110,6 @@ namespace DatabaseTask.Services.Commands
 
             _itemCommands.Clear();
         }
-
 
         public void ClearAll()
         {

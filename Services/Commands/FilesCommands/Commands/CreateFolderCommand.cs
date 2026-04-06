@@ -31,7 +31,7 @@ namespace DatabaseTask.Services.Commands.FilesCommands.Commands
 
         public void Undo()
         {
-
+            _filesOperations.DeleteFolder(_path);
         }
 
         public void Commit()

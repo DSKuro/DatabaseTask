@@ -33,7 +33,7 @@ namespace DatabaseTask.Services.Commands.FilesCommands.Commands
 
         public void Undo()
         {
-
+            _filesOperations.MoveFile(_newPath, _oldPath);
         }
 
         public void Commit()

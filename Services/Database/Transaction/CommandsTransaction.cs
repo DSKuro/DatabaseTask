@@ -20,7 +20,7 @@ namespace DatabaseTask.Services.Database.Transaction
             _drawingRepository = drawingRepository;
         }
 
-        public void ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands)
+        public bool ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands)
         {
             using var context = new DataContext(_stringData.ConnectionString);
             using var transaction = context.Database.BeginTransaction();
@@ -38,10 +38,12 @@ namespace DatabaseTask.Services.Database.Transaction
                 ExecuteQueue(commands, context, pathIndex);
                 context.SaveChanges();
                 transaction.Commit();
+                return true;
             }
             catch (System.Exception)
             {
                 transaction.Rollback();
+                return false;
             }
         }
 

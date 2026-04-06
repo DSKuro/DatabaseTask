@@ -6,6 +6,6 @@ namespace DatabaseTask.Services.Database.Transaction.Interfaces
 {
     public interface ICommandsTransaction
     {
-        public void ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands);
+        public bool ExecuteCommandsInTransaction(Queue<IDatabaseCommand> commands);
     }
 }

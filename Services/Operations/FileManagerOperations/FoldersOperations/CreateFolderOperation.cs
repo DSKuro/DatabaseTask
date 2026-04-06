@@ -1,9 +1,10 @@
-﻿using DatabaseTask.Models.Categories;
+using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,23 +31,22 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private async Task CreateFolderImplementation(string folderName, INode parent)
         {
             NodeViewModel node = CreateNode(folderName, parent);
-            int index = 0;
-            bool isInsert = _treeViewFunctionality.TryInsertNode(parent, node, out index);
+            bool isInsert = _treeViewFunctionality.TryInsertNode(parent, node, out _);
             if (isInsert)
             {
-                await UpdateProperties(index, parent, node);
+                await UpdateProperties(node);
                 node.IsOperationHighlighted = true;
             }
         }
 
-        private async Task UpdateProperties(int index, INode parent, INode node)
+        private async Task UpdateProperties(INode node)
         {
             _treeViewFunctionality.UpdateSelectedNodes(node);
             await Task.Delay(100);
             _treeViewFunctionality.BringIntoView(node);
         }
 
-        private NodeViewModel CreateNode(string folderName, INode parent)
+        private static NodeViewModel CreateNode(string folderName, INode parent)
         {
             return new NodeViewModel()
             {
@@ -54,6 +54,9 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 IsFolder = true,
                 IconPath = IconCategory.Folder.Value,
                 Parent = parent,
+                FullPath = string.IsNullOrWhiteSpace(parent.FullPath)
+                    ? null
+                    : Path.Combine(parent.FullPath, folderName),
                 CreatedAt = DateTime.Now
             };
         }
@@ -62,8 +65,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             if (parent is not null)
             {
-                var node = parent.Children
-                    .FirstOrDefault(item => item.Name.Equals(folderName));
+                var node = parent.Children.FirstOrDefault(item => item.Name.Equals(folderName));
                 if (node is not null)
                 {
                     _treeViewFunctionality.RemoveNode(node);
@@ -87,8 +89,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             if (parent is not null)
             {
-                var node = parent.Children
-                    .FirstOrDefault(item => item.Name.Equals(folderName));
+                var node = parent.Children.FirstOrDefault(item => item.Name.Equals(folderName));
                 if (node is not null)
                 {
                     node.IsOperationHighlighted = false;

@@ -1,9 +1,7 @@
-﻿using Avalonia.Controls;
-using Avalonia.Platform.Storage;
+using Avalonia.Controls;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Comparer.Interfaces;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
-using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
@@ -26,9 +24,9 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
         private readonly INodeComparer _comparer;
 
         public TreeViewEventService(ITreeView treeView, IDataGrid dataGrid,
-                                   IDataGridFunctionality dataGridFunctionality,
-                                   ITreeViewManagerHelper treeViewManagerHelper,
-                                   INodeComparer comparer)
+            IDataGridFunctionality dataGridFunctionality,
+            ITreeViewManagerHelper treeViewManagerHelper,
+            INodeComparer comparer)
         {
             _treeView = treeView;
             _treeView.SelectionChanged += HandleSelectionChanged;
@@ -72,35 +70,43 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
             var realNodes = new List<NodeViewModel>();
 
-            if (selectedNode.StorageItem is IStorageFolder folder)
+            if (selectedNode.IsFolder && !string.IsNullOrWhiteSpace(selectedNode.FullPath))
             {
                 try
                 {
-                    await foreach (var item in folder.GetItemsAsync())
+                    foreach (string childPath in Directory.EnumerateFileSystemEntries(selectedNode.FullPath))
                     {
-                        if (_treeViewManagerHelper.HasFlag(item, FileAttributes.Hidden))
-                            continue;
-
-                        var nvm = new NodeViewModel
+                        if (_treeViewManagerHelper.HasFlag(childPath, FileAttributes.Hidden))
                         {
-                            Name = item.Name,
-                            IsFolder = item is IStorageFolder,
-                            StorageItem = item,
-                            Parent = selectedNode,
-                            IconPath = item is IStorageFolder ? IconCategory.Folder.Value : IconCategory.File.Value
-                        };
+                            continue;
+                        }
 
-                        realNodes.Add(nvm);
+                        bool isFolder = Directory.Exists(childPath);
+                        realNodes.Add(new NodeViewModel
+                        {
+                            Name = Path.GetFileName(childPath),
+                            IsFolder = isFolder,
+                            FullPath = childPath,
+                            Parent = selectedNode,
+                            IconPath = isFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                            CreatedAt = GetCreatedAt(childPath)
+                        });
                     }
                 }
                 catch (UnauthorizedAccessException)
+                {
+                }
+                catch (DirectoryNotFoundException)
+                {
+                }
+                catch (IOException)
                 {
                 }
             }
 
             var virtualNodes = selectedNode.Children
                 .OfType<NodeViewModel>()
-                .Where(x => x.StorageItem is null && x.Name != "Loading...")
+                .Where(x => string.IsNullOrWhiteSpace(x.FullPath) && x.Name != "Loading...")
                 .ToList();
 
             var combinedNodes = realNodes.Concat(virtualNodes).ToList();
@@ -108,39 +114,75 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
             var filePropertiesList = new List<FileProperties>();
 
-            foreach (var n in combinedNodes)
+            foreach (NodeViewModel item in combinedNodes)
             {
-                if (n.StorageItem is not null)
-                {
-                    var basicProperties = await n.StorageItem.GetBasicPropertiesAsync();
-
-                    filePropertiesList.Add(new FileProperties(
-                        n.StorageItem.Name,
-                        n.StorageItem is IStorageFolder
-                            ? ""
-                            : _dataGridFunctionality.SizeToString(basicProperties.Size),
-                        _dataGridFunctionality.TimeToString(basicProperties.DateModified),
-                        n.IsFolder
-                            ? IconCategory.Folder.Value
-                            : IconCategory.File.Value,
-                        n
-                    ));
-                }
-                else
-                {
-                    filePropertiesList.Add(new FileProperties(
-                        n.Name,
-                        "",
-                        _dataGridFunctionality.TimeToString(n.CreatedAt),
-                        n.IsFolder
-                            ? IconCategory.Folder.Value
-                            : IconCategory.File.Value,
-                        n
-                    ));
-                }
+                filePropertiesList.Add(CreateFileProperties(item));
             }
 
             _dataGrid.FilesProperties.AddRange(filePropertiesList);
+            await System.Threading.Tasks.Task.CompletedTask;
+        }
+
+        private FileProperties CreateFileProperties(NodeViewModel node)
+        {
+            if (!string.IsNullOrWhiteSpace(node.FullPath))
+            {
+                return new FileProperties(
+                    node.Name,
+                    _dataGridFunctionality.SizeToString(node.IsFolder ? null : GetFileSize(node.FullPath)),
+                    _dataGridFunctionality.TimeToString(GetModifiedAt(node.FullPath)),
+                    node.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                    node);
+            }
+
+            return new FileProperties(
+                node.Name,
+                "",
+                _dataGridFunctionality.TimeToString(new DateTimeOffset(node.CreatedAt)),
+                node.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                node);
+        }
+
+        private DateTime GetCreatedAt(string path)
+        {
+            try
+            {
+                return Directory.Exists(path)
+                    ? Directory.GetCreationTime(path)
+                    : File.GetCreationTime(path);
+            }
+            catch
+            {
+                return DateTime.Now;
+            }
+        }
+
+        private DateTimeOffset GetModifiedAt(string path)
+        {
+            try
+            {
+                DateTime modifiedAt = Directory.Exists(path)
+                    ? Directory.GetLastWriteTime(path)
+                    : File.GetLastWriteTime(path);
+
+                return new DateTimeOffset(modifiedAt);
+            }
+            catch
+            {
+                return DateTimeOffset.MinValue;
+            }
+        }
+
+        private ulong? GetFileSize(string path)
+        {
+            try
+            {
+                return (ulong)new FileInfo(path).Length;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

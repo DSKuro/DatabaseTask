@@ -148,11 +148,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                 _logger.LogOperations.Clear();
             }
 
-            foreach (IStorageFolder folder in folders)
+            List<string> folderPaths = folders
+                .Select(folder => folder.Path.LocalPath)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .ToList();
+
+            foreach (string folderPath in folderPaths)
             {
-                _fullPath.PathToCoreFolder = folder.Path.LocalPath;
+                _fullPath.PathToCoreFolder = folderPath;
             }
-            await _fileManager.GetCollectionFromFolders(folders);
+
+            await _fileManager.GetCollectionFromFolders(folderPaths);
             _fileManager.TreeViewFunctionality.AddSelectedNodeByIndex(0);
             WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
             _commandsHistory.ClearAll();

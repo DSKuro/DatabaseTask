@@ -1,4 +1,3 @@
-﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Services.DataGrid.DataGridFunctionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
@@ -34,9 +33,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
             _dataGrid = dataGrid;
         }
 
-        public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
+        public async Task GetCollectionFromFolders(IEnumerable<string> folderPaths)
         {
-           await _treeViewManager.LoadFoldersAsync(folders);
+           await _treeViewManager.LoadFoldersAsync(folderPaths);
         }
     }
 }

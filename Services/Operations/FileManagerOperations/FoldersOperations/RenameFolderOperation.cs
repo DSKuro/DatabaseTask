@@ -1,8 +1,9 @@
-﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,8 +13,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
-        public RenameFolderOperation(
-            ITreeViewFunctionality treeViewFunctionality)
+        public RenameFolderOperation(ITreeViewFunctionality treeViewFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
         }
@@ -29,6 +29,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private async Task RenameFolderImpl(string newName, NodeViewModel node, bool isScroll, bool isHighlight)
         {
             node.Name = newName;
+            RefreshNodePaths(node);
             node.IsOperationHighlighted = isHighlight;
             RefreshNodePosition(node);
             _treeViewFunctionality.UpdateSelectedNodes(node);
@@ -40,7 +41,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        private void RefreshNodePosition(INode node)
+        private static void RefreshNodePosition(INode node)
         {
             if (node.Parent is not null)
             {
@@ -52,6 +53,21 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
                 node.Parent.Children.Clear();
                 node.Parent.Children.AddRange(sorted);
+            }
+        }
+
+        private static void RefreshNodePaths(INode node)
+        {
+            if (node.Parent is not null)
+            {
+                node.FullPath = string.IsNullOrWhiteSpace(node.Parent.FullPath)
+                    ? null
+                    : Path.Combine(node.Parent.FullPath, node.Name);
+            }
+
+            foreach (INode child in node.Children)
+            {
+                RefreshNodePaths(child);
             }
         }
 

@@ -1,7 +1,8 @@
-﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
+using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.IO;
 using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -10,8 +11,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
     {
         private readonly ITreeViewFunctionality _treeViewFunctionality;
 
-        public CopyItemOperation(
-            ITreeViewFunctionality treeViewFunctionality)
+        public CopyItemOperation(ITreeViewFunctionality treeViewFunctionality)
         {
             _treeViewFunctionality = treeViewFunctionality;
         }
@@ -23,7 +23,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 target.IsExpanded = true;
                 newNode.Name = newItemName;
-                newNode.Children = copied.Children;
+                UpdatePathRecursive(newNode, target);
                 bool isInsert = _treeViewFunctionality.TryInsertNode(target, newNode, out _);
                 if (isInsert)
                 {
@@ -37,24 +37,33 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
 
         private void RecursiveCopyChildren(INode sourceParent, INode targetParent)
         {
-            foreach (var child in sourceParent.Children
-                         .Where(x => x.Name != "Loading..."))
+            foreach (var child in sourceParent.Children.Where(x => x.Name != "Loading..."))
             {
                 var newChildNode = _treeViewFunctionality.CreateNode(child, targetParent);
 
                 if (newChildNode == null)
+                {
                     continue;
+                }
 
                 _treeViewFunctionality.TryInsertNode(targetParent, newChildNode, out _);
 
-                var nodeChild = child as NodeViewModel;
-                if (nodeChild is not null)
+                if (child is NodeViewModel nodeChild && nodeChild.IsFolder && nodeChild.Children.Any())
                 {
-                    if (nodeChild.IsFolder && nodeChild.Children.Any())
-                    {
-                        RecursiveCopyChildren(child, newChildNode);
-                    }
+                    RecursiveCopyChildren(child, newChildNode);
                 }
+            }
+        }
+
+        private static void UpdatePathRecursive(INode node, INode parent)
+        {
+            node.FullPath = string.IsNullOrWhiteSpace(parent.FullPath)
+                ? null
+                : Path.Combine(parent.FullPath, node.Name);
+
+            foreach (INode child in node.Children)
+            {
+                UpdatePathRecursive(child, node);
             }
         }
 

@@ -1,4 +1,3 @@
-﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
@@ -13,7 +12,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces
         public ITreeView TreeView { get; }
         public ITreeViewFunctionality TreeViewFunctionality { get; }
 
-        public Task GetCollectionFromFolders
-            (IEnumerable<IStorageFolder> folders);
+        public Task GetCollectionFromFolders(IEnumerable<string> folderPaths);
     }
 }

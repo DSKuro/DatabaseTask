@@ -1,4 +1,3 @@
-﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Models;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Comparer.Interfaces;
@@ -18,15 +17,17 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 {
     public class TreeViewNodeService : ITreeViewNodeService
     {
+        private const string LoadingPlaceholderName = "Loading...";
+
         private readonly ITreeView _treeView;
         private readonly ITreeViewManagerHelper _managerHelper;
         private readonly INodeComparer _nodeComparer;
         private readonly ITreeViewEventService _eventService;
 
         public TreeViewNodeService(ITreeView treeView,
-                                    ITreeViewEventService eventService,
-                                    INodeComparer nodeComparer,
-                                    ITreeViewManagerHelper managerHelper)
+            ITreeViewEventService eventService,
+            INodeComparer nodeComparer,
+            ITreeViewManagerHelper managerHelper)
         {
             _treeView = treeView;
             _managerHelper = managerHelper;
@@ -48,8 +49,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         {
             if (node != null && node.Parent != null)
             {
-                return node.Parent.Children
-                    .Any(x => x.Name == name);
+                return node.Parent.Children.Any(x => x.Name == name);
             }
 
             return false;
@@ -75,8 +75,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 
             foreach (var part in parts)
             {
-                INode? nextNode = currentNode.Children
-                    .FirstOrDefault(node => node.Name.Equals(part));
+                INode? nextNode = currentNode.Children.FirstOrDefault(node => node.Name.Equals(part));
 
                 if (nextNode is null)
                 {
@@ -96,142 +95,81 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 
         public INode? CreateNode(INode template, INode parent)
         {
-            if (template is NodeViewModel nodeTemplate)
+            if (template is not NodeViewModel nodeTemplate)
             {
-                var node = new NodeViewModel()
-                {
-                    Name = nodeTemplate.Name,
-                    IsExpanded = nodeTemplate.IsExpanded,
-                    IsFolder = nodeTemplate.IsFolder,
-                    IconPath = nodeTemplate.IconPath,
-                    Parent = parent,
-                    StorageItem = template.StorageItem,
-                    Children = new SmartCollection<INode>(),
-                    CreatedAt = template.CreatedAt
-                };
-                node.Expanded += _eventService.ExpandHandler;
-                node.Expanded += async n => await ExpandNodeAsync(n);
-                node.Collapsed += _eventService.CollapsedHandler;
-
-                return node;
+                return null;
             }
 
-
-            return null;
-        }
-
-        private async Task<NodeViewModel> CreateNode(IStorageItem item, INode? parent)
-        {
-            DateTime createdAt = DateTime.Now;
-
-            if (item != null)
+            var node = new NodeViewModel()
             {
-                try
-                {
-                    var properties = await item.GetBasicPropertiesAsync();
-                    if (properties is not null)
-                    {
-                        createdAt = properties.DateCreated!.Value.UtcDateTime;
-                    }
-                }
-                catch
-                {
-                }
-            }
-
-            var node = new NodeViewModel
-            {
-                Name = item!.Name,
-                IsFolder = item is IStorageFolder,
-                IconPath = item is IStorageFolder
-                    ? IconCategory.Folder.Value
-                    : IconCategory.File.Value,
+                Name = nodeTemplate.Name,
+                IsExpanded = nodeTemplate.IsExpanded,
+                IsFolder = nodeTemplate.IsFolder,
+                IconPath = nodeTemplate.IconPath,
                 Parent = parent,
-                StorageItem = item,
-                CreatedAt = createdAt
+                FullPath = parent is null || string.IsNullOrWhiteSpace(parent.FullPath)
+                    ? nodeTemplate.FullPath
+                    : Path.Combine(parent.FullPath, nodeTemplate.Name),
+                Children = new SmartCollection<INode>(),
+                CreatedAt = nodeTemplate.CreatedAt
             };
 
-            node.Expanded += _eventService.ExpandHandler;
-            node.Expanded += async n => await ExpandNodeAsync(n);
-            node.Collapsed += _eventService.CollapsedHandler;
-
+            AttachNodeEvents(node);
             return node;
         }
 
-        private async void AddPlaceholder(NodeViewModel node, IStorageItem item)
+        public async Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null)
         {
-            if (!node.IsFolder || item is not IStorageFolder folder)
-            {
-                return;
-            }
+            var nodes = new List<INode>();
 
-            await foreach (var child in folder.GetItemsAsync())
+            foreach (var path in paths)
             {
-                if (_managerHelper.HasFlag(child, FileAttributes.Hidden))
+                if (string.IsNullOrWhiteSpace(path))
                 {
                     continue;
                 }
 
-                node.Children.Add(new NodeViewModel
-                {
-                    Name = "Loading..."
-                });
-
-                return;
+                NodeViewModel child = await CreateNodeFromPathAsync(path, parent);
+                nodes.Add(child);
             }
+
+            return nodes;
         }
 
-        private async Task ExpandNodeAsync(INode expandedNode)
+        public async Task<List<INode>> GetChildNodesAsync(INode node)
         {
-            if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
+            if (node is not NodeViewModel parentNode || !parentNode.IsFolder || string.IsNullOrWhiteSpace(parentNode.FullPath))
             {
-                return;
+                return GetVirtualChildren(node);
             }
+
+            var realNodes = new List<INode>();
 
             try
             {
-                var realNodes = new List<INode>();
-                if (node.StorageItem is IStorageFolder folder)
+                foreach (string childPath in Directory.EnumerateFileSystemEntries(parentNode.FullPath))
                 {
-                    await foreach (var item in folder.GetItemsAsync())
+                    if (_managerHelper.HasFlag(childPath, FileAttributes.Hidden))
                     {
-                        if (_managerHelper.HasFlag(item, FileAttributes.Hidden))
-                        {
-                            continue;
-                        }
-
-                        await AddNode(realNodes, node, item);
+                        continue;
                     }
+
+                    realNodes.Add(await CreateNodeFromPathAsync(childPath, parentNode));
                 }
-
-                var virtualNodes = node.Children.Where(c => c.StorageItem is null && !c.Name.Equals("Loading...")).ToList();
-
-                var combined = realNodes.Concat(virtualNodes)
-                                        .ToList();
-
-                combined.Sort(_nodeComparer);
-
-                node.Children.Clear();
-
-                if (combined is not null && combined.Any())
-                {
-                    node.Children.AddRange(combined!);
-                }
-
-                node.IsLoaded = true;
             }
             catch (UnauthorizedAccessException)
             {
             }
-        }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
 
-        private async Task AddNode(List<INode> nodes, INode? parent, IStorageItem item)
-        {
-            var child = await CreateNode(item, parent);
-
-            AddPlaceholder(child, item);
-
-            nodes.Add(child);
+            var combined = realNodes.Concat(GetVirtualChildren(node)).ToList();
+            combined.Sort(_nodeComparer);
+            return combined;
         }
 
         public void RemoveNode(INode node)
@@ -242,6 +180,110 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         public void BringIntoView(INode node)
         {
             _treeView.ScrollChanged?.Invoke(this, new TreeViewEventArgs(node));
+        }
+
+        private async Task<NodeViewModel> CreateNodeFromPathAsync(string path, INode? parent)
+        {
+            bool isFolder = Directory.Exists(path);
+            DateTime createdAt = GetCreatedAt(path);
+
+            var node = new NodeViewModel
+            {
+                Name = Path.GetFileName(path),
+                IsFolder = isFolder,
+                IconPath = isFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                Parent = parent,
+                FullPath = path,
+                CreatedAt = createdAt
+            };
+
+            AttachNodeEvents(node);
+            AddPlaceholder(node);
+
+            await Task.CompletedTask;
+            return node;
+        }
+
+        private void AttachNodeEvents(NodeViewModel node)
+        {
+            node.Expanded += _eventService.ExpandHandler;
+            node.Expanded += async n => await ExpandNodeAsync(n);
+            node.Collapsed += _eventService.CollapsedHandler;
+        }
+
+        private void AddPlaceholder(NodeViewModel node)
+        {
+            if (!node.IsFolder || string.IsNullOrWhiteSpace(node.FullPath))
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (string childPath in Directory.EnumerateFileSystemEntries(node.FullPath))
+                {
+                    if (_managerHelper.HasFlag(childPath, FileAttributes.Hidden))
+                    {
+                        continue;
+                    }
+
+                    node.Children.Add(new NodeViewModel
+                    {
+                        Name = LoadingPlaceholderName
+                    });
+
+                    return;
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+        }
+
+        private async Task ExpandNodeAsync(INode expandedNode)
+        {
+            if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
+            {
+                return;
+            }
+
+            List<INode> combined = await GetChildNodesAsync(node);
+
+            node.Children.Clear();
+
+            if (combined.Any())
+            {
+                node.Children.AddRange(combined);
+            }
+
+            node.IsLoaded = true;
+        }
+
+        private static DateTime GetCreatedAt(string path)
+        {
+            try
+            {
+                return Directory.Exists(path)
+                    ? Directory.GetCreationTime(path)
+                    : File.GetCreationTime(path);
+            }
+            catch
+            {
+                return DateTime.Now;
+            }
+        }
+
+        private static List<INode> GetVirtualChildren(INode node)
+        {
+            return node.Children
+                .Where(c => string.IsNullOrWhiteSpace(c.FullPath) && !c.Name.Equals(LoadingPlaceholderName))
+                .ToList();
         }
     }
 }

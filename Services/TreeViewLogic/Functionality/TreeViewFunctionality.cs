@@ -1,7 +1,8 @@
-﻿using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality
 {
@@ -24,7 +25,9 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         {
             index = _sortService.GetNodePositionIndex(parent, node);
             if (index == -1)
+            {
                 return false;
+            }
 
             parent.Children.Insert(index, node);
             return true;
@@ -39,12 +42,15 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         public INode? GetNodeByPath(string path) => _nodeService.GetNodeByPath(path);
         public INode? GetCoreNode() => _nodeService.GetCoreNode();
         public INode? CreateNode(INode template, INode parent) => _nodeService.CreateNode(template, parent);
+        public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null)
+            => _nodeService.CreateNodesFromPathsAsync(paths, parent);
+        public Task<List<INode>> GetChildNodesAsync(INode node) => _nodeService.GetChildNodesAsync(node);
         public void RemoveNode(INode node) => _nodeService.RemoveNode(node);
         public void BringIntoView(INode node) => _nodeService.BringIntoView(node);
         public void UpdateSelectedNodes(INode node) => _selectionService.UpdateSelectedNodes(node);
         public void AddNodeToSelected(INode node) => _selectionService.AddNodeToSelected(node);
         public void RemoveSelectedNodes(INode node) => _selectionService.RemoveSelectedNodes(node);
-        public void ClearAll() => _selectionService.ClearAll(); 
+        public void ClearAll() => _selectionService.ClearAll();
         public void AddSelectedNodeByIndex(int index) => _selectionService.AddSelectedNodeByIndex(index);
     }
 }

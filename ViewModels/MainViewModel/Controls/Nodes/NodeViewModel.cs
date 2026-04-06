@@ -1,4 +1,3 @@
-﻿using Avalonia.Platform.Storage;
 using DatabaseTask.Models;
 using DatabaseTask.ViewModels.Base;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
@@ -18,7 +17,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
 
         public bool IsFolder { get; set; }
         public bool IsLoaded { get; set; }
-        public IStorageItem? StorageItem { get; set; }
+        public string? FullPath { get; set; }
         public INode? Parent { get; set; }
         public DateTime CreatedAt { get; set; }
 

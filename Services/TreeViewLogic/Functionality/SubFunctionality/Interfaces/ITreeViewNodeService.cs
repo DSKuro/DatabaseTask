@@ -1,4 +1,6 @@
-﻿using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces
 {
@@ -10,6 +12,8 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public INode? GetNodeByPath(string path);
         public INode? GetCoreNode();
         public INode? CreateNode(INode template, INode parent);
+        public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null);
+        public Task<List<INode>> GetChildNodesAsync(INode node);
         public void RemoveNode(INode node);
         public void BringIntoView(INode node);
     }

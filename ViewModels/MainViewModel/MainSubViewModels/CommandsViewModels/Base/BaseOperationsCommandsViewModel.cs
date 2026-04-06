@@ -110,7 +110,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
             CommandInfo commandInfo = new CommandInfo(type, paths);
 
             CommandInfo? databaseInfo = null;
-            if (type is not CommandType.CreateFolder && isDatabase)
+            if (type is not CommandType.CreateFolder &&
+                type is not CommandType.CopyFile && type is not 
+                CommandType.CopyFolder && isDatabase)
             {
                 string[] relativePaths = GetRelativePathForCommand(targets);
                 databaseInfo = new CommandInfo(type, relativePaths);

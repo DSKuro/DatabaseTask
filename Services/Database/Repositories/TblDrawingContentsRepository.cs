@@ -140,10 +140,7 @@ namespace DatabaseTask.Services.Database.Repositories
                 else
                 {
                     record.ContentDocument =
-                        record.ContentDocument.Replace(
-                            relativeOldPath,
-                            relativeNewPath,
-                            StringComparison.OrdinalIgnoreCase);
+                        newPath;
                 }
             }
         }

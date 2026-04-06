@@ -48,7 +48,10 @@ namespace DatabaseTask.Services.Operations.LoggerOperations
 
         public void RemoveLog()
         {
-            _logger.LogOperations.RemoveAt(0);
+            if (_logger.LogOperations.Count > 0)
+            {
+                _logger.LogOperations.RemoveAt(_logger.LogOperations.Count - 1);
+            }
         }
 
         public void ClearAll()

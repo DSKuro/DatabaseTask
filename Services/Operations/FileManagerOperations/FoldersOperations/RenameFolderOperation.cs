@@ -41,7 +41,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        private static void RefreshNodePosition(INode node)
+        private void RefreshNodePosition(INode node)
         {
             if (node.Parent is not null)
             {
@@ -56,7 +56,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        private static void RefreshNodePaths(INode node)
+        private void RefreshNodePaths(INode node)
         {
             if (node.Parent is not null)
             {

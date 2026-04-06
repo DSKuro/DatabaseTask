@@ -55,7 +55,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-        private static void UpdatePathRecursive(INode node, INode parent)
+        private void UpdatePathRecursive(INode node, INode parent)
         {
             node.FullPath = string.IsNullOrWhiteSpace(parent.FullPath)
                 ? null

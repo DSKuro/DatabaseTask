@@ -46,7 +46,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             _treeViewFunctionality.BringIntoView(node);
         }
 
-        private static NodeViewModel CreateNode(string folderName, INode parent)
+        private NodeViewModel CreateNode(string folderName, INode parent)
         {
             return new NodeViewModel()
             {

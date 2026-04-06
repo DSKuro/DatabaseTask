@@ -7,6 +7,7 @@ using DatabaseTask.ViewModels.MainViewModel.Controls.DataGrid.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
 {
@@ -33,9 +34,9 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager
             _dataGrid = dataGrid;
         }
 
-        public void GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
+        public async Task GetCollectionFromFolders(IEnumerable<IStorageFolder> folders)
         {
-           _treeViewManager.LoadFoldersAsync(folders);
+           await _treeViewManager.LoadFoldersAsync(folders);
         }
     }
 }

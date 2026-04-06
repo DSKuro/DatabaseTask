@@ -152,7 +152,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             {
                 _fullPath.PathToCoreFolder = folder.Path.LocalPath;
             }
-            _fileManager.GetCollectionFromFolders(folders);
+            await _fileManager.GetCollectionFromFolders(folders);
             _fileManager.TreeViewFunctionality.AddSelectedNodeByIndex(0);
             WeakReferenceMessenger.Default.Send(new MainWindowToggleManagerButtons(true));
             _commandsHistory.ClearAll();

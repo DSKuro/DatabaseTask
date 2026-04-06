@@ -13,7 +13,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces
         public ITreeView TreeView { get; }
         public ITreeViewFunctionality TreeViewFunctionality { get; }
 
-        public void GetCollectionFromFolders
+        public Task GetCollectionFromFolders
             (IEnumerable<IStorageFolder> folders);
     }
 }

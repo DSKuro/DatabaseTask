@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 {
@@ -105,10 +106,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
                     IconPath = nodeTemplate.IconPath,
                     Parent = parent,
                     StorageItem = template.StorageItem,
-                    Children = new SmartCollection<INode>()
+                    Children = new SmartCollection<INode>(),
+                    CreatedAt = template.CreatedAt
                 };
                 node.Expanded += _eventService.ExpandHandler;
-                node.Expanded += ExpandNodeAsync;
+                node.Expanded += async n => await ExpandNodeAsync(n);
                 node.Collapsed += _eventService.CollapsedHandler;
 
                 return node;
@@ -118,21 +120,39 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             return null;
         }
 
-        private NodeViewModel CreateNode(IStorageItem item, INode? parent)
+        private async Task<NodeViewModel> CreateNode(IStorageItem item, INode? parent)
         {
+            DateTime createdAt = DateTime.Now;
+
+            if (item != null)
+            {
+                try
+                {
+                    var properties = await item.GetBasicPropertiesAsync();
+                    if (properties is not null)
+                    {
+                        createdAt = properties.DateCreated!.Value.UtcDateTime;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
             var node = new NodeViewModel
             {
-                Name = item.Name,
+                Name = item!.Name,
                 IsFolder = item is IStorageFolder,
                 IconPath = item is IStorageFolder
                     ? IconCategory.Folder.Value
                     : IconCategory.File.Value,
                 Parent = parent,
-                StorageItem = item
+                StorageItem = item,
+                CreatedAt = createdAt
             };
 
             node.Expanded += _eventService.ExpandHandler;
-            node.Expanded += ExpandNodeAsync;
+            node.Expanded += async n => await ExpandNodeAsync(n);
             node.Collapsed += _eventService.CollapsedHandler;
 
             return node;
@@ -161,7 +181,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             }
         }
 
-        private async void ExpandNodeAsync(INode expandedNode)
+        private async Task ExpandNodeAsync(INode expandedNode)
         {
             if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
             {
@@ -180,7 +200,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
                             continue;
                         }
 
-                        AddNode(realNodes, node, item);
+                        await AddNode(realNodes, node, item);
                     }
                 }
 
@@ -205,9 +225,9 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             }
         }
 
-        private void AddNode(List<INode> nodes, INode? parent, IStorageItem item)
+        private async Task AddNode(List<INode> nodes, INode? parent, IStorageItem item)
         {
-            var child = CreateNode(item, parent);
+            var child = await CreateNode(item, parent);
 
             AddPlaceholder(child, item);
 

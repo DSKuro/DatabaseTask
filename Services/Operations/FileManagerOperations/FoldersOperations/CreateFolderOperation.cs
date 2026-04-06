@@ -3,6 +3,7 @@ using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.I
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,7 +53,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 Name = folderName,
                 IsFolder = true,
                 IconPath = IconCategory.Folder.Value,
-                Parent = parent
+                Parent = parent,
+                CreatedAt = DateTime.Now
             };
         }
 

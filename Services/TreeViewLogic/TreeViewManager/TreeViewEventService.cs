@@ -62,7 +62,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
         private async void UpdatePropertiesOnSelection()
         {
-            INode? node = _treeView.Nodes.FirstOrDefault();
+            INode? node = _treeView.SelectedNodes.FirstOrDefault();
             if (node is not NodeViewModel selectedNode)
             {
                 return;
@@ -107,6 +107,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             combinedNodes.Sort(_comparer);
 
             var filePropertiesList = new List<FileProperties>();
+
             foreach (var n in combinedNodes)
             {
                 if (n.StorageItem is not null)
@@ -115,9 +116,13 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
                     filePropertiesList.Add(new FileProperties(
                         n.StorageItem.Name,
-                        n.StorageItem is IStorageFolder ? "" : _dataGridFunctionality.SizeToString(basicProperties.Size),
+                        n.StorageItem is IStorageFolder
+                            ? ""
+                            : _dataGridFunctionality.SizeToString(basicProperties.Size),
                         _dataGridFunctionality.TimeToString(basicProperties.DateModified),
-                        n.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                        n.IsFolder
+                            ? IconCategory.Folder.Value
+                            : IconCategory.File.Value,
                         n
                     ));
                 }
@@ -126,8 +131,10 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
                     filePropertiesList.Add(new FileProperties(
                         n.Name,
                         "",
-                        _dataGridFunctionality.TimeToString(DateTime.Now),
-                        n.IsFolder ? IconCategory.Folder.Value : IconCategory.File.Value,
+                        _dataGridFunctionality.TimeToString(n.CreatedAt),
+                        n.IsFolder
+                            ? IconCategory.Folder.Value
+                            : IconCategory.File.Value,
                         n
                     ));
                 }

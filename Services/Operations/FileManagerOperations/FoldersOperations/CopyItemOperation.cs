@@ -45,7 +45,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 if (newChildNode == null)
                     continue;
 
-                // Вставляем узел на нужное место
                 _treeViewFunctionality.TryInsertNode(targetParent, newChildNode, out _);
 
                 var nodeChild = child as NodeViewModel;

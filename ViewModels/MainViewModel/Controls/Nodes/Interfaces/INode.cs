@@ -12,6 +12,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces
         public IStorageItem? StorageItem { get; set; }
         public string Name { get; set; }
         public INode? Parent { get; set; }
+        public DateTime CreatedAt { get; set; }
         public event Action<INode> Expanded;
         public event Action<INode> Collapsed;
         public SmartCollection<INode> Children { get; set; }

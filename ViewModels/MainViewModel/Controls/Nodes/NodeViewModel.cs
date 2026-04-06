@@ -20,6 +20,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.Controls.Nodes
         public bool IsLoaded { get; set; }
         public IStorageItem? StorageItem { get; set; }
         public INode? Parent { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public SmartCollection<INode> Children { get; set; } = new SmartCollection<INode>();
 

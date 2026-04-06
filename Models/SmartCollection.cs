@@ -36,5 +36,19 @@ namespace DatabaseTask.Models
             Items.Clear();
             AddRange(range);
         }
+
+        public void RemoveAll(IEnumerable<T> range)
+        {
+            
+
+            foreach (var item in range)
+            {
+                Items.Remove(item);
+            }
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
+            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
     }
 }

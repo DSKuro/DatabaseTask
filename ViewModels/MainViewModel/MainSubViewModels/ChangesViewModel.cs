@@ -60,7 +60,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
             {
                 _commandsHistory.ClearAll();
                 _commandsHistory.ExecuteUndoItemsCommands();
-                _loggerOperations.ClearAll();
+                _loggerOperations.ClearCommittedLog();
             }
         }
     }

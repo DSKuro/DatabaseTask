@@ -55,5 +55,14 @@ namespace DatabaseTask.Services.Operations.LoggerOperations
         {
             _logger.LogOperations.Clear();
         }
+
+        public void ClearCommittedLog()
+        {
+            var committedLogs = _logger.LogOperations
+                .Where(x => string.IsNullOrEmpty(x.ImagePath))
+                .ToList();
+
+            _logger.LogOperations.RemoveAll(committedLogs);
+        }
     }
 }

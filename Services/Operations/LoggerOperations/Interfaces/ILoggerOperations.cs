@@ -9,5 +9,6 @@ namespace DatabaseTask.Services.Operations.LoggerOperations.Interfaces
         public void UpdateStatus(List<bool> results);
         public void RemoveLog();
         public void ClearAll();
+        public void ClearCommittedLog();
     }
 }

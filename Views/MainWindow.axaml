@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
 		dialogues:DialogueManager.Register="MainDialogueWindow"
-        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
-		Width="500" Height="600"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
+		Width="550" Height="650"
 		xmlns:controls="clr-namespace:DatabaseTask.Controls"
 		xmlns:models="using:DatabaseTask.Models"
 		xmlns:log="using:DatabaseTask.ViewModels.Logger"
@@ -48,7 +48,7 @@
 			</WrapPanel>
 		</Border>
 		
-		<Grid Grid.Row="1" ColumnDefinitions="0.75*, 1.25*">
+		<Grid Grid.Row="1" ColumnDefinitions="1*, 1*">
 			<TreeView Grid.Column="0"
 					  x:DataType="vm:MainWindowViewModel"
 					  Name="TreeViewControl" 
@@ -170,12 +170,12 @@
 					Command="{Binding DeleteFileCommand}"
 					Content="Удалить файл"/>
 		</Grid>
-		<Grid Margin="10, 10, 0, 0" Grid.Row="3" RowDefinitions="0.7*, 1.25*">
+		<Grid Margin="10, 10, 0, 0" Grid.Row="3" RowDefinitions="0.5*, 2*">
 			<TextBlock Text="Operation log" Grid.Row="0"/>
 			<DataGrid Margin="0, 5, 0, 0" Grid.Row="1" HorizontalAlignment="Stretch"
 					IsReadOnly="True"
 					CanUserResizeColumns="True"
-					Height="100"
+					Height="150"
 					ItemsSource="{Binding Logger.LogOperations}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Width="*" Header="Время" Binding="{Binding Time}"/>
@@ -183,11 +183,15 @@
 					<DataGridTemplateColumn Width="*" Header="Статус">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate x:DataType="log:LogData">
-								<Svg Path="{Binding ImagePath}"
-									 HorizontalAlignment="Center"
-									 VerticalAlignment="Center"
-									 Width="20"
-									 Height="20"/>
+								 <Viewbox Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+									<Svg Path="{Binding ImagePath}"
+									     IsVisible="{Binding ImagePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+														 HorizontalAlignment="Center"
+														 VerticalAlignment="Center"
+														 Width="20"
+														 Height="20"/>
+								 </Viewbox>
+								
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>

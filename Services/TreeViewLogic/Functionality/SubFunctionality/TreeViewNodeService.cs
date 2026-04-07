@@ -140,7 +140,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         {
             if (node is not NodeViewModel parentNode || !parentNode.IsFolder || string.IsNullOrWhiteSpace(parentNode.FullPath))
             {
-                return GetVirtualChildren(node);
+                return GetExistingChildren(node);
             }
 
             var realNodes = new List<INode>();
@@ -167,7 +167,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             {
             }
 
-            var combined = realNodes.Concat(GetVirtualChildren(node)).ToList();
+            var combined = realNodes
+                .Concat(GetExistingChildren(node))
+                .GroupBy(GetNodeIdentity)
+                .Select(x => x.First())
+                .ToList();
             combined.Sort(_nodeComparer);
             return combined;
         }
@@ -279,11 +283,16 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             }
         }
 
-        private static List<INode> GetVirtualChildren(INode node)
+        private List<INode> GetExistingChildren(INode node)
         {
             return node.Children
-                .Where(c => string.IsNullOrWhiteSpace(c.FullPath) && !c.Name.Equals(LoadingPlaceholderName))
+                .Where(c => !c.Name.Equals(LoadingPlaceholderName))
                 .ToList();
+        }
+
+        private string GetNodeIdentity(INode node)
+        {
+            return $"{node.FullPath ?? string.Empty}|{node.Name}";
         }
     }
 }

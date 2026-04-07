@@ -41,6 +41,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         public List<INode> GetAllSelectedNodes() => _selectionService.GetAllSelectedNodes();
         public INode? GetNodeByPath(string path) => _nodeService.GetNodeByPath(path);
         public INode? GetCoreNode() => _nodeService.GetCoreNode();
+        public INode? FindVirtualNode(string name) => _nodeService.FindVirtualNode(name);
         public INode? CreateNode(INode template, INode parent) => _nodeService.CreateNode(template, parent);
         public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null)
             => _nodeService.CreateNodesFromPathsAsync(paths, parent);

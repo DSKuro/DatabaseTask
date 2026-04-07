@@ -70,7 +70,7 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
 
             var realNodes = new List<NodeViewModel>();
 
-            if (selectedNode.IsFolder && !string.IsNullOrWhiteSpace(selectedNode.FullPath))
+            if (selectedNode.IsFolder && !string.IsNullOrWhiteSpace(selectedNode.FullPath) && selectedNode.Children.Count is 1)
             {
                 try
                 {
@@ -102,6 +102,13 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
                 catch (IOException)
                 {
                 }
+            }
+            else
+            {
+                realNodes = selectedNode.Children
+                .OfType<NodeViewModel>()
+                .Where(x => !string.IsNullOrWhiteSpace(x.FullPath) && x.Name != "Loading...")
+                .ToList();
             }
 
             var virtualNodes = selectedNode.Children

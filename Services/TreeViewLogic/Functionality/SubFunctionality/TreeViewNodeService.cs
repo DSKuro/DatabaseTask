@@ -88,6 +88,12 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             return currentNode;
         }
 
+        public INode? FindVirtualNode(string name)
+        {
+            INode? coreNode = GetCoreNode();
+            return coreNode is null ? null : FindVirtualNodeRecursive(coreNode, name);
+        }
+
         public INode? GetCoreNode()
         {
             return _treeView.Nodes.FirstOrDefault();
@@ -293,6 +299,26 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         private string GetNodeIdentity(INode node)
         {
             return $"{node.FullPath ?? string.Empty}|{node.Name}";
+        }
+
+        private static INode? FindVirtualNodeRecursive(INode node, string name)
+        {
+            if (string.Equals(node.Name, name, StringComparison.OrdinalIgnoreCase)
+                && string.IsNullOrWhiteSpace(node.FullPath))
+            {
+                return node;
+            }
+
+            foreach (INode child in node.Children)
+            {
+                INode? found = FindVirtualNodeRecursive(child, name);
+                if (found is not null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public bool IsParentHasNodeWithName(INode node, string name);
         public INode? GetChildrenByName(INode node, string name);
         public INode? GetNodeByPath(string path);
+        public INode? FindVirtualNode(string name);
         public INode? GetCoreNode();
         public INode? CreateNode(INode template, INode parent);
         public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null);

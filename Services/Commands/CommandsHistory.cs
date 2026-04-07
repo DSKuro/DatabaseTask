@@ -59,7 +59,8 @@ namespace DatabaseTask.Services.Commands
 
         public List<bool> ExecuteAllCommands()
         {
-            List<bool> results = ExecuteQueue(_commands);
+            List<IResultCommand> executedCommands = new List<IResultCommand>();
+            List<bool> results = ExecuteQueue(_commands, executedCommands);
             //ExecuteQueue(_databaseCommands);
             
             if (_databaseCommands.Any())
@@ -75,12 +76,13 @@ namespace DatabaseTask.Services.Commands
             // если всё-таки делаем отмену и для файлов, то коммитим операции
             // здесь
 
+            CommitSuccessfulResultCommands(executedCommands, results);
             CommitSuccessfulItemCommands(results);
 
             return results;
         }
 
-        private List<bool> ExecuteQueue(Queue<IResultCommand> queue)
+        private List<bool> ExecuteQueue(Queue<IResultCommand> queue, List<IResultCommand> executedCommands)
         {
             var results = new List<bool>();
 
@@ -89,10 +91,22 @@ namespace DatabaseTask.Services.Commands
                 var command = queue.Dequeue();
                 command.Execute();
 
+                executedCommands.Add(command);
                 results.Add(command.IsSuccess);
             }
 
             return results;
+        }
+
+        private void CommitSuccessfulResultCommands(List<IResultCommand> commands, List<bool> results)
+        {
+            for (int i = 0; i < commands.Count && i < results.Count; i++)
+            {
+                if (results[i])
+                {
+                    commands[i].Commit();
+                }
+            }
         }
 
         private void CommitSuccessfulItemCommands(List<bool> commandResults)

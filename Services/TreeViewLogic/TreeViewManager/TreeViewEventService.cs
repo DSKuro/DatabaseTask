@@ -106,9 +106,9 @@ namespace DatabaseTask.Services.TreeViewLogic.TreeViewManager
             else
             {
                 realNodes = selectedNode.Children
-                .OfType<NodeViewModel>()
-                .Where(x => !string.IsNullOrWhiteSpace(x.FullPath) && x.Name != "Loading...")
-                .ToList();
+                    .OfType<NodeViewModel>()
+                    .Where(x => !string.IsNullOrWhiteSpace(x.FullPath) && x.Name != "Loading...")
+                    .ToList();
             }
 
             var virtualNodes = selectedNode.Children

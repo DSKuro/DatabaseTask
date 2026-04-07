@@ -1,4 +1,5 @@
 ﻿using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using System;
@@ -36,9 +37,10 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         public void UpdateSelectedNodes(INode node)
         {
             INode? selectedNode = GetFirstSelectedNode();
-            if (selectedNode != null)
+            var selectedNodeViewModel = selectedNode as NodeViewModel;
+            if (selectedNodeViewModel is not null && selectedNodeViewModel.IsFolder)
             {
-                selectedNode.IsExpanded = true;
+                selectedNodeViewModel.IsExpanded = true;
             }
             _treeView.SelectedNodes.Clear();
             AddNodeToSelected(node);

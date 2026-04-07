@@ -54,9 +54,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 IsFolder = true,
                 IconPath = IconCategory.Folder.Value,
                 Parent = parent,
-                FullPath = string.IsNullOrWhiteSpace(parent.FullPath)
-                    ? null
-                    : Path.Combine(parent.FullPath, folderName),
+                FullPath = string.Empty,
                 CreatedAt = DateTime.Now
             };
         }

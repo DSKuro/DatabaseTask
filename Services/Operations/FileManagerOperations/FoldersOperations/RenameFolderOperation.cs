@@ -60,9 +60,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         {
             if (node.Parent is not null)
             {
-                node.FullPath = string.IsNullOrWhiteSpace(node.Parent.FullPath)
-                    ? null
-                    : Path.Combine(node.Parent.FullPath, node.Name);
+                node.FullPath = string.Empty;
             }
 
             foreach (INode child in node.Children)

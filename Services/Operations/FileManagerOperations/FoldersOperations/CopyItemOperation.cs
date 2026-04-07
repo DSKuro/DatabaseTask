@@ -29,7 +29,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             {
                 target.IsExpanded = true;
                 newNode.Name = newItemName;
-                UpdatePathRecursive(newNode, target);
+                newNode.FullPath = string.Empty;
                 bool isInsert = _treeViewFunctionality.TryInsertNode(target, newNode, out _);
                 if (isInsert)
                 {
@@ -51,6 +51,8 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 {
                     continue;
                 }
+
+                newChildNode.FullPath = string.Empty;
 
                 _treeViewFunctionality.TryInsertNode(targetParent, newChildNode, out _);
 

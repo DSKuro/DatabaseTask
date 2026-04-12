@@ -2,6 +2,8 @@ using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.I
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -29,6 +31,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             node.Name = newName;
             _treeViewFunctionality.UpdatePathRecursive(node, string.Empty);
             node.IsOperationHighlighted = isHighlight;
+            RefreshNodePosition(node);
             _treeViewFunctionality.UpdateSelectedNodes(node);
 
             if (isScroll)
@@ -38,7 +41,20 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             }
         }
 
-  
+        private void RefreshNodePosition(INode node)
+        {
+            if (node.Parent is not null)
+            {
+                var sorted = node.Parent.Children
+                    .OfType<NodeViewModel>()
+                    .OrderByDescending(x => x.IsFolder)
+                    .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                node.Parent.Children.Clear();
+                node.Parent.Children.AddRange(sorted);
+            }
+        }
 
         public async Task UndoRenameFolder(INode node, string oldName)
         {

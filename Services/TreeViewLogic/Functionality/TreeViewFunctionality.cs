@@ -1,5 +1,6 @@
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,6 +34,28 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
             return true;
         }
 
+        public async Task RecursiveCopyChildren(INode sourceParent, INode targetParent)
+        {
+            foreach (INode child in await GetChildNodesAsync(sourceParent))
+            {
+                var newChildNode = CreateNode(child, targetParent);
+
+                if (newChildNode == null)
+                {
+                    continue;
+                }
+
+                newChildNode.FullPath = string.Empty;
+
+                TryInsertNode(targetParent, newChildNode, out _);
+
+                if (child is NodeViewModel nodeChild && nodeChild.IsFolder)
+                {
+                    await RecursiveCopyChildren(child, newChildNode);
+                }
+            }
+        }
+
         public bool IsNodeExist(INode parent, string name) => _nodeService.IsNodeExist(parent, name);
         public bool IsParentHasNodeWithName(INode node, string name) => _nodeService.IsParentHasNodeWithName(node, name);
         public int GetNodePositionIndex(INode parent, INode node) => _sortService.GetNodePositionIndex(parent, node);
@@ -57,6 +80,11 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         public void UpdatePathRecursive(INode node, string path)
         {
             _nodeService.UpdatePathRecursive(node, path);
+        }
+
+        public async Task EnsureTreeLoadedRecursive(NodeViewModel node)
+        {
+            await _nodeService.EnsureTreeLoadedRecursive(node);
         }
     }
 }

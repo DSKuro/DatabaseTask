@@ -1,3 +1,4 @@
+using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public INode? FindVirtualNode(string name);
         public INode? GetCoreNode();
         public INode? CreateNode(INode template, INode parent);
+        public Task EnsureTreeLoadedRecursive(NodeViewModel node);
         public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null);
         public Task<List<INode>> GetChildNodesAsync(INode node);
         public void UpdatePathRecursive(INode node, string path);

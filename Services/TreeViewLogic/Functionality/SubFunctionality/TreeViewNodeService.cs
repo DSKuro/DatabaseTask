@@ -1,6 +1,7 @@
 using DatabaseTask.Models;
 using DatabaseTask.Models.Categories;
 using DatabaseTask.Services.Comparer.Interfaces;
+using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.TreeViewManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
@@ -256,6 +257,32 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             }
         }
 
+        public async Task EnsureTreeLoadedRecursive(NodeViewModel node)
+        {
+            bool hasOnlyPlaceholder =
+                node.Children.Count is 1 &&
+                node.Children[0] is NodeViewModel child &&
+                child.Name.Equals(LoadingPlaceholderName);
+
+            if (hasOnlyPlaceholder)
+            {
+                node.Children.Clear();
+
+                var loadedChildren =
+                    await GetChildNodesAsync(node);
+
+                node.Children.AddRange(loadedChildren);
+            }
+
+            foreach (var childNode in node.Children.OfType<NodeViewModel>())
+            {
+                if (childNode.IsFolder)
+                {
+                    await EnsureTreeLoadedRecursive(childNode);
+                }
+            }
+        }
+
         private async Task ExpandNodeAsync(INode expandedNode)
         {
             if (expandedNode is not NodeViewModel node || !node.IsFolder || node.IsLoaded)
@@ -312,7 +339,12 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
                     continue;
                 }
 
-                UpdatePathRecursive(child, Path.Combine(path, child.Name));
+                string result = string.Empty;
+                if (!string.IsNullOrEmpty(path))
+                {
+                    result = Path.Combine(path, child.Name);
+                }
+                UpdatePathRecursive(child, result);
             }
         }
 

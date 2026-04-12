@@ -1,6 +1,7 @@
 ﻿using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations.Interfaces;
 using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
+using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
 {
@@ -19,6 +20,11 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
             if (node.Parent is not null && isUpdateSelection)
             {
                 node.Parent.IsOperationHighlighted = true;
+
+                if (!node.Parent.Children.Any())
+                {
+                    node.Parent.IsExpanded = false;
+                }
             }
         }
 

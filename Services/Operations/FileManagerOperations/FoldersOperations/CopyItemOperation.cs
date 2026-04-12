@@ -4,7 +4,6 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Interfa
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations
@@ -70,18 +69,6 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
                 .GetAwaiter()
                 .GetResult()
                 .Where(x => x.Name != "Loading...");
-        }
-
-        private void UpdatePathRecursive(INode node, INode parent)
-        {
-            node.FullPath = string.IsNullOrWhiteSpace(parent.FullPath)
-                ? null
-                : Path.Combine(parent.FullPath, node.Name);
-
-            foreach (INode child in node.Children)
-            {
-                UpdatePathRecursive(child, node);
-            }
         }
 
         public void UndoCopyItem(INode copied, INode target, string newItemName)

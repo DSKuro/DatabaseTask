@@ -53,5 +53,10 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality
         public void RemoveSelectedNodes(INode node) => _selectionService.RemoveSelectedNodes(node);
         public void ClearAll() => _selectionService.ClearAll();
         public void AddSelectedNodeByIndex(int index) => _selectionService.AddSelectedNodeByIndex(index);
+
+        public void UpdatePathRecursive(INode node, string path)
+        {
+            _nodeService.UpdatePathRecursive(node, path);
+        }
     }
 }

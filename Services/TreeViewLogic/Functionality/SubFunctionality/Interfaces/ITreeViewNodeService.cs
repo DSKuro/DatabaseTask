@@ -15,6 +15,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality.Int
         public INode? CreateNode(INode template, INode parent);
         public Task<List<INode>> CreateNodesFromPathsAsync(IEnumerable<string> paths, INode? parent = null);
         public Task<List<INode>> GetChildNodesAsync(INode node);
+        public void UpdatePathRecursive(INode node, string path);
         public void RemoveNode(INode node);
         public void BringIntoView(INode node);
     }

@@ -53,22 +53,7 @@ namespace DatabaseTask.Services.Commands.FilesCommands.Commands
                 return;
             }
 
-            UpdatePathRecursive(node, _newPath);
-        }
-
-        private static void UpdatePathRecursive(INode node, string path)
-        {
-            node.FullPath = path;
-
-            foreach (INode child in node.Children)
-            {
-                if (child.Name == "Loading...")
-                {
-                    continue;
-                }
-
-                UpdatePathRecursive(child, Path.Combine(path, child.Name));
-            }
+            _treeViewFunctionality.UpdatePathRecursive(node, _newPath);
         }
     }
 }

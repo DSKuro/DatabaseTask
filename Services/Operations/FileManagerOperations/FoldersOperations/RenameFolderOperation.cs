@@ -3,7 +3,6 @@ using DatabaseTask.Services.TreeViewLogic.Functionality.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes;
 using DatabaseTask.ViewModels.MainViewModel.Controls.Nodes.Interfaces;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,7 +28,7 @@ namespace DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperatio
         private async Task RenameFolderImpl(string newName, NodeViewModel node, bool isScroll, bool isHighlight)
         {
             node.Name = newName;
-            RefreshNodePaths(node);
+            _treeViewFunctionality.UpdatePathRecursive(node, string.Empty);
             node.IsOperationHighlighted = isHighlight;
             RefreshNodePosition(node);
             _treeViewFunctionality.UpdateSelectedNodes(node);

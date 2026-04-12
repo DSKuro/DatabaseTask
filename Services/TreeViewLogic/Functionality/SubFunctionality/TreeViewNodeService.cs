@@ -301,7 +301,22 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             return $"{node.FullPath ?? string.Empty}|{node.Name}";
         }
 
-        private static INode? FindVirtualNodeRecursive(INode node, string name)
+        public void UpdatePathRecursive(INode node, string path)
+        {
+            node.FullPath = path;
+
+            foreach (INode child in node.Children)
+            {
+                if (child.Name.Equals(LoadingPlaceholderName))
+                {
+                    continue;
+                }
+
+                UpdatePathRecursive(child, Path.Combine(path, child.Name));
+            }
+        }
+
+        private INode? FindVirtualNodeRecursive(INode node, string name)
         {
             if (string.Equals(node.Name, name, StringComparison.OrdinalIgnoreCase)
                 && string.IsNullOrWhiteSpace(node.FullPath))

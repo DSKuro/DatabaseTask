@@ -50,12 +50,17 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             var results = await WeakReferenceMessenger.Default.Send<MainWindowDuplicatesFilesMessage>();
 
-            if (results is not null
-                && results.PathsToUpdate.Any()
-                && results.PathsToDelete.Any())
+            if (results is not null)
             {
-                UpdateDuplicatePaths(results.PathsToUpdate);
-                await DeleteFiles(results.PathsToDelete);
+                if (results.PathsToUpdate.Any())
+                {
+                    UpdateDuplicatePaths(results.PathsToUpdate);
+                }
+
+                if (results.PathsToDelete.Any())
+                {
+                    await DeleteFiles(results.PathsToDelete);
+                }
             }
         }
 
@@ -87,7 +92,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
         {
             foreach (var path in paths)
             {
-                INode? node = _treeViewFunctionality.GetNodeByPath(path);
+                INode? node = await _treeViewFunctionality.GetNodeByPathAsync(path);
                 if (node is not null)
                 {
                     await DeleteItemOperation(node, LogCategory.DeleteFileCategory, isInDatabase);

@@ -89,6 +89,39 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
             return currentNode;
         }
 
+        public async Task<INode?> GetNodeByPathAsync(string path)
+        {
+            INode? coreNode = GetCoreNode();
+            if (coreNode is null)
+            {
+                return null;
+            }
+
+            var parts = path.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(part => !part.Equals("."));
+
+            INode currentNode = coreNode;
+
+            foreach (var part in parts)
+            {
+                if (currentNode is NodeViewModel folderNode && folderNode.IsFolder && !folderNode.IsLoaded)
+                {
+                    await LoadNodeChildrenAsync(folderNode);
+                }
+
+                INode? nextNode = currentNode.Children.FirstOrDefault(node => node.Name.Equals(part));
+
+                if (nextNode is null)
+                {
+                    return null;
+                }
+
+                currentNode = nextNode;
+            }
+
+            return currentNode;
+        }
+
         public INode? FindVirtualNode(string name)
         {
             INode? coreNode = GetCoreNode();
@@ -259,20 +292,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
 
         public async Task EnsureTreeLoadedRecursive(NodeViewModel node)
         {
-            bool hasOnlyPlaceholder =
-                node.Children.Count is 1 &&
-                node.Children[0] is NodeViewModel child &&
-                child.Name.Equals(LoadingPlaceholderName);
-
-            if (hasOnlyPlaceholder)
-            {
-                node.Children.Clear();
-
-                var loadedChildren =
-                    await GetChildNodesAsync(node);
-
-                node.Children.AddRange(loadedChildren);
-            }
+            await LoadNodeChildrenAsync(node);
 
             foreach (var childNode in node.Children.OfType<NodeViewModel>())
             {
@@ -290,16 +310,7 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
                 return;
             }
 
-            List<INode> combined = await GetChildNodesAsync(node);
-
-            node.Children.Clear();
-
-            if (combined.Any())
-            {
-                node.Children.AddRange(combined);
-            }
-
-            node.IsLoaded = true;
+            await LoadNodeChildrenAsync(node);
         }
 
         private static DateTime GetCreatedAt(string path)
@@ -326,6 +337,36 @@ namespace DatabaseTask.Services.TreeViewLogic.Functionality.SubFunctionality
         private string GetNodeIdentity(INode node)
         {
             return $"{node.FullPath ?? string.Empty}|{node.Name}";
+        }
+
+        private async Task LoadNodeChildrenAsync(NodeViewModel node)
+        {
+            if (!node.IsFolder || node.IsLoaded)
+            {
+                return;
+            }
+
+            bool hasOnlyPlaceholder =
+                node.Children.Count is 1 &&
+                node.Children[0] is NodeViewModel child &&
+                child.Name.Equals(LoadingPlaceholderName);
+
+            if (!hasOnlyPlaceholder && node.Children.Any())
+            {
+                node.IsLoaded = true;
+                return;
+            }
+
+            List<INode> combined = await GetChildNodesAsync(node);
+
+            node.Children.Clear();
+
+            if (combined.Any())
+            {
+                node.Children.AddRange(combined);
+            }
+
+            node.IsLoaded = true;
         }
 
         public void UpdatePathRecursive(INode node, string path)

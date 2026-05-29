@@ -7,6 +7,7 @@ using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
 using DatabaseTask.Views.Analyse;
 using DatabaseTask.Views.Comparators.Enum;
@@ -23,6 +24,8 @@ namespace DatabaseTask.Views
         private readonly ITreeView _treeView;
         private readonly IServiceProvider _serviceProvider;
 
+        private bool _confirmedClose;
+
         public MainWindow(ITreeViewInitializer treeViewInitializer,
             ITreeView treeView,
             IMessageBoxService messageBoxService,
@@ -37,6 +40,32 @@ namespace DatabaseTask.Views
             _treeViewInitializer.Initialize(TreeViewControl, this);
             InitializeMessages();
             InitializeSortingComparers(factory);
+
+            Closing += MainWindow_Closing;
+        }
+
+
+        private async void MainWindow_Closing(object? sender, WindowClosingEventArgs e)
+        {
+            if (_confirmedClose)
+            {
+                return;
+            }
+
+            if (DataContext is not MainWindowViewModel viewModel)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+
+            var canClose = await viewModel.CanExitProgram();
+
+            if (canClose)
+            {
+                _confirmedClose = true;
+                Close();
+            }
         }
 
         private void InitializeMessages()

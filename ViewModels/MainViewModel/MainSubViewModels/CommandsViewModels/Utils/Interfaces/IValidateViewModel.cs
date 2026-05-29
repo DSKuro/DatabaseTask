@@ -6,5 +6,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
     {
         public Task<bool> ValidateChanges();
         public Task<bool> ValidateCatalogAndDatabaseAsync();
+        public bool HasCommandsChanges();
     }
 }

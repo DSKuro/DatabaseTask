@@ -50,7 +50,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return false;
             }
             
-            if (_commandsHistory.GetCommandsCount() is not 0)
+            if (!HasCommandsChanges())
             {
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                     MessageBoxConstants.Error.Value, "Обнаружены операции с каталогами. Примите изменения или отмените их.",
@@ -65,6 +65,11 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
         {
             return string.IsNullOrWhiteSpace(_connectionStringData.ConnectionString)
                 || _treeViewFunctionality.GetCoreNode() == null;
+        }
+
+        public bool HasCommandsChanges()
+        {
+            return _commandsHistory.GetCommandsCount() is not 0;
         }
     }
 }

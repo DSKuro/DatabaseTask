@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DatabaseTask.Models.MessageBox;
 using DatabaseTask.Services.Commands.FilesCommands.Interfaces;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.ViewModels.Base;
@@ -6,7 +7,9 @@ using DatabaseTask.ViewModels.Logger.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.Controls.FileManager.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.CommonViewModels.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.FolderViewModels.Interfaces;
+using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewModels.Utils.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces;
+using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace DatabaseTask.ViewModels.MainViewModel
@@ -26,6 +29,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
         private readonly ICopyAllCommandsViewModel _copyAllCommandsViewModel;
 
         private readonly IChangesViewModel _changesViewModel;
+        private readonly IValidateViewModel _validateViewModel;
 
         public IFileManager FileManager { get => _fileManager; }
         public ILogger Logger { get => _logger; }
@@ -42,7 +46,8 @@ namespace DatabaseTask.ViewModels.MainViewModel
             ICopyFolderCommandsViewModel copyFolderCommandsViewModel,
             IDatabaseInteractionViewModel databaseInteractionViewModel,
             ICopyAllCommandsViewModel copyAllCommandsViewModel,
-            IChangesViewModel changesViewModel) : base(messageBoxService)
+            IChangesViewModel changesViewModel,
+            IValidateViewModel validateViewModel) : base(messageBoxService)
         {
             _fileManager = fileManager;
             _logger = logger;
@@ -55,6 +60,7 @@ namespace DatabaseTask.ViewModels.MainViewModel
             _databaseInteractionViewModel = databaseInteractionViewModel;
             _copyAllCommandsViewModel = copyAllCommandsViewModel;
             _changesViewModel = changesViewModel;
+            _validateViewModel = validateViewModel;
         }
 
         [RelayCommand]
@@ -145,6 +151,23 @@ namespace DatabaseTask.ViewModels.MainViewModel
         public void CancelChanges()
         {
             _changesViewModel.CancelChanges();
+        }
+
+        public async Task<bool> CanExitProgram()
+        {
+            if (_validateViewModel.HasCommandsChanges())
+            {
+                var result = await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
+                    MessageBoxConstants.Error.Value, "Обнаружены операции с каталогами. Изменения при выходе будут потеряны. Вы точно хотите выйти?",
+                    ButtonEnum.YesNo));
+
+                if (result is not ButtonResult.Yes)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -50,7 +50,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.CommandsViewMo
                 return false;
             }
             
-            if (!HasCommandsChanges())
+            if (HasCommandsChanges())
             {
                 await MessageBoxHelper("MainDialogueWindow", new MessageBoxOptions(
                     MessageBoxConstants.Error.Value, "Обнаружены операции с каталогами. Примите изменения или отмените их.",

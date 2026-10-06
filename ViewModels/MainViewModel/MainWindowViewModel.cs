@@ -136,6 +136,12 @@ namespace DatabaseTask.ViewModels.MainViewModel
         }
 
         [RelayCommand]
+        public async Task DeleteHiddenDwgFiles()
+        {
+            await _databaseInteractionViewModel.DeleteHiddenDwgFiles();
+        }
+
+        [RelayCommand]
         public async Task DeleteFile()
         {
             await _deleteItemCommandsViewModel.DeleteFiles();

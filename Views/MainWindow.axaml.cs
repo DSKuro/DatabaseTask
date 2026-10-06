@@ -6,6 +6,7 @@ using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Messages;
 using DatabaseTask.Services.TreeViewLogic.TreeViewItemLogic.Interfaces;
 using DatabaseTask.ViewModels;
+using DatabaseTask.ViewModels.Analyses;
 using DatabaseTask.ViewModels.Analyses.Interfaces;
 using DatabaseTask.ViewModels.MainViewModel;
 using DatabaseTask.ViewModels.MainViewModel.Controls.TreeView.Interfaces;
@@ -15,6 +16,7 @@ using DatabaseTask.Views.Comparators.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DatabaseTask.Views
 {
@@ -98,10 +100,17 @@ namespace DatabaseTask.Views
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowUnusedFilesMessage>(this,
             (window, message) =>
             {
-                UnusedFilesWindow unusedFilesWindow = _serviceProvider.GetRequiredService<UnusedFilesWindow>();
-                unusedFilesWindow.DataContext = _serviceProvider.GetRequiredService<IUnusedFilesViewModel>();
-                unusedFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                message.Reply(unusedFilesWindow.ShowDialog<List<string>>(window));
+                var viewModel = (FilesSelectionViewModel)_serviceProvider
+                    .GetRequiredService<IUnusedFilesViewModel>();
+                message.Reply(ShowFilesSelectionDialog(window, viewModel));
+            });
+
+            WeakReferenceMessenger.Default.Register<MainWindow, MainWindowHiddenDwgFilesMessage>(this,
+            (window, message) =>
+            {
+                var viewModel = (FilesSelectionViewModel)_serviceProvider
+                    .GetRequiredService<IHiddenDwgFilesViewModel>();
+                message.Reply(ShowFilesSelectionDialog(window, viewModel));
             });
 
             WeakReferenceMessenger.Default.Register<MainWindow, MainWindowDuplicatesFilesMessage>(this,
@@ -112,6 +121,17 @@ namespace DatabaseTask.Views
                 duplicatesFilesWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 message.Reply(duplicatesFilesWindow.ShowDialog<DuplicatesFilesDialogResult>(window));
             });
+        }
+
+        private Task<List<string>> ShowFilesSelectionDialog(
+            Window owner,
+            FilesSelectionViewModel viewModel)
+        {
+            FilesSelectionWindow filesSelectionWindow =
+                _serviceProvider.GetRequiredService<FilesSelectionWindow>();
+            filesSelectionWindow.DataContext = viewModel;
+            filesSelectionWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            return filesSelectionWindow.ShowDialog<List<string>>(owner);
         }
 
         private void EnableManagerButtons(bool value)

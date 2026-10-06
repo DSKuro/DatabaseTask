@@ -6,5 +6,6 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels.Interfaces
     {
         public Task FindDuplicates();
         public Task FindUnusedFiles();
+        public Task DeleteHiddenDwgFiles();
     }
 }

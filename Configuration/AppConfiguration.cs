@@ -27,10 +27,9 @@ using DatabaseTask.Services.DataGrid.DataGridFunctionality.SubFunctionality.Inte
 using DatabaseTask.Services.Dialogues.Base;
 using DatabaseTask.Services.Dialogues.MessageBox;
 using DatabaseTask.Services.Dialogues.Storage;
-using DatabaseTask.Services.Excel;
 using DatabaseTask.Services.Excel.DuplicatesFiles;
 using DatabaseTask.Services.Excel.DuplicatesFiles.Interfaces;
-using DatabaseTask.Services.Excel.UnusedFiles.Interfaces;
+using DatabaseTask.Services.Excel.Writer;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility;
 using DatabaseTask.Services.Operations.FileManagerOperations.Accessibility.Interfaces;
 using DatabaseTask.Services.Operations.FileManagerOperations.FoldersOperations;
@@ -227,11 +226,12 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IChangesViewModel, ChangesViewModel>();
             _serviceCollection.AddScoped<IValidateViewModel, ValidateViewModel>();
             _serviceCollection.AddTransient<IUnusedFilesViewModel, UnusedFilesViewModel>();
+            _serviceCollection.AddTransient<IHiddenDwgFilesViewModel, HiddenDwgFilesViewModel>();
             _serviceCollection.AddTransient<IDuplicatesFilesViewModel, DuplicatesFilesViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindowViewModel>();
             _serviceCollection.AddTransient<MainWindowViewModel>();
             _serviceCollection.AddTransient<FolderOperationWindow>();
-            _serviceCollection.AddTransient<UnusedFilesWindow>();
+            _serviceCollection.AddTransient<FilesSelectionWindow>();
             _serviceCollection.AddTransient<DuplicatesFilesWindow>();
         }
 
@@ -249,9 +249,9 @@ namespace DatabaseTask.Configuration
             _serviceCollection.AddScoped<IAnalyseUtils, AnalyseUtils>();
             _serviceCollection.AddScoped<IFindDuplicatesService, FindDuplicatesService>();
             _serviceCollection.AddScoped<IFindUnusedFilesServices, FindUnusedFilesServices>();
-            _serviceCollection.AddScoped<IUnusedFilesItemViewModel, UnusedFilesItemViewModel>();
+            _serviceCollection.AddScoped<IFindHiddenDwgFilesService, FindHiddenDwgFilesService>();
             _serviceCollection.AddScoped<IDuplicatesFilesItemViewModel, DuplicatesFilesItemViewModel>();
-            _serviceCollection.AddScoped<IExcelUnusedPaths, ExcelUnusedPaths>();
+            _serviceCollection.AddScoped<IExcelWriter, ExcelWriter>();
             _serviceCollection.AddScoped<IExcelDuplicatesFiles, ExcelDuplicatesFiles>();
         }
     }

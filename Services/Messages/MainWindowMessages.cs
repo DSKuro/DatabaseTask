@@ -21,4 +21,5 @@ namespace DatabaseTask.Services.Messages
 
     public class MainWindowDuplicatesFilesMessage : AsyncRequestMessage<DuplicatesFilesDialogResult> { }
     public class MainWindowUnusedFilesMessage : AsyncRequestMessage<List<string>> { }
+    public class MainWindowHiddenDwgFilesMessage : AsyncRequestMessage<List<string>> { }
 }

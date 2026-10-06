@@ -99,5 +99,20 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
                 }
             }
         }
+
+        public async Task DeleteHiddenDwgFiles()
+        {
+            if (!await _validateViewModel.ValidateCatalogAndDatabaseAsync())
+            {
+                return;
+            }
+
+            var paths = await WeakReferenceMessenger.Default.Send<MainWindowHiddenDwgFilesMessage>();
+
+            if (paths is not null)
+            {
+                await DeleteFiles(paths, true);
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using DatabaseTask.Models.AppData;
 using DatabaseTask.Services.Database.Repositories.Interfaces;
 using DatabaseTask.Services.Database.Utils.Interfaces;
+using DocumentFormat.OpenXml.VariantTypes;
 using ExCSS;
-using Microsoft.EntityFrameworkCore;
-using System;
+using System;  
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +11,7 @@ namespace DatabaseTask.Services.Database.Repositories
 {
     public class TblDrawingContentsRepository : ITblDrawingContentsRepository
     {
+        private const string _hideParameterName = "Скрыть элемент";
         private readonly ConnectionStringData _stringData;
         private readonly IDatabasePath _databasePath;
 
@@ -48,6 +49,43 @@ namespace DatabaseTask.Services.Database.Repositories
                 return null;
             }
 
+        }
+
+        public List<string>? GetHiddenDwgPaths()
+        {
+            try
+            {
+                using var context = new DataContext(_stringData.ConnectionString);
+
+                var hiddenDeviceParameter = context.TblDeviceParameters
+                    .Where(parameter => (string)(object)parameter.DeviceParameterName! == _hideParameterName)
+                    .Select(parameter => parameter.DeviceParameterId)
+                    .FirstOrDefault();
+
+                if (hiddenDeviceParameter is (int) default)
+                {
+                    return new List<string>();
+                }
+
+                var hideIds = context.TblDeviceValues
+                    .Where(x => (int)(object)x.DeviceValueParameter! == hiddenDeviceParameter)
+                    .Select(x => x.DeviceValueDevice)
+                    .Distinct()
+                    .ToList();
+
+                return context.TblDrawingContents
+                    .Where(drawing => drawing.ContentDevice.HasValue
+                        && hideIds.Contains(drawing.ContentDevice.Value)
+                        && !string.IsNullOrEmpty(drawing.ContentDocument))
+                    .Select(drawing => drawing.ContentDocument!)
+                    .AsEnumerable()
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public Dictionary<string, List<TblDrawingContent>> GetPathIndex(DataContext context, List<string> paths)

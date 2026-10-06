@@ -1,6 +1,6 @@
 namespace DatabaseTask.ViewModels.Analyses.Interfaces
 {
-    public interface IUnusedFilesViewModel
+    public interface IHiddenDwgFilesViewModel
     {
     }
 }

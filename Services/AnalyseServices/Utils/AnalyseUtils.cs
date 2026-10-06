@@ -1,6 +1,5 @@
 ﻿using DatabaseTask.Services.AnalyseServices.Utils.Interfaces;
 using DatabaseTask.Services.Operations.FilesOperations.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +10,7 @@ namespace DatabaseTask.Services.AnalyseServices.Utils
     {
         private const string _unusedPrefix = "unusedfiles_";
         private const string _duplicatePrefix = "duplicates_";
+        private const string _hiddenDWGPrefix_ = "hiddenDWG_";
 
         private readonly IFullPath _fullPath;
 
@@ -24,8 +24,9 @@ namespace DatabaseTask.Services.AnalyseServices.Utils
             string tempPath = Path.GetTempPath();
             var unusedFiles = Directory.GetFiles(tempPath, $"{_unusedPrefix}*.xlsx");
             var duplicatesFiles = Directory.GetFiles(tempPath, $"{_duplicatePrefix}*.xlsx");
+            var hiddendwgs = Directory.GetFiles(tempPath, $"{_hiddenDWGPrefix_}*.xlsx");
 
-            var unionFiles = unusedFiles.Concat(duplicatesFiles);
+            var unionFiles = unusedFiles.Concat(duplicatesFiles).Concat(hiddendwgs);
 
             foreach (var file in unionFiles)
             {

@@ -1,38 +1,32 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:DatabaseTask.ViewModels.Analyses"
-		xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
-		dialogues:DialogueManager.Register="UnusedFilesDialogues"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="DatabaseTask.Views.Analyse.UnusedFilesWindow"
-		x:DataType="vm:UnusedFilesViewModel"
+        xmlns:models="using:DatabaseTask.ViewModels.Analyses.Models"
+        xmlns:dialogues="clr-namespace:DatabaseTask.Services.Dialogues.Base"
+        dialogues:DialogueManager.Register="FilesSelectionDialogues"
+        x:Class="DatabaseTask.Views.Analyse.FilesSelectionWindow"
+        x:DataType="vm:FilesSelectionViewModel"
         Width="500"
         Height="400"
         Icon="/Assets/window.ico"
-        Title="Анализ неиспользуемых файлов">
+        Title="{Binding WindowTitle}">
 
-	<Design.DataContext>
-		<vm:UnusedFilesViewModel/>
-	</Design.DataContext>
-    
-   <Grid RowDefinitions="*, Auto, Auto">
+    <Grid RowDefinitions="*, Auto">
         <TabControl Grid.Row="0"
-                    Margin="10, 0, 0, 0">
+                    Margin="10,0,0,0">
             <TabControl.Styles>
                 <Style Selector="TabItem">
-                    <Setter Property="FontSize" Value="14"/> 
+                    <Setter Property="FontSize" Value="14"/>
                     <Setter Property="Padding" Value="4,2"/>
                 </Style>
             </TabControl.Styles>
 
-            <TabItem Header="Неиспользуемые файлы">
+            <TabItem Header="{Binding FilesTabTitle}">
                 <Grid>
                     <DataGrid AutoGenerateColumns="False"
                               CanUserResizeColumns="True"
                               HorizontalScrollBarVisibility="Visible"
-                              ItemsSource="{Binding UnusedFiles}"
+                              ItemsSource="{Binding Files}"
                               Margin="0,0,0,30">
                         <DataGrid.Styles>
                             <Style Selector="DataGridColumnHeader">
@@ -42,8 +36,9 @@
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Удалить" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox IsChecked="{Binding IsDelete}" HorizontalAlignment="Center"/>
+                                    <DataTemplate x:DataType="models:FileSelectionItemViewModel">
+                                        <CheckBox IsChecked="{Binding IsDelete}"
+                                                  HorizontalAlignment="Center"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -54,23 +49,28 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="5" Margin="0,0,0,0" VerticalAlignment="Bottom">
-                        <Button MinWidth="50" 
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Spacing="5"
+                                VerticalAlignment="Bottom">
+                        <Button MinWidth="50"
                                 Command="{Binding CheckAllCommand}">
-                            Выделить</Button>
-                        <Button MinWidth="50" 
+                            Выделить
+                        </Button>
+                        <Button MinWidth="50"
                                 Command="{Binding UncheckAllCommand}">
-                            Снять</Button>
+                            Снять
+                        </Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Неопознанные файлы">
+            <TabItem Header="{Binding AdditionalFilesTabTitle}"
+                     IsVisible="{Binding ShowAdditionalFiles}">
                 <DataGrid AutoGenerateColumns="False"
                           CanUserResizeColumns="True"
                           HorizontalScrollBarVisibility="Visible"
-                          ItemsSource="{Binding ExceptFiles}"
-                          Margin="0">
+                          ItemsSource="{Binding AdditionalFiles}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Путь"
                                             IsReadOnly="True"
@@ -81,28 +81,31 @@
             </TabItem>
         </TabControl>
 
-          <StackPanel Spacing="10" 
-					Margin="0, 0, 10, 10" 
-					MaxHeight="200"
-					HorizontalAlignment="Right" 
-					Orientation="Horizontal" 
-					Grid.Row="2">
-			<StackPanel.Styles>
-				<Style Selector="Button">
-					<Setter Property="HorizontalContentAlignment" Value="Center"/>
-				</Style>
-			</StackPanel.Styles>
-            <Button MinWidth="70" 
-                    Command="{Binding WriteUnusedExcelPathsCommand}">
-                Excel</Button>
-            <Button MinWidth="70" 
-                    Classes="ApplyButton" 
+        <StackPanel Spacing="10"
+                    Margin="0,0,10,10"
+                    MaxHeight="200"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Grid.Row="1">
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+            </StackPanel.Styles>
+            <Button MinWidth="70"
+                    IsVisible="{Binding ShowExport}"
+                    Command="{Binding ExportCommand}">
+                Excel
+            </Button>
+            <Button MinWidth="70"
+                    Classes="ApplyButton"
                     Command="{Binding ApplyCommand}">
-                Ok</Button>
-            <Button MinWidth="70" 
+                Ok
+            </Button>
+            <Button MinWidth="70"
                     Command="{Binding CancelCommand}">
-                Отмена</Button>
+                Отмена
+            </Button>
         </StackPanel>
-
     </Grid>
 </Window>

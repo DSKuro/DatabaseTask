@@ -111,7 +111,7 @@ namespace DatabaseTask.ViewModels.MainViewModel.MainSubViewModels
 
             if (paths is not null)
             {
-                await DeleteFiles(paths, true);
+                await DeleteFiles(paths, false);
             }
         }
     }

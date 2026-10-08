@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace DatabaseTask.Services.Excel.Writer
 {
@@ -26,9 +25,6 @@ namespace DatabaseTask.Services.Excel.Writer
 
                 foreach (var sheetData in sheetsData)
                 {
-                    if (!sheetData.Data.Any())
-                        continue;
-
                     CreateSheet(
                         workbookPart,
                         sheets,

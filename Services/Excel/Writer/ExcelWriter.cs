@@ -15,32 +15,30 @@ namespace DatabaseTask.Services.Excel.Writer
         {
             var tempFile = Path.Combine(Path.GetTempPath(), $"{filePrefix}{Guid.NewGuid()}.xlsx");
 
-            using var document = SpreadsheetDocument.Create(
-                tempFile,
-                SpreadsheetDocumentType.Workbook,
-                true);
-
-            var workbookPart = document.AddWorkbookPart();
-            workbookPart.Workbook = new Workbook();
-
-            var sheets = workbookPart.Workbook.AppendChild(new Sheets());
-
-            uint sheetId = 1;
-
-            foreach (var sheetData in sheetsData)
+            using (var document = SpreadsheetDocument.Create(tempFile, SpreadsheetDocumentType.Workbook, true)) 
             {
-                if (!sheetData.Data.Any())
-                    continue;
+                var workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
 
-                CreateSheet(
-                    workbookPart,
-                    sheets,
-                    sheetData.Data,
-                    sheetData.Name,
-                    sheetId++);
+                var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+
+                uint sheetId = 1;
+
+                foreach (var sheetData in sheetsData)
+                {
+                    if (!sheetData.Data.Any())
+                        continue;
+
+                    CreateSheet(
+                        workbookPart,
+                        sheets,
+                        sheetData.Data,
+                        sheetData.Name,
+                        sheetId++);
+                }
+
+                workbookPart.Workbook.Save();
             }
-
-            workbookPart.Workbook.Save();
 
             Process.Start(new ProcessStartInfo(tempFile)
             {

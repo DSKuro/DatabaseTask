@@ -25,57 +25,58 @@ namespace DatabaseTask.Services.Excel.DuplicatesFiles
 
             string tempFile = Path.Combine(Path.GetTempPath(), $"{_filePrefix}{Guid.NewGuid()}.xlsx");
 
-            using var document = SpreadsheetDocument.Create(tempFile, SpreadsheetDocumentType.Workbook, true);
-
-            var workbookPart = document.AddWorkbookPart();
-            workbookPart.Workbook = new Workbook();
-
-            var sheets = workbookPart.Workbook.AppendChild(new Sheets());
-            var wsPart = workbookPart.AddNewPart<WorksheetPart>();
-
-            var sheetData = new SheetData();
-            var columns = new Columns();
-
-            wsPart.Worksheet = new Worksheet(columns, sheetData);
-
-            sheets.Append(new Sheet()
+            using (var document = SpreadsheetDocument.Create(tempFile, SpreadsheetDocumentType.Workbook, true))
             {
-                Id = workbookPart.GetIdOfPart(wsPart),
-                SheetId = 1,
-                Name = _duplicatesFiles
-            });
+                var workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
 
-            uint rowIndex = 1;
+                var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                var wsPart = workbookPart.AddNewPart<WorksheetPart>();
 
-            sheetData.Append(CreateRow(rowIndex++, "Группа", "Путь"));
+                var sheetData = new SheetData();
+                var columns = new Columns();
 
-            int maxGroup = "Группа".Length;
-            int maxPath = "Путь".Length;
+                wsPart.Worksheet = new Worksheet(columns, sheetData);
 
-            foreach (var item in data)
-            {
-                string group = item.FileName ?? "";
-                string path = item.Path ?? "";
-
-                sheetData.Append(CreateRow(rowIndex++, group, path));
-
-                if (group.Length > maxGroup)
+                sheets.Append(new Sheet()
                 {
-                    maxGroup = group.Length;
+                    Id = workbookPart.GetIdOfPart(wsPart),
+                    SheetId = 1,
+                    Name = _duplicatesFiles
+                });
+
+                uint rowIndex = 1;
+
+                sheetData.Append(CreateRow(rowIndex++, "Группа", "Путь"));
+
+                int maxGroup = "Группа".Length;
+                int maxPath = "Путь".Length;
+
+                foreach (var item in data)
+                {
+                    string group = item.FileName ?? "";
+                    string path = item.Path ?? "";
+
+                    sheetData.Append(CreateRow(rowIndex++, group, path));
+
+                    if (group.Length > maxGroup)
+                    {
+                        maxGroup = group.Length;
+                    }
+
+                    if (path.Length > maxPath)
+                    {
+                        maxPath = path.Length;
+                    }
                 }
 
-                if (path.Length > maxPath)
-                {
-                    maxPath = path.Length;
-                }
+                columns.Append(
+                    CreateColumn(1, maxGroup),
+                    CreateColumn(2, maxPath)
+                );
+
+                workbookPart.Workbook.Save();
             }
-
-            columns.Append(
-                CreateColumn(1, maxGroup),
-                CreateColumn(2, maxPath)
-            );
-
-            workbookPart.Workbook.Save();
 
             Process.Start(new ProcessStartInfo(tempFile)
             {
